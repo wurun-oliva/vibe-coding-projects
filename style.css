@@ -1,0 +1,152 @@
+/* V1:简洁单页,先求结构清晰,视觉在 V2 再迭代 */
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #1a1a1a;
+  --color-muted: #666666;
+  --color-accent: #2563eb;
+  --color-border: #e5e7eb;
+  --color-section: #f9fafb;
+  --max-width: 880px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
+}
+
+a { color: var(--color-accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 顶部导航 */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 10;
+}
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-brand { font-weight: 700; color: var(--color-text); }
+.nav-links { display: flex; gap: 20px; }
+.nav-links a { color: var(--color-muted); font-size: 0.95rem; }
+.nav-links a:hover { color: var(--color-text); text-decoration: none; }
+.nav-cta {
+  padding: 6px 14px;
+  border: 1px solid var(--color-accent);
+  border-radius: 6px;
+  color: var(--color-accent) !important;
+}
+.nav-cta:hover { background: var(--color-accent); color: #fff !important; }
+
+/* Hero */
+.hero {
+  padding: 80px 24px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+.hero-inner { max-width: var(--max-width); margin: 0 auto; }
+.hero h1 { font-size: 2.4rem; margin-bottom: 12px; }
+.hero-tagline { color: var(--color-muted); font-size: 1.1rem; margin-bottom: 28px; }
+.hero-cta { display: flex; gap: 14px; justify-content: center; }
+
+.btn {
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: inline-block;
+}
+.btn-primary { background: var(--color-accent); color: #fff; }
+.btn-primary:hover { text-decoration: none; opacity: 0.9; }
+.btn-ghost { border: 1px solid var(--color-border); color: var(--color-text); }
+.btn-ghost:hover { text-decoration: none; border-color: var(--color-text); }
+
+/* 通用 section */
+.section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 56px 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+.section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 18px;
+}
+.section p { color: var(--color-text); }
+
+/* 技能 */
+.skill-list { list-style: none; }
+.skill-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.skill-list li:last-child { border-bottom: none; }
+.skill-list strong { color: var(--color-text); }
+
+/* 项目卡片 */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+.project-card {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-section);
+}
+.project-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+.project-card p { color: var(--color-muted); font-size: 0.95rem; margin-bottom: 12px; }
+.project-links { display: flex; gap: 14px; }
+.project-links .link { font-size: 0.9rem; }
+
+/* 联系方式 */
+.section-contact { background: var(--color-section); }
+.contact-grid {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.contact-item {
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+.contact-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+.contact-value { font-weight: 500; }
+
+/* 页脚 */
+.footer {
+  text-align: center;
+  padding: 28px 24px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+/* 响应式:移动端导航简化 */
+@media (max-width: 600px) {
+  .nav-inner { flex-direction: column; gap: 10px; }
+  .nav-links { flex-wrap: wrap; justify-content: center; gap: 14px; }
+  .hero { padding: 56px 20px; }
+  .hero h1 { font-size: 1.9rem; }
+  .section { padding: 40px 20px; }
+}

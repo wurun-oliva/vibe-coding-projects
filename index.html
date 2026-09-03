@@ -3,74 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>个人主页 | V1</title>
+  <title>吴润 · 个人主页</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- 顶部导航 -->
+
+  <!-- 顶部锚点导航 -->
   <header class="nav">
     <div class="nav-inner">
-      <a href="#top" class="nav-brand">[你的姓名]</a>
-      <nav class="nav-links">
+      <a href="#top" class="nav-brand">吴润</a>
+      <nav class="nav-links" aria-label="主导航">
         <a href="#about">关于</a>
         <a href="#skills">技能</a>
         <a href="#interests">兴趣</a>
         <a href="#projects">项目</a>
-        <a href="#contact" class="nav-cta">联系我</a>
+        <a href="#twin">数字分身</a>
+        <a href="#contact" class="nav-cta">联系</a>
       </nav>
     </div>
   </header>
 
-  <!-- Hero:第一眼告诉 HR 你是谁、做什么、下一步看什么 -->
+  <!-- Hero -->
   <section id="top" class="hero">
     <div class="hero-inner">
-      <h1>[你的姓名]</h1>
-      <p class="hero-tagline">[一句话定位,例:前端工程师 / 在校学生 · 喜欢 Vibe Coding]</p>
+      <div class="avatar-slot" aria-label="头像预留位">
+        <span class="avatar-placeholder">头像</span>
+      </div>
+      <h1>吴润</h1>
+      <p class="hero-tagline">天津大学深圳学院 · 智能医学工程专业</p>
+      <p class="hero-sub">正在学习 Vibe Coding，把想法做成可用的小产品</p>
       <div class="hero-cta">
-        <a href="#projects" class="btn btn-primary">看作品</a>
-        <a href="#contact" class="btn btn-ghost">联系我</a>
+        <a href="#twin" class="btn btn-primary">和数字分身聊聊</a>
+        <a href="#projects" class="btn btn-ghost">看作品</a>
       </div>
     </div>
   </section>
 
-  <!-- 关于:自我记录用,真实可核实 -->
+  <!-- 关于我 -->
   <section id="about" class="section">
     <h2>关于我</h2>
-    <p>[2-3 句自我介绍:背景、当前状态、方向。例:目前在 XX 大学读 XX 专业,关注前端与产品化思维,正在通过 Vibe Coding 把想法做成可用的小产品。]</p>
+    <div class="about-grid">
+      <div class="info-item">
+        <span class="info-label">名字</span>
+        <span class="info-value">吴润</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">学校</span>
+        <span class="info-value">天津大学深圳学院</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">专业</span>
+        <span class="info-value">智能医学工程</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">在做</span>
+        <span class="info-value">学习 Vibe Coding</span>
+      </div>
+    </div>
+    <p class="about-bio">一个对技术与艺术同样好奇的学生。白天在智能医学工程里穿梭，晚上用 Vibe Coding 把零散的想法拼成看得见的小东西。</p>
   </section>
 
   <!-- 技能 -->
-  <section id="skills" class="section">
+  <section id="skills" class="section section-alt">
     <h2>技能</h2>
-    <ul class="skill-list">
-      <li><strong>[技能 1]</strong> · [熟练度或说明,例:HTML / CSS / JavaScript]</li>
-      <li><strong>[技能 2]</strong> · [例:Git 版本控制]</li>
-      <li><strong>[技能 3]</strong> · [例:AI 辅助开发 (Vibe Coding)]</li>
-      <li><strong>[技能 4]</strong> · [可继续添加]</li>
-    </ul>
+    <div class="skill-grid">
+      <div class="skill-card">
+        <h3>HTML / CSS</h3>
+        <p>页面结构与样式基础</p>
+      </div>
+      <div class="skill-card">
+        <h3>Git</h3>
+        <p>版本控制与协作流程</p>
+      </div>
+      <div class="skill-card">
+        <h3>Vibe Coding</h3>
+        <p>用自然语言驱动 AI 开发</p>
+      </div>
+      <div class="skill-card">
+        <h3>智能医学</h3>
+        <p>专业背景知识</p>
+      </div>
+    </div>
   </section>
 
   <!-- 兴趣 -->
   <section id="interests" class="section">
     <h2>兴趣</h2>
-    <p>[兴趣方向,例:Web 产品迭代、设计美学、AI 工具探索、写作与记录。]</p>
+    <div class="interest-grid">
+      <div class="interest-card"><span class="interest-icon">画</span><h3>绘画</h3></div>
+      <div class="interest-card"><span class="interest-icon">陶</span><h3>陶艺</h3></div>
+      <div class="interest-card"><span class="interest-icon">身</span><h3>健身</h3></div>
+      <div class="interest-card"><span class="interest-icon">书</span><h3>阅读</h3></div>
+    </div>
   </section>
 
   <!-- 项目 -->
-  <section id="projects" class="section">
+  <section id="projects" class="section section-alt">
     <h2>项目</h2>
     <div class="project-grid">
       <article class="project-card">
-        <h3>[项目名称 1]</h3>
-        <p>[一句话描述:做了什么、解决什么问题。]</p>
+        <div class="project-tag">个人主页</div>
+        <h3>个人主页 V1</h3>
+        <p>用 Vibe Coding 方法从 0 到 1 做的个人主页，含数字分身聊天区。</p>
         <div class="project-links">
           <a href="#" class="link">在线 Demo</a>
           <a href="#" class="link">源码</a>
         </div>
       </article>
       <article class="project-card">
-        <h3>[项目名称 2]</h3>
-        <p>[一句话描述。]</p>
+        <div class="project-tag">记录</div>
+        <h3>心理记录</h3>
+        <p>[占位符 · 待补充项目说明]</p>
+        <div class="project-links">
+          <a href="#" class="link">在线 Demo</a>
+          <a href="#" class="link">源码</a>
+        </div>
+      </article>
+      <article class="project-card">
+        <div class="project-tag">记录</div>
+        <h3>健身记录</h3>
+        <p>[占位符 · 待补充项目说明]</p>
         <div class="project-links">
           <a href="#" class="link">在线 Demo</a>
           <a href="#" class="link">源码</a>
@@ -79,10 +131,30 @@
     </div>
   </section>
 
-  <!-- 联系方式 -->
-  <section id="contact" class="section section-contact">
+  <!-- 数字分身聊天区 -->
+  <section id="twin" class="section twin-section">
+    <h2>数字分身</h2>
+    <p class="twin-hint">问我关于吴润的任何事，我替他回答。</p>
+    <div class="chat-box" id="chatBox">
+      <div class="msg msg-bot">你好！我是吴润的数字分身。可以问我他的专业、兴趣、最近在做什么。</div>
+    </div>
+    <div class="chat-quick">
+      <button class="chip" data-q="你叫什么">你叫什么</button>
+      <button class="chip" data-q="专业">专业</button>
+      <button class="chip" data-q="兴趣">兴趣</button>
+      <button class="chip" data-q="最近在做">最近在做</button>
+      <button class="chip" data-q="联系">怎么联系</button>
+    </div>
+    <form class="chat-input" id="chatForm">
+      <input type="text" id="chatInput" placeholder="输入你的问题…" autocomplete="off">
+      <button type="submit" class="btn btn-primary">发送</button>
+    </form>
+  </section>
+
+  <!-- 联系 -->
+  <section id="contact" class="section section-alt">
     <h2>联系我</h2>
-    <p>[一句话邀请,例:欢迎 HR 联系或同行交流。]</p>
+    <p>欢迎 HR 老师联系，或同行交流。</p>
     <div class="contact-grid">
       <div class="contact-item">
         <span class="contact-label">邮箱</span>
@@ -90,17 +162,19 @@
       </div>
       <div class="contact-item">
         <span class="contact-label">微信</span>
-        <span class="contact-value">[你的微信号]</span>
+        <span class="contact-value">[微信号]</span>
       </div>
       <div class="contact-item">
         <span class="contact-label">GitHub</span>
-        <a href="#" class="contact-value">[GitHub 主页链接]</a>
+        <a href="#" class="contact-value">[GitHub 主页]</a>
       </div>
     </div>
   </section>
 
   <footer class="footer">
-    <p>© 2026 [你的姓名] · 个人主页 V1</p>
+    <p>© 2026 吴润 · 个人主页 V1</p>
   </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心情记录 · Mind Log</title>
+<style>
+  /* ===== 全局变量：蓝橙配色 + 情绪三色 ===== */
+  :root {
+    --blue: #2563EB;
+    --blue-soft: #DBEAFE;
+    --orange: #F97316;
+    --orange-soft: #FFEDD5;
+    --happy: #FBBF24;
+    --calm: #60A5FA;
+    --negative: #64748B;
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface-muted: #F1F5F9;
+    --text: #1E293B;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --border: #E2E8F0;
+    --success: #10B981;
+    --radius: 8px;
+    --radius-card: 12px;
+    --radius-pill: 999px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; }
+
+  /* ===== App 容器 ===== */
+  #app {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+    min-height: 100vh;
+  }
+
+  /* ===== 顶部导航条 ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .topbar .brand {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .topbar .nav {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-link {
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .nav-link:hover { background: var(--surface-muted); }
+  .nav-link.active {
+    background: var(--blue-soft);
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  /* ===== 通用组件 ===== */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn-secondary {
+    background: var(--surface-muted);
+    color: var(--text);
+  }
+  .btn-orange { background: var(--orange); }
+  .btn-large {
+    padding: 14px 28px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+  .btn-block { width: 100%; }
+
+  /* 主页底部固定"记录心情"按钮 */
+  .fab {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: var(--radius-pill);
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    z-index: 50;
+    transition: transform 0.15s;
+  }
+  .fab:hover { transform: translateX(-50%) translateY(-2px); }
+
+  /* 占位页面样式 */
+  .placeholder {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+  .placeholder .emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  .placeholder h2 {
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .placeholder p {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  /* 反馈 toast */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--blue);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 100;
+    animation: toastIn 0.2s ease-out;
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* ===== 日历 ===== */
+  .calendar-wrap {
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .cal-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--surface-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .cal-title {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .cal-nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--blue);
+    font-size: 18px;
+    padding: 4px 10px;
+    border-radius: var(--radius);
+    transition: background 0.15s;
+  }
+  .cal-nav-btn:hover { background: var(--blue-soft); }
+  .cal-today-btn {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: none;
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+  }
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: var(--surface-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .cal-weekdays div {
+    text-align: center;
+    padding: 8px 0;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .cal-cell {
+    background: var(--surface);
+    min-height: 80px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .cal-cell:hover { background: var(--surface-muted); }
+  .cal-cell.empty { background: var(--surface-muted); cursor: default; }
+  .cal-cell.empty:hover { background: var(--surface-muted); }
+  .cal-cell.today { background: var(--blue-soft); }
+  .cal-cell.today .cal-day-num { color: var(--blue); font-weight: 600; }
+  .cal-day-num {
+    font-size: 12px;
+    color: var(--text-muted);
+    align-self: flex-start;
+    margin-left: 6px;
+    margin-top: 2px;
+  }
+  .cal-mood-icon {
+    width: 28px;
+    height: 28px;
+    margin-top: 4px;
+  }
+  .cal-count {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== 心情选择卡片 ===== */
+  .mood-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .mood-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mood-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .mood-card.happy { border-color: var(--happy); }
+  .mood-card.happy:hover { background: #FEF3C7; }
+  .mood-card.calm { border-color: var(--calm); }
+  .mood-card.calm:hover { background: #DBEAFE; }
+  .mood-card.negative { border-color: var(--negative); }
+  .mood-card.negative:hover { background: #F1F5F9; }
+  .mood-card svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+  }
+  .mood-card .mood-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mood-card.happy .mood-label { color: #B45309; }
+  .mood-card.calm .mood-label { color: #1E40AF; }
+  .mood-card.negative .mood-label { color: #334155; }
+
+  /* ===== 表单：情境标签 + 备注 ===== */
+  .form-section { margin-bottom: 24px; }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .context-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    background: var(--surface-muted);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chip:hover { background: var(--blue-soft); color: var(--blue); border-color: var(--blue); }
+  .chip.selected {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+  .chip.other-chip {
+    border-style: dashed;
+  }
+  .note-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    resize: none;
+    min-height: 70px;
+    font-family: inherit;
+  }
+  .note-input:focus { border-color: var(--blue); }
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  /* 当前选择的心情头部 */
+  .mood-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .mood-header svg {
+    width: 56px;
+    height: 56px;
+  }
+  .mood-header .mood-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+  .mood-header.happy .mood-title { color: #B45309; }
+
+  /* ===== 礼花特效（从底部一点向上喷射，物理仿真）===== */
+  .confetti-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 200;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform, opacity;
+  }
+  .mood-header.calm .mood-title { color: #1E40AF; }
+
+  /* ===== 负面情绪分支 ===== */
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .step-dot.active { background: var(--blue); transform: scale(1.2); }
+  .step-dot.done { background: var(--blue-soft); }
+  .step-arrow { color: var(--border); }
+
+  .emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .emotion-card {
+    padding: 14px 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .emotion-card:hover {
+    background: var(--surface-muted);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .emotion-card.custom {
+    border-style: dashed;
+    color: var(--text-muted);
+  }
+  .emotion-card.custom input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    width: 100%;
+  }
+
+  .method-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .method-item:hover { background: var(--surface-muted); }
+  .method-item.selected {
+    background: var(--blue-soft);
+    border-color: var(--blue);
+  }
+  .method-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    position: relative;
+    transition: all 0.15s;
+  }
+  .method-item.selected .method-radio { border-color: var(--blue); }
+  .method-item.selected .method-radio::after {
+    content: '';
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+  .method-text {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .method-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .method-section-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 20px 0 10px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .method-section-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--blue);
+    border-radius: 2px;
+  }
+  .method-section-title.history::before { background: var(--orange); }
+
+  .custom-method-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .custom-method-row input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+  }
+  .custom-method-row input:focus { border-color: var(--blue); border-style: solid; }
+
+  /* ===== 成果回填弹窗 ===== */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: modalFadeIn 0.2s ease-out;
+  }
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .modal-card {
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    padding: 22px 20px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    animation: modalSlideUp 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+  @keyframes modalSlideUp {
+    from { transform: translateY(20px) scale(0.96); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-align: center;
+    color: var(--text);
+  }
+  .modal-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .modal-context {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .modal-methods {
+    background: var(--surface-muted);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 18px;
+  }
+  .modal-methods-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .modal-method-item {
+    font-size: 13px;
+    color: var(--text);
+    padding: 3px 0;
+  }
+  .modal-question {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .effect-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .effect-option {
+    padding: 12px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    user-select: none;
+  }
+  .effect-option:hover {
+    border-color: var(--blue);
+    background: var(--blue-soft);
+    transform: translateY(-1px);
+  }
+  .effect-option:active { transform: translateY(0); }
+  .effect-option.opt-1:hover { border-color: #EF4444; background: #FEE2E2; color: #B91C1C; }
+  .effect-option.opt-2:hover { border-color: #F97316; background: #FED7AA; color: #C2410C; }
+  .effect-option.opt-3:hover { border-color: #EAB308; background: #FEF08A; color: #A16207; }
+  .effect-option.opt-4:hover { border-color: #10B981; background: #A7F3D0; color: #047857; }
+  .effect-option.opt-5:hover { border-color: #2563EB; background: #BFDBFE; color: #1D4ED8; }
+  .modal-skip {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px;
+  }
+  .modal-skip:hover { color: var(--blue); }
+
+  /* AI 已配置标识 */
+  .nav-link.ai-on {
+    background: #DCFCE7;
+    color: #047857;
+    font-weight: 500;
+  }
+
+  /* 设置弹窗 */
+  .setting-row { margin-bottom: 14px; }
+  .setting-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .setting-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface);
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  .setting-input:focus {
+    border-color: var(--blue);
+    outline: none;
+  }
+  .setting-help {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .setting-help code {
+    background: var(--surface-muted);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--blue);
+  }
+  .preset-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .preset-chip {
+    padding: 4px 10px;
+    background: var(--surface-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .preset-chip:hover {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border-color: var(--blue);
+  }
+
+  /* 里程碑弹窗 */
+  .milestone-card {
+    max-width: 340px;
+    text-align: center;
+    background: linear-gradient(135deg, #FFF7ED 0%, #DBEAFE 100%);
+    border: 2px solid #F97316;
+  }
+  .milestone-emoji {
+    font-size: 56px;
+    margin-bottom: 10px;
+    animation: milestonePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes milestonePop {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .milestone-title {
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .milestone-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    padding: 0 8px;
+  }
+
+  /* ===== 统计仪表盘 ===== */
+  .stats-page { display: flex; flex-direction: column; gap: 16px; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    padding: 16px 14px;
+    border: 1px solid var(--border);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-unit {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 2px;
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .stat-card.happy .stat-value { color: var(--happy); }
+  .stat-card.calm .stat-value { color: var(--calm); }
+  .stat-card.negative .stat-value { color: var(--negative); }
+  .stat-card.accent .stat-value { color: var(--blue); }
+
+  /* 心情分布饼图 */
+  .pie-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px 4px;
+  }
+  .pie-svg { flex-shrink: 0; }
+  .pie-legend { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .pie-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .pie-count {
+    margin-left: auto;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pie-empty {
+    text-align: center;
+    padding: 24px 8px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* 评分条 */
+  .rating-bar-wrap {
+    margin-top: 4px;
+    background: var(--surface-muted);
+    border-radius: 999px;
+    overflow: hidden;
+    height: 8px;
+  }
+  .rating-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #EF4444 0%, #F59E0B 50%, #10B981 100%);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .rating-stars {
+    margin-top: 8px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--orange);
+  }
+
+  /* 常用方法列表 */
+  .method-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .method-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--surface-muted);
+    border-radius: var(--radius);
+  }
+  .method-rank {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .method-rank.gold { background: #F59E0B; }
+  .method-rank.silver { background: #94A3B8; }
+  .method-rank.bronze { background: #D97706; }
+  .method-name {
+    font-size: 13px;
+    color: var(--text);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .method-meta-wrap {
+    font-size: 11px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .section-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .stats-empty {
+    text-align: center;
+    padding: 28px 8px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ===================================================================
+ * 心情记录 Mind Log —— 单文件 HTML 应用
+ * 模块组织：api / llmService / similarityService / presetAdvice / router / pages
+ * 设计：所有数据读写走 api 模块，未来切后端只改 api.ts
+ * =================================================================== */
+
+// ===== 全局状态 =====
+const AppState = {
+  user: null,          // { id: uuid } 单用户本机识别
+  records: [],         // 心情记录数组
+  customEmotions: [],  // 用户自定义负面情绪词
+  triggeredMilestones: [], // 已触发的里程碑 ID
+  pendingTimers: new Map() // 内存中的定时器（成果回填）
+};
+
+// ===== API 模块：所有数据读写走这里，未来切后端只改这个对象 =====
+const api = {
+  KEYS: {
+    USER: 'mindlog_user',
+    RECORDS: 'mindlog_records',
+    CUSTOM_EMOTIONS: 'mindlog_custom_emotions',
+    MILESTONES: 'mindlog_milestones'
+  },
+
+  // 加载所有本地数据
+  async loadAll() {
+    try {
+      AppState.user = JSON.parse(localStorage.getItem(this.KEYS.USER) || 'null');
+      AppState.records = JSON.parse(localStorage.getItem(this.KEYS.RECORDS) || '[]');
+      AppState.customEmotions = JSON.parse(localStorage.getItem(this.KEYS.CUSTOM_EMOTIONS) || '[]');
+      AppState.triggeredMilestones = JSON.parse(localStorage.getItem(this.KEYS.MILESTONES) || '[]');
+    } catch (e) {
+      console.error('加载数据失败', e);
+    }
+    // 首次使用生成用户 ID
+    if (!AppState.user) {
+      AppState.user = { id: this._uuid(), createdAt: new Date().toISOString() };
+      this._save(this.KEYS.USER, AppState.user);
+    }
+  },
+
+  // 保存记录
+  async saveRecord(record) {
+    AppState.records.push(record);
+    this._save(this.KEYS.RECORDS, AppState.records);
+    return record;
+  },
+
+  // 更新记录（用于回填成果）
+  async updateRecord(id, patch) {
+    const r = AppState.records.find(r => r.id === id);
+    if (r) Object.assign(r, patch);
+    this._save(this.KEYS.RECORDS, AppState.records);
+  },
+
+  async deleteRecord(id) {
+    AppState.records = AppState.records.filter(r => r.id !== id);
+    this._save(this.KEYS.RECORDS, AppState.records);
+  },
+
+  async saveCustomEmotion(word) {
+    if (!AppState.customEmotions.includes(word)) {
+      AppState.customEmotions.push(word);
+      this._save(this.KEYS.CUSTOM_EMOTIONS, AppState.customEmotions);
+    }
+  },
+
+  async markMilestone(id) {
+    if (!AppState.triggeredMilestones.includes(id)) {
+      AppState.triggeredMilestones.push(id);
+      this._save(this.KEYS.MILESTONES, AppState.triggeredMilestones);
+    }
+  },
+
+  // 内部工具
+  _save(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      // 配额超限保护
+      console.error('存储失败', e);
+      alert('本地存储空间不足，请导出备份后清理旧记录');
+    }
+  },
+  _uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+};
+
+// ===== 大模型服务（OpenAI 兼容格式，适配 DeepSeek / 通义千问 / OpenAI 等）=====
+const llmService = {
+  KEYS: {
+    ENDPOINT: 'mindlog_llm_endpoint',
+    API_KEY: 'mindlog_llm_apikey',
+    MODEL: 'mindlog_llm_model'
+  },
+
+  // 读取配置
+  getConfig() {
+    return {
+      endpoint: localStorage.getItem(this.KEYS.ENDPOINT) || '',
+      apiKey: localStorage.getItem(this.KEYS.API_KEY) || '',
+      model: localStorage.getItem(this.KEYS.MODEL) || ''
+    };
+  },
+
+  // 是否已配置
+  isConfigured() {
+    const c = this.getConfig();
+    return !!(c.endpoint && c.apiKey && c.model);
+  },
+
+  // 保存配置
+  saveConfig(config) {
+    if (config.endpoint !== undefined) localStorage.setItem(this.KEYS.ENDPOINT, config.endpoint);
+    if (config.apiKey !== undefined) localStorage.setItem(this.KEYS.API_KEY, config.apiKey);
+    if (config.model !== undefined) localStorage.setItem(this.KEYS.MODEL, config.model);
+  },
+
+  // 调用 OpenAI 兼容 API 生成建议
+  // 返回 4 条建议字符串数组，失败返回 null
+  async getAISuggestion(emotion, context, historyMethods) {
+    if (!this.isConfigured()) return null;
+    const { endpoint, apiKey, model } = this.getConfig();
+
+    const systemPrompt = '你是一个心理健康助手，针对大学生。给出具体、可操作、5 分钟内能做的缓解建议。每条 10-25 字，简洁直接，不解释原理，不要编号。';
+    const userPrompt = `我现在的情绪是「${emotion}」${context ? `，情境是「${context}」` : ''}。${historyMethods && historyMethods.length > 0 ? `我之前试过：${historyMethods.join('、')}。` : ''}请给我 4 条新的缓解方法，每条一行返回，不要编号，不要前缀符号。`;
+
+    try {
+      const resp = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+          ],
+          temperature: 0.85,
+          max_tokens: 250,
+          stream: false
+        })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text().catch(() => '');
+        console.error('LLM 调用失败', resp.status, errText);
+        return null;
+      }
+
+      const data = await resp.json();
+      const text = data?.choices?.[0]?.message?.content || '';
+      return this._parseSuggestions(text);
+    } catch (e) {
+      console.error('LLM 调用异常', e);
+      return null;
+    }
+  },
+
+  // 解析 LLM 返回的文本为建议数组
+  _parseSuggestions(text) {
+    const lines = text.split('\n').map(s => s.trim()).filter(Boolean);
+    const cleaned = lines.map(l =>
+      l.replace(/^\d+[\.\)、\s]+/, '')         // 去掉 "1. " "1) " "1、"
+       .replace(/^[•\-*★●○▶▸→]\s*/, '')      // 去掉 bullet 符号
+       .replace(/^["「『]|["」』]$/g, '')      // 去掉首尾引号
+       .trim()
+    ).filter(s => s.length >= 4 && s.length <= 50);
+    return cleaned.slice(0, 4);
+  }
+};
+
+// ===== 相似度服务（当前情绪硬匹配，未来升级 embedding）=====
+const similarityService = {
+  findSimilarMethods(currentEmotion, currentContext, historyRecords) {
+    // 当前实现：从历史记录里筛出"同情绪"用过的方法，按使用次数排序
+    // 未来升级：调用 embedding API 计算方法文本余弦相似度
+    const negativeRecords = historyRecords.filter(r =>
+      r.mood === 'negative' && r.emotion === currentEmotion
+    );
+    // 进一步：有情境时优先匹配同情境
+    const withContext = currentContext
+      ? negativeRecords.filter(r => r.context === currentContext)
+      : negativeRecords;
+
+    // 收集所有用过的方法 + 计数 + 最新评分
+    const methodMap = new Map();
+    [...negativeRecords, ...withContext].forEach(r => {
+      (r.methods || []).forEach(m => {
+        if (!methodMap.has(m)) {
+          methodMap.set(m, { method: m, count: 0, lastEffectiveness: null });
+        }
+        const item = methodMap.get(m);
+        item.count++;
+        if (r.effectiveness != null) item.lastEffectiveness = r.effectiveness;
+      });
+    });
+
+    // 按使用次数倒序
+    return [...methodMap.values()].sort((a, b) => b.count - a.count).slice(0, 5);
+  }
+};
+
+// ===== 成果回填服务 =====
+// 触发时机 1：浏览器开着时，保存负面记录后启动 1 小时定时器
+// 触发时机 2：启动应用时扫描所有 pending 记录，按时间倒序逐条弹窗
+const effectivenessService = {
+  REMIND_AFTER_MS: 60 * 60 * 1000, // 1 小时
+
+  // 找出所有未填成果 + 超过 1 小时的负面记录（按时间倒序）
+  findPending() {
+    const cutoff = Date.now() - this.REMIND_AFTER_MS;
+    return AppState.records
+      .filter(r =>
+        r.mood === 'negative' &&
+        r.effectiveness === null &&
+        new Date(r.timestamp).getTime() < cutoff
+      )
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  },
+
+  // 启动 1 小时定时器（仅浏览器开着时有效）
+  scheduleReminder(record) {
+    const elapsed = Date.now() - new Date(record.timestamp).getTime();
+    const remaining = this.REMIND_AFTER_MS - elapsed;
+    if (remaining <= 0) {
+      // 已超 1 小时，直接弹
+      this.showModal(record.id);
+      return;
+    }
+    const timerId = setTimeout(() => {
+      this.showModal(record.id);
+    }, remaining);
+    // 保存到 AppState.timers（避免重复 + 调试用）
+    AppState.timers = AppState.timers || [];
+    AppState.timers.push({ id: timerId, recordId: record.id });
+  },
+
+  // 启动时扫描：如果有 pending 记录，弹最新一条
+  checkPendingOnStartup() {
+    const pending = this.findPending();
+    if (pending.length === 0) return;
+    // 延迟 800ms 弹出，避免和首页渲染抢资源
+    setTimeout(() => this.showModal(pending[0].id), 800);
+  },
+
+  // 显示五档评分弹窗
+  showModal(recordId) {
+    const record = AppState.records.find(r => r.id === recordId);
+    if (!record || record.effectiveness !== null) return; // 不存在或已填
+
+    // 移除已有弹窗
+    const existing = document.getElementById('effectModal');
+    if (existing) existing.remove();
+
+    const time = new Date(record.timestamp);
+    const timeStr = `${time.getMonth() + 1}月${time.getDate()}日 ${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
+
+    const methodList = (record.methods || []).map(m =>
+      `<div class="modal-method-item">· ${m}</div>`
+    ).join('');
+
+    const contextBadge = record.context
+      ? `<span style="display:inline-block; padding:3px 10px; background:#FFF3E0; color:var(--orange); border-radius:999px; font-size:12px; margin-left:4px">${record.context}</span>`
+      : '';
+
+    const options = [
+      { value: 1, label: '完全没用' },
+      { value: 2, label: '有点用' },
+      { value: 3, label: '一般' },
+      { value: 4, label: '比较好' },
+      { value: 5, label: '非常有用' }
+    ];
+
+    const optionsHtml = options.map(o => `
+      <div class="effect-option opt-${o.value}" onclick="submitEffectiveness(${recordId}, ${o.value})">${o.label}</div>
+    `).join('');
+
+    const html = `
+      <div class="modal-overlay" id="effectModal" onclick="if(event.target.id==='effectModal') skipEffectiveness()">
+        <div class="modal-card">
+          <div class="modal-title">1 小时前的回顾</div>
+          <div class="modal-subtitle">${timeStr} 的记录</div>
+          <div class="modal-context">
+            <span style="display:inline-block; padding:3px 10px; background:var(--blue-soft); color:var(--blue); border-radius:999px; font-size:12px">${record.emotion}</span>
+            ${contextBadge}
+          </div>
+          <div class="modal-methods">
+            <div class="modal-methods-title">当时选择的方法</div>
+            ${methodList}
+          </div>
+          <div class="modal-question">效果怎么样？</div>
+          <div class="effect-options">
+            ${optionsHtml}
+          </div>
+          <div class="modal-skip" onclick="skipEffectiveness()">稍后再说</div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', html);
+  }
+};
+
+// 提交评分：保存到原记录的 effectiveness 字段
+async function submitEffectiveness(recordId, score) {
+  await api.updateRecord(recordId, { effectiveness: score });
+  const modal = document.getElementById('effectModal');
+  if (modal) modal.remove();
+  ui.toast('记录完成 ✨', 'success');
+  // 看下一条 pending
+  setTimeout(() => effectivenessService.checkPendingOnStartup(), 500);
+  // 评分提交后也检查里程碑（解决负面情绪次数可能达标）
+  setTimeout(() => milestoneService.triggerMilestones(), 800);
+}
+
+// 跳过当前弹窗，看下一条 pending
+function skipEffectiveness() {
+  const modal = document.getElementById('effectModal');
+  if (modal) modal.remove();
+  setTimeout(() => effectivenessService.checkPendingOnStartup(), 300);
+}
+
+// ===== 里程碑服务 =====
+const milestoneService = {
+  // 里程碑定义
+  DEFINITIONS: [
+    { id: 'streak_3',  type: 'streak',  threshold: 3,  emoji: '🌱', title: '连续记录 3 天',  desc: '开始养成习惯，最难的往往是开头' },
+    { id: 'streak_7',  type: 'streak',  threshold: 7,  emoji: '🌿', title: '连续记录 7 天',  desc: '一周打卡完成，你比大多数人更坚持' },
+    { id: 'streak_14', type: 'streak',  threshold: 14, emoji: '🔥', title: '连续记录 14 天', desc: '两周不间断，习惯正在成型' },
+    { id: 'streak_30', type: 'streak',  threshold: 30, emoji: '🏆', title: '连续记录 30 天', desc: '整整一个月，你做到了' },
+    { id: 'solve_5',   type: 'solve',   threshold: 5,  emoji: '💪', title: '解决 5 次负面情绪', desc: '每一次都是你掌控生活的练习' },
+    { id: 'solve_10',  type: 'solve',   threshold: 10, emoji: '🌟', title: '解决 10 次负面情绪', desc: '你越来越擅长和情绪相处了' },
+    { id: 'solve_25',  type: 'solve',   threshold: 25, emoji: '✨', title: '解决 25 次负面情绪', desc: '你已经是情绪管理老手了' },
+    { id: 'solve_50',  type: 'solve',   threshold: 50, emoji: '👑', title: '解决 50 次负面情绪', desc: '50 次，这是真正的成长' },
+    { id: 'methods_5', type: 'methods', threshold: 5,  emoji: '🧰', title: '尝试 5 种不同方法', desc: '你正在建立自己的情绪工具箱' }
+  ],
+
+  // 检测新触发的里程碑（返回数组，未触发过的）
+  checkNewMilestones() {
+    const stats = this._calcStats();
+    const triggered = AppState.milestones || [];
+    const newly = [];
+    for (const def of this.DEFINITIONS) {
+      if (triggered.includes(def.id)) continue;
+      let value;
+      if (def.type === 'streak') value = stats.streak;
+      else if (def.type === 'solve') value = stats.solvedCount;
+      else if (def.type === 'methods') value = stats.uniqueMethods;
+      if (value >= def.threshold) newly.push(def);
+    }
+    return newly;
+  },
+
+  // 计算当前统计
+  _calcStats() {
+    const records = AppState.records || [];
+    const streak = this._calcStreak(records);
+    // 解决负面情绪次数（有 effectiveness 评分的）
+    const solvedCount = records.filter(r => r.mood === 'negative' && r.effectiveness !== null).length;
+    // 不同方法数
+    const methodSet = new Set();
+    records.filter(r => r.mood === 'negative').forEach(r => {
+      (r.methods || []).forEach(m => methodSet.add(m));
+    });
+    return { streak, solvedCount, uniqueMethods: methodSet.size };
+  },
+
+  // 计算连续记录天数（到今天为止；今天还没记也不打断，从昨天往前数）
+  _calcStreak(records) {
+    if (records.length === 0) return 0;
+    const dates = new Set(records.map(r => r.timestamp.split('T')[0]));
+    let streak = 0;
+    const today = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      if (dates.has(dateStr)) {
+        streak++;
+      } else {
+        if (i === 0) continue; // 今天还没记，跳过不打断
+        break;
+      }
+    }
+    return streak;
+  },
+
+  // 标记已触发（持久化）
+  markTriggered(id) {
+    AppState.milestones = AppState.milestones || [];
+    if (!AppState.milestones.includes(id)) {
+      AppState.milestones.push(id);
+      api.saveMilestones();
+    }
+  },
+
+  // 触发所有新里程碑（逐个弹窗）
+  async triggerMilestones() {
+    const newly = this.checkNewMilestones();
+    if (newly.length === 0) return;
+    for (const m of newly) {
+      this.markTriggered(m.id);
+      await this._showMilestoneModal(m);
+    }
+  },
+
+  // 显示单个里程碑弹窗（返回 Promise，用户关闭后 resolve）
+  _showMilestoneModal(milestone) {
+    return new Promise(resolve => {
+      // 撒花
+      fireConfetti();
+      const html = `
+        <div class="modal-overlay" id="milestoneModal" onclick="dismissMilestone()">
+          <div class="modal-card milestone-card" onclick="event.stopPropagation()">
+            <div class="milestone-emoji">${milestone.emoji}</div>
+            <div class="milestone-title">${milestone.title}</div>
+            <div class="milestone-desc">${milestone.desc}</div>
+            <button class="btn btn-block" onclick="dismissMilestone()">继续</button>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', html);
+      window._milestoneResolve = resolve;
+    });
+  }
+};
+
+// 关闭里程碑弹窗
+function dismissMilestone() {
+  const modal = document.getElementById('milestoneModal');
+  if (modal) modal.remove();
+  const resolve = window._milestoneResolve;
+  window._milestoneResolve = null;
+  if (resolve) resolve();
+}
+
+// ===== 统计服务 =====
+const statsService = {
+  // 返回统计对象：{ overview, pie, rating, topMethods, recentMilestones }
+  compute() {
+    const records = AppState.records || [];
+    const now = new Date();
+
+    // 1. 总览数据
+    const totalRecords = records.length;
+    const dateSet = new Set(records.map(r => r.timestamp.split('T')[0]));
+    const totalDays = dateSet.size;
+
+    // 本周（周一到今天）
+    const weekStart = new Date(now);
+    const dayOfWeek = now.getDay() || 7; // 周日=7
+    weekStart.setDate(now.getDate() - (dayOfWeek - 1));
+    weekStart.setHours(0, 0, 0, 0);
+    const weekDays = Math.min(dayOfWeek, 7);
+    const weekRecords = records.filter(r => new Date(r.timestamp) >= weekStart);
+    const weekDaySet = new Set(weekRecords.map(r => r.timestamp.split('T')[0]));
+    const weekRecordedDays = weekDaySet.size;
+
+    // 本月（1 号到今天）
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthRecords = records.filter(r => new Date(r.timestamp) >= monthStart);
+    const monthDaySet = new Set(monthRecords.map(r => r.timestamp.split('T')[0]));
+    const monthRecordedDays = monthDaySet.size;
+
+    // 情绪分布
+    const counts = { happy: 0, calm: 0, negative: 0 };
+    records.forEach(r => {
+      if (counts[r.mood] !== undefined) counts[r.mood]++;
+    });
+    const pieTotal = counts.happy + counts.calm + counts.negative;
+
+    // 连续记录天数（复用 milestoneService 逻辑）
+    const streak = milestoneService._calcStreak(records);
+
+    // 2. 负面情绪解决统计
+    const solvedRecords = records.filter(r => r.mood === 'negative' && r.effectiveness !== null);
+    const solvedCount = solvedRecords.length;
+    const avgRating = solvedCount > 0
+      ? solvedRecords.reduce((s, r) => s + r.effectiveness, 0) / solvedCount
+      : 0;
+    const avgRatingRounded = solvedCount > 0 ? (Math.round(avgRating * 10) / 10) : null;
+
+    // 3. 最常用的 3 种方法（负面记录里的 methods，按使用次数倒序）
+    const methodCount = new Map();
+    const methodRatings = new Map(); // 存评分总和和次数
+    records.filter(r => r.mood === 'negative').forEach(r => {
+      (r.methods || []).forEach(m => {
+        methodCount.set(m, (methodCount.get(m) || 0) + 1);
+        if (r.effectiveness !== null) {
+          if (!methodRatings.has(m)) methodRatings.set(m, { sum: 0, count: 0 });
+          const v = methodRatings.get(m);
+          v.sum += r.effectiveness;
+          v.count += 1;
+        }
+      });
+    });
+    const topMethods = [...methodCount.entries()]
+      .map(([name, count]) => {
+        const r = methodRatings.get(name);
+        const avg = r && r.count > 0 ? r.sum / r.count : null;
+        return { name, count, avgRating: avg };
+      })
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
+
+    // 4. 已完成的里程碑
+    const triggered = AppState.milestones || [];
+    const completedMilestones = milestoneService.DEFINITIONS
+      .filter(d => triggered.includes(d.id))
+      .slice(-6)
+      .reverse();
+
+    return {
+      overview: {
+        totalRecords,
+        totalDays,
+        streak,
+        weekRecordedDays,
+        weekDays,
+        monthRecordedDays,
+        now: now.toLocaleString('zh-CN', { month: 'long', day: 'numeric', weekday: 'short' })
+      },
+      pie: { counts, total: pieTotal },
+      rating: {
+        solvedCount,
+        avgRating: avgRatingRounded,
+        avgRatingPct: solvedCount > 0 ? (avgRating - 1) / 4 * 100 : 0
+      },
+      topMethods,
+      completedMilestones
+    };
+  },
+
+  // 生成饼图 SVG（不依赖任何图表库）
+  renderPieSVG(counts, total, size = 110) {
+    if (total === 0) return `<svg class="pie-svg" width="${size}" height="${size}"><circle cx="${size/2}" cy="${size/2}" r="${size/2 - 4}" fill="#F1F5F9" stroke="#E2E8F0" stroke-width="2"/></svg>`;
+
+    const colors = { happy: '#FBBF24', calm: '#60A5FA', negative: '#64748B' };
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = size / 2 - 4;
+    const startAngle = -Math.PI / 2; // 从 12 点方向开始
+
+    let currentAngle = startAngle;
+    let paths = '';
+
+    ['happy', 'calm', 'negative'].forEach(mood => {
+      const count = counts[mood];
+      if (count === 0) return;
+      const ratio = count / total;
+      const sweepAngle = ratio * Math.PI * 2;
+      const endAngle = currentAngle + sweepAngle;
+
+      // 单一分类占 100%：画完整圆
+      if (count === total) {
+        paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${colors[mood]}"/>`;
+        currentAngle = endAngle;
+        return;
+      }
+
+      const x1 = cx + r * Math.cos(currentAngle);
+      const y1 = cy + r * Math.sin(currentAngle);
+      const x2 = cx + r * Math.cos(endAngle);
+      const y2 = cy + r * Math.sin(endAngle);
+      const largeArc = sweepAngle > Math.PI ? 1 : 0;
+
+      // A rx ry rotation large-arc sweep x y
+      paths += `<path d="M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z" fill="${colors[mood]}"/>`;
+      currentAngle = endAngle;
+    });
+
+    // 中心白圈（甜甜圈样式）
+    paths += `<circle cx="${cx}" cy="${cy}" r="${r * 0.58}" fill="white"/>`;
+    // 中心文字
+    paths += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="#0F172A" font-size="16" font-weight="700">${total}</text>`;
+    paths += `<text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#64748B" font-size="9">次记录</text>`;
+
+    return `<svg class="pie-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg>`;
+  },
+
+  // 生成星星评分字符串（根据 1-5 平均分）
+  renderStars(avgRating) {
+    if (avgRating === null) return '—';
+    const full = Math.floor(avgRating);
+    const half = avgRating - full >= 0.5;
+    const fulls = '★'.repeat(full);
+    const halfs = half ? '☆' : '';
+    const empty = '☆'.repeat(5 - full - (half ? 1 : 0));
+    return `${fulls}${halfs}${empty}`;
+  }
+};
+
+// ===== AI 设置弹窗 =====
+function openSettings() {
+  const config = llmService.getConfig();
+  const html = `
+    <div class="modal-overlay" id="settingsModal" onclick="if(event.target.id==='settingsModal') closeSettings()">
+      <div class="modal-card" style="max-width:420px">
+        <div class="modal-title">AI 设置</div>
+        <div class="modal-subtitle">配置后，"换一换"用完本地建议会调用 AI 生成新建议</div>
+
+        <div class="setting-row">
+          <div class="setting-label">API Endpoint</div>
+          <input type="text" class="setting-input" id="llmEndpoint" value="${config.endpoint}" placeholder="https://api.deepseek.com/v1/chat/completions">
+          <div class="setting-help">OpenAI 兼容格式。完整 URL，含 <code>/v1/chat/completions</code></div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-label">API Key</div>
+          <input type="password" class="setting-input" id="llmApiKey" value="${config.apiKey}" placeholder="sk-...">
+          <div class="setting-help">仅存在浏览器 localStorage，不上传任何服务器</div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-label">Model</div>
+          <input type="text" class="setting-input" id="llmModel" value="${config.model}" placeholder="deepseek-chat">
+          <div class="setting-help">如 <code>deepseek-chat</code> / <code>qwen-plus</code> / <code>gpt-4o-mini</code></div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-label">常用预设（点击填入 endpoint 和 model）</div>
+          <div class="preset-chips">
+            <span class="preset-chip" onclick="applyPreset('deepseek')">DeepSeek</span>
+            <span class="preset-chip" onclick="applyPreset('qwen')">通义千问</span>
+            <span class="preset-chip" onclick="applyPreset('openai')">OpenAI</span>
+          </div>
+          <div class="setting-help" style="margin-top:8px">推荐 DeepSeek：国内可用、CORS 友好、便宜</div>
+        </div>
+
+        <div class="form-actions" style="margin-top:20px">
+          <button class="btn btn-secondary" onclick="closeSettings()">取消</button>
+          <button class="btn btn-block" onclick="saveSettings()">保存</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const existing = document.getElementById('settingsModal');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function closeSettings() {
+  const modal = document.getElementById('settingsModal');
+  if (modal) modal.remove();
+}
+
+function applyPreset(provider) {
+  const presets = {
+    deepseek: {
+      endpoint: 'https://api.deepseek.com/v1/chat/completions',
+      model: 'deepseek-chat'
+    },
+    qwen: {
+      endpoint: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+      model: 'qwen-plus'
+    },
+    openai: {
+      endpoint: 'https://api.openai.com/v1/chat/completions',
+      model: 'gpt-4o-mini'
+    }
+  };
+  const p = presets[provider];
+  if (!p) return;
+  document.getElementById('llmEndpoint').value = p.endpoint;
+  document.getElementById('llmModel').value = p.model;
+  ui.toast(`已填入 ${provider} 预设（仍需填 API Key）`, 'info');
+}
+
+function saveSettings() {
+  const endpoint = document.getElementById('llmEndpoint').value.trim();
+  const apiKey = document.getElementById('llmApiKey').value.trim();
+  const model = document.getElementById('llmModel').value.trim();
+
+  if (!endpoint || !apiKey || !model) {
+    ui.toast('请填完所有字段', 'orange');
+    return;
+  }
+
+  llmService.saveConfig({ endpoint, apiKey, model });
+  closeSettings();
+  ui.toast('AI 设置已保存 ✓', 'success');
+  ui.rerender(); // 更新 topbar 的 AI 标识
+}
+
+// 测试用：立刻弹出最近一条负面记录的回填弹窗（不限制时间）
+// 在浏览器控制台输入 testEffectModal() 即可
+function testEffectModal() {
+  const negativeRecords = AppState.records
+    .filter(r => r.mood === 'negative')
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  if (negativeRecords.length === 0) {
+    ui.toast('还没有负面记录，先记一条', 'orange');
+    return;
+  }
+  // 临时把 effectiveness 清空再弹（仅测试，不写入）
+  const target = { ...negativeRecords[0], effectiveness: null };
+  // 直接调用 showModal 逻辑（绕过 pending 检查）
+  const record = negativeRecords[0];
+  // 临时清空 effectiveness 让 showModal 不被拦截
+  const original = record.effectiveness;
+  record.effectiveness = null;
+  effectivenessService.showModal(record.id);
+  // 还原（如果原本有值，弹窗后提交会覆盖；如果用户跳过，需要还原避免数据错乱）
+  // 简化：如果用户跳过，effectiveness 保持 null，下次启动还会弹
+  // 所以这里只还原原本有值的记录
+  if (original !== null) {
+    // 用户原本填过，跳过后还原
+    setTimeout(() => {
+      const stillOriginal = AppState.records.find(r => r.id === record.id);
+      if (stillOriginal && stillOriginal.effectiveness === null) {
+        api.updateRecord(record.id, { effectiveness: original });
+      }
+    }, 100);
+  }
+}
+
+// ===== 预设建议库（每种情绪 8 条，"换一换"时从中随机抽 4 条）=====
+const presetAdvice = {
+  '焦虑': [
+    '深呼吸 5 分钟（4 秒吸气、7 秒屏住、8 秒呼气）',
+    '写下你担心的所有事，然后划掉你控制不了的',
+    '出门走 10 分钟，不带手机',
+    '把当前任务拆成最小的一步，只做那一步',
+    '喝一杯温水，感受温度从喉咙到胃',
+    '设定 25 分钟番茄钟，只做一件事',
+    '整理桌面 5 分钟，外在秩序会带来内在秩序',
+    '给一个信任的人发条消息："我现在有点焦虑"'
+  ],
+  '痛苦': [
+    '找一个安全的地方哭出来',
+    '给一个信任的人发条消息',
+    '写下你现在的感受，不用看第二遍',
+    '听一首你喜欢的歌',
+    '用热水袋或热毛巾敷在胸口',
+    '躺下来，把双手放在肚子上感受呼吸',
+    '慢慢喝一杯热饮',
+    '允许自己什么都不做 15 分钟'
+  ],
+  '愤怒': [
+    '离开让你愤怒的现场，物理隔离 15 分钟',
+    '用力捏一个枕头或握紧拳头 10 秒再松开',
+    '把愤怒写下来，然后撕掉',
+    '跑 200 米或做 20 个俯卧撑',
+    '冷水洗脸 30 秒',
+    '数 10 个深呼吸，每个都慢慢呼出',
+    '把"愤怒"翻译成它背后的情绪（受伤？无力？）',
+    '等情绪平复后再回应那个人'
+  ],
+  '迷茫': [
+    '列出你现在能确定的 3 件事',
+    '找一个比你大几岁的人聊聊',
+    '暂时什么都不做，给自己半天"迷茫假"',
+    '把所有可能性写出来，先不评价',
+    '回忆你上次感到清晰是什么时候',
+    '做一件小事，让"行动"先于"想清楚"',
+    '整理一个抽屉，秩序会带来掌控感',
+    '读一段你喜欢的文字'
+  ],
+  '悲伤': [
+    '听一首让你能哭出来的歌',
+    '给悲伤命名：是失落？是遗憾？还是别的',
+    '联系一个让你感到安全的人',
+    '写一封信给那个让你悲伤的事/人（不用寄出）',
+    '允许自己难过一会儿，不急着好起来',
+    '出门走走，看看树和天空',
+    '抱一个柔软的东西（枕头、毛绒玩具）',
+    '回忆一件和这个悲伤相反的小事'
+  ],
+  '孤独': [
+    '主动给一个老朋友发"在吗"',
+    '去一个人多的地方待一会（咖啡馆、图书馆）',
+    '写下你重视的人的名字，提醒自己被在乎过',
+    '做一件让别人也感到温暖的小事',
+    '给家人打个电话',
+    '加入一个线上兴趣社群',
+    '写一封信给未来的自己',
+    '看一部你看过的老电影'
+  ],
+  '无力': [
+    '做一件 5 分钟内能完成的事',
+    '把"应该做的事"先放下，做"想做的事"',
+    '喝杯水，走 5 分钟',
+    '写下 3 件你今天已经做到的事',
+    '洗个热水澡',
+    '把目标缩小到"今天就做一件事"',
+    '找一首能让你有节奏感的歌',
+    '躺平 10 分钟，什么都不想'
+  ],
+  '内疚': [
+    '区分"我做错了"和"我这个人有问题"',
+    '写下你能补救的部分，做不到的部分也写下来',
+    '找一个你伤害过的人真诚道歉（哪怕只是一条消息）',
+    '原谅自己一次，像原谅朋友那样',
+    '写下这件事教会了你什么',
+    '把"我应该"换成"我下次可以"',
+    '做一件善待自己的小事',
+    '给自己一个拥抱（双手交叉抱肩 30 秒）'
+  ],
+  '嫉妒': [
+    '把嫉妒写出来，问自己"我真正想要的是什么"',
+    '取关让你比较的账号 24 小时',
+    '祝愿那个人好，看自己的感受',
+    '把注意力放回你自己的进度',
+    '写下你已经拥有的 3 件事',
+    '把嫉妒转化成具体目标',
+    '做一件让你自己感到骄傲的小事',
+    '远离引发嫉妒的信息源 24 小时'
+  ],
+  '恐惧': [
+    '写下你害怕的最坏情况，再写下实际发生的概率',
+    '做 4-7-8 呼吸法 3 轮',
+    '找一个安全的人说出你的恐惧',
+    '接受恐惧存在，带着它继续做该做的事',
+    '做一个应急预案',
+    '闭眼想象事情进展顺利的场景 1 分钟',
+    '把恐惧写下来，撕掉',
+    '做一件让你感到安全的小事（抱枕头、盖毯子）'
+  ]
+};
+
+// 从某情绪的建议池里随机抽 N 条，可排除指定项（避免"换一换"重复）
+function pickRandomAdvice(emotion, count, exclude) {
+  const pool = (presetAdvice[emotion] || []).filter(m => !exclude.includes(m));
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+// 预设校园情境
+const presetContexts = [
+  '考试周', '室友冲突', '恋爱', '家庭压力',
+  '经济压力', '学业迷茫', '社交焦虑', '就业焦虑'
+];
+
+// 预设负面情绪
+const presetEmotions = [
+  '焦虑', '痛苦', '愤怒', '迷茫', '悲伤',
+  '孤独', '无力', '内疚', '嫉妒', '恐惧'
+];
+
+// ===== 心情简笔画 SVG 图标（24x24 火柴人）=====
+const moodIcons = {
+  happy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.5 L12 14"/><path d="M9 11 L15 11"/><path d="M12 14 L9 19"/><path d="M12 14 L15 19"/><path d="M9 6 L7 4 M15 6 L17 4"/><circle cx="7" cy="4" r="1" fill="currentColor"/><circle cx="17" cy="4" r="1" fill="currentColor"/></svg>`,
+  calm: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.5 L12 14"/><path d="M9 11 L15 11"/><path d="M12 14 L9 19"/><path d="M12 14 L15 19"/><path d="M7 6 Q9 5 11 6"/><path d="M13 6 Q15 5 17 6"/></svg>`,
+  negative: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.5 L12 14"/><path d="M9 11 L15 11"/><path d="M12 14 L9 19"/><path d="M12 14 L15 19"/><path d="M8 5 L10 7"/><path d="M16 5 L14 7"/></svg>`
+};
+
+// ===== 日历游标状态 =====
+const calState = {
+  cursor: new Date(),  // 当前显示月份（始终为该月 1 号）
+  init() { this.cursor.setDate(1); },
+  prev() { this.cursor.setMonth(this.cursor.getMonth() - 1); },
+  next() { this.cursor.setMonth(this.cursor.getMonth() + 1); },
+  today() { this.cursor = new Date(); this.cursor.setDate(1); }
+};
+
+// ===== 负面情绪分支状态机 =====
+// step 1=选情绪, 2=选情境, 3=选方法, 保存后回日历
+const negState = {
+  step: 1,
+  emotion: null,        // 当前选中的情绪
+  context: null,         // 当前选中的情境（可空）
+  customMethods: [],     // 用户在 step 3 输入的自定义方法
+  selectedMethods: [],  // 用户在 step 3 选中的方法（来自预设+历史+自定义）
+  currentAdvice: [],    // 通用建议区当前显示的 4 条
+  shownAdvice: [],      // 本次流程已展示过的所有建议（避免换一换时重复）
+  reset() {
+    this.step = 1;
+    this.emotion = null;
+    this.context = null;
+    this.customMethods = [];
+    this.selectedMethods = [];
+    this.currentAdvice = [];
+    this.shownAdvice = [];
+  },
+  // 进入负面流程时调一次
+  start() { this.reset(); }
+};
+
+// ===== 路由（hash 路由实现 SPA）=====
+const router = {
+  routes: {
+    '/': () => pages.calendar(),
+    '/record': () => pages.record(),
+    '/record/happy': () => pages.happyFlow(),
+    '/record/calm': () => pages.calmFlow(),
+    '/record/negative': () => pages.negativeBranch(),
+    '/stats': () => pages.stats(),
+    '/day': () => pages.dayDetail()
+  },
+
+  init() {
+    window.addEventListener('hashchange', () => this.handle());
+    this.handle();
+  },
+
+  handle() {
+    const hash = location.hash.slice(1) || '/';
+    const [path] = hash.split('?');
+    const handler = this.routes[path] || this.routes['/'];
+    handler();
+    // 滚动到顶部
+    window.scrollTo(0, 0);
+  },
+
+  go(path) {
+    location.hash = path;
+  },
+
+  // 获取当前 hash 参数
+  getParam(key) {
+    const hash = location.hash.slice(1);
+    const [, query] = hash.split('?');
+    if (!query) return null;
+    const params = new URLSearchParams(query);
+    return params.get(key);
+  }
+};
+
+// ===== 页面渲染函数（骨架占位，后续填充）=====
+const pages = {
+  // 主页：心情日历
+  calendar() {
+    const html = `
+      ${ui.topbar('calendar')}
+      ${ui.calendarHtml()}
+      <button class="fab" onclick="router.go('/record')">+ 记录心情</button>
+    `;
+    ui.render(html);
+  },
+
+  // 心情选择
+  record() {
+    const html = `
+      ${ui.topbar()}
+      <div style="text-align:center; margin: 30px 0 20px">
+        <h2 style="font-size:20px; font-weight:600">今天心情怎么样？</h2>
+        <p style="color:var(--text-muted); font-size:13px; margin-top:6px">选一个最贴近现在的</p>
+      </div>
+      <div class="mood-cards">
+        <div class="mood-card happy" onclick="router.go('/record/happy')" style="color:var(--happy)">
+          ${moodIcons.happy}
+          <div class="mood-label">高兴</div>
+        </div>
+        <div class="mood-card calm" onclick="router.go('/record/calm')" style="color:var(--calm)">
+          ${moodIcons.calm}
+          <div class="mood-label">平静</div>
+        </div>
+        <div class="mood-card negative" onclick="startNegativeFlow()" style="color:var(--negative)">
+          ${moodIcons.negative}
+          <div class="mood-label">负面</div>
+        </div>
+      </div>
+      <div style="margin-top:20px; text-align:center">
+        <button class="btn btn-secondary" onclick="router.go('/')">返回</button>
+      </div>
+    `;
+    ui.render(html);
+  },
+
+  // 高兴流程
+  happyFlow() {
+    ui.clearContext();
+    const html = `
+      ${ui.topbar()}
+      <div class="card">
+        <div class="mood-header happy" style="color:var(--happy)">
+          ${moodIcons.happy}
+          <div class="mood-title">高兴！</div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">想记下原因或感受吗？(可选)</label>
+          <textarea class="note-input" id="noteInput" placeholder="比如：和朋友吃了顿好饭 / 跑完了一个 5 公里 / 完成了一直拖的事..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="router.go('/record')">返回</button>
+          <button class="btn btn-block" onclick="saveSimpleMood('happy')">记录下来</button>
+        </div>
+      </div>
+    `;
+    ui.render(html);
+    // 进入高兴页面立刻礼花庆祝
+    fireConfetti();
+  },
+
+  // 平静流程
+  calmFlow() {
+    ui.clearContext();
+    const html = `
+      ${ui.topbar()}
+      <div class="card">
+        <div class="mood-header calm" style="color:var(--calm)">
+          ${moodIcons.calm}
+          <div class="mood-title">有什么想要记录的吗？</div>
+        </div>
+
+        <div class="form-section">
+          <label class="form-label">记下这一刻的感受 (可选)</label>
+          <textarea class="note-input" id="noteInput" placeholder="比如：刚冥想完 / 完成了一个小目标 / 在阳光下发了会儿呆..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="router.go('/record')">返回</button>
+          <button class="btn btn-block" onclick="saveSimpleMood('calm')">记录下来</button>
+        </div>
+      </div>
+    `;
+    ui.render(html);
+  },
+
+  // 负面情绪分支（多步流程：情绪 → 情境 → 方法）
+  negativeBranch() {
+    const stepHtml = this['_negStep' + negState.step] ? this['_negStep' + negState.step]() : '';
+    const html = `
+      ${ui.topbar()}
+      ${stepHtml}
+    `;
+    ui.render(html);
+  },
+
+  // Step 1：选情绪
+  _negStep1() {
+    const presetCards = presetEmotions.map(e => `
+      <div class="emotion-card" onclick="selectNegEmotion('${e}')">${e}</div>
+    `).join('');
+
+    const customCards = (AppState.customEmotions || []).map(e => `
+      <div class="emotion-card" onclick="selectNegEmotion('${e}')">${e}</div>
+    `).join('');
+
+    return `
+      <div class="card">
+        <div class="step-indicator">
+          <span class="step-dot active"></span>
+          <span class="step-arrow">→</span>
+          <span class="step-dot"></span>
+          <span class="step-arrow">→</span>
+          <span class="step-dot"></span>
+          <span style="margin-left:8px">第 1 步：选情绪</span>
+        </div>
+        <div class="mood-header" style="color:var(--negative)">
+          ${moodIcons.negative}
+          <div class="mood-title" style="color:#334155">现在最强烈的是？</div>
+        </div>
+        <p style="text-align:center; color:var(--text-muted); font-size:13px; margin-top:8px">选一个最贴近现在的</p>
+        <div class="emotion-grid">
+          ${presetCards}
+          ${customCards}
+          <div class="emotion-card custom">
+            <input type="text" id="customEmotionInput" placeholder="+ 自定义" onkeydown="if(event.key==='Enter') addCustomEmotion()">
+          </div>
+        </div>
+        <div style="margin-top:24px; text-align:center">
+          <button class="btn btn-secondary" onclick="router.go('/record')">返回</button>
+        </div>
+      </div>
+    `;
+  },
+
+  // Step 2：选情境（可选）
+  _negStep2() {
+    const contextChips = presetContexts.map(c => `
+      <button class="chip ${negState.context === c ? 'selected' : ''}" onclick="selectNegContext('${c}')">${c}</button>
+    `).join('');
+
+    const isOther = negState.context && !presetContexts.includes(negState.context);
+
+    return `
+      <div class="card">
+        <div class="step-indicator">
+          <span class="step-dot done"></span>
+          <span class="step-arrow">→</span>
+          <span class="step-dot active"></span>
+          <span class="step-arrow">→</span>
+          <span class="step-dot"></span>
+          <span style="margin-left:8px">第 2 步：选情境</span>
+        </div>
+        <div style="text-align:center; margin-bottom:16px">
+          <span style="display:inline-block; padding:4px 12px; background:var(--blue-soft); color:var(--blue); border-radius:999px; font-size:13px; font-weight:500">${negState.emotion}</span>
+        </div>
+        <div class="form-section">
+          <label class="form-label">是什么情境下产生的？(可选)</label>
+          <div class="context-chips">
+            ${contextChips}
+            <button class="chip other-chip ${isOther ? 'selected' : ''}" onclick="toggleNegOtherInput()">
+              ${isOther ? '其他：' + negState.context : '+ 其他'}
+            </button>
+          </div>
+          <div id="negOtherWrap" style="display:${isOther ? 'block' : 'none'}; margin-top:8px">
+            <input type="text" class="note-input" id="negContextInput" placeholder="描述一下情境..." value="${isOther ? negState.context : ''}" oninput="selectNegContext(this.value, true)" style="min-height:auto; padding:8px 12px">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="negState.step=1; ui.rerender()">返回</button>
+          <button class="btn btn-block" onclick="negState.step=3; ui.rerender()">下一步</button>
+        </div>
+      </div>
+    `;
+  },
+
+  // Step 3：选方法（多选 + 自定义 + 保存）
+  _negStep3() {
+    const emotionBadge = `<span style="display:inline-block; padding:4px 12px; background:var(--blue-soft); color:var(--blue); border-radius:999px; font-size:13px; font-weight:500">${negState.emotion}</span>`;
+    const contextBadge = negState.context
+      ? `<span style="display:inline-block; padding:4px 12px; background:#FFF3E0; color:var(--orange); border-radius:999px; font-size:13px; font-weight:500; margin-left:6px">${negState.context}</span>`
+      : '';
+
+    // 通用建议（预设）：首次进入 step 3 时随机抽 4 条，并记录到 shownAdvice
+    if (!negState.currentAdvice || negState.currentAdvice.length === 0) {
+      negState.currentAdvice = pickRandomAdvice(negState.emotion, 4, []);
+      negState.shownAdvice = [...negState.currentAdvice];
+    }
+    const adviceList = negState.currentAdvice;
+    const presetHtml = adviceList.map(m => `
+      <div class="method-item ${negState.selectedMethods.includes(m) ? 'selected' : ''}" onclick="toggleNegMethod(decodeURIComponent('${encodeURIComponent(m)}'))">
+        <div class="method-radio"></div>
+        <div class="method-text">${m}</div>
+      </div>
+    `).join('');
+
+    // 历史相似方法
+    const historyMethods = similarityService.findSimilarMethods(
+      negState.emotion, negState.context, AppState.records
+    );
+    const historyHtml = historyMethods.length === 0
+      ? `<p style="font-size:13px; color:var(--text-muted); padding:8px 0">还没有用过的方法，选一条试试吧</p>`
+      : historyMethods.map(m => {
+          const scoreText = m.lastEffectiveness ? ` · 上次评 ${m.lastEffectiveness}/5` : '';
+          return `
+            <div class="method-item ${negState.selectedMethods.includes(m.method) ? 'selected' : ''}" onclick="toggleNegMethod(decodeURIComponent('${encodeURIComponent(m.method)}'))">
+              <div class="method-radio"></div>
+              <div>
+                <div class="method-text">${m.method}</div>
+                <div class="method-meta">用过 ${m.count} 次${scoreText}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+    // 用户在 step 3 刚加的自定义方法
+    const customMethodsHtml = (negState.customMethods || []).map(m => `
+      <div class="method-item ${negState.selectedMethods.includes(m) ? 'selected' : ''}" onclick="toggleNegMethod(decodeURIComponent('${encodeURIComponent(m)}'))">
+        <div class="method-radio"></div>
+        <div class="method-text">${m}</div>
+      </div>
+    `).join('');
+
+    const saveBtnDisabled = negState.selectedMethods.length === 0 ? 'disabled style="opacity:0.5; cursor:not-allowed"' : '';
+
+    return `
+      <div class="card">
+        <div class="step-indicator">
+          <span class="step-dot done"></span>
+          <span class="step-arrow">→</span>
+          <span class="step-dot done"></span>
+          <span class="step-arrow">→</span>
+          <span class="step-dot active"></span>
+          <span style="margin-left:8px">第 3 步：选方法</span>
+        </div>
+        <div style="text-align:center; margin-bottom:16px">
+          ${emotionBadge}
+          ${contextBadge}
+        </div>
+
+        <div class="method-section-title">
+          <span>通用建议</span>
+          <span style="margin-left:auto; font-size:12px; color:var(--blue); cursor:pointer; font-weight:400; padding:3px 10px; border-radius:999px; background:var(--blue-soft)" onclick="cycleAdvice(event)">换一换 ↻</span>
+        </div>
+        ${presetHtml}
+
+        <div class="method-section-title history">你之前用过的</div>
+        ${historyHtml}
+
+        ${customMethodsHtml ? `<div class="method-section-title">你刚加的</div>${customMethodsHtml}` : ''}
+
+        <div class="custom-method-row">
+          <input type="text" id="customMethodInput" placeholder="+ 输入一个新的方法" onkeydown="if(event.key==='Enter') addCustomMethod()">
+          <button class="btn btn-secondary" onclick="addCustomMethod()">添加</button>
+        </div>
+
+        ${negState.selectedMethods.length > 0 ? `
+          <div style="font-size:12px; color:var(--text-secondary); text-align:center; margin-top:14px; padding:10px 12px; background:var(--surface-muted); border-radius:var(--radius); line-height:1.6">
+            <div style="font-weight:500; color:var(--blue); margin-bottom:4px">已选 ${negState.selectedMethods.length} 个</div>
+            ${negState.selectedMethods.map(m => `<span style="display:inline-block; padding:2px 8px; background:var(--surface); border:1px solid var(--border); border-radius:999px; margin:2px 2px 0; font-size:11px">${m}</span>`).join('')}
+          </div>
+        ` : ''}
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="negState.step=2; ui.rerender()">返回</button>
+          <button class="btn btn-block" onclick="saveNegativeMood()" ${saveBtnDisabled}>记录下来</button>
+        </div>
+      </div>
+    `;
+  },
+
+  // 统计仪表盘
+  stats() {
+    const s = statsService.compute();
+    const { overview, pie, rating, topMethods, completedMilestones } = s;
+
+    const hasData = overview.totalRecords > 0;
+
+    // 心情分布 legend
+    const legendMap = { happy: { color: '#FBBF24', name: '高兴' }, calm: { color: '#60A5FA', name: '平静' }, negative: { color: '#64748B', name: '负面' } };
+    const legend = ['happy', 'calm', 'negative'].filter(m => pie.counts[m] > 0).map(m => {
+      const l = legendMap[m];
+      const pct = pie.total > 0 ? Math.round(pie.counts[m] / pie.total * 100) : 0;
+      return `
+        <div class="pie-legend-item">
+          <span class="pie-dot" style="background:${l.color}"></span>
+          <span>${l.name}</span>
+          <span class="pie-count">${pie.counts[m]} · ${pct}%</span>
+        </div>
+      `;
+    }).join('');
+
+    // top 3 方法列表
+    const rankClass = ['gold', 'silver', 'bronze'];
+    const topMethodsHtml = topMethods.length > 0
+      ? `<div class="method-list">
+          ${topMethods.map((m, idx) => `
+            <div class="method-list-item">
+              <div class="method-rank ${rankClass[idx] || ''}">${idx + 1}</div>
+              <div class="method-name" title="${m.name}">${m.name}</div>
+              <div class="method-meta-wrap">
+                <div>${m.count} 次</div>
+                ${m.avgRating !== null ? `<div>平均 ${(Math.round(m.avgRating * 10) / 10)}/5</div>` : `<div>—</div>`}
+              </div>
+            </div>
+          `).join('')}
+        </div>`
+      : `<div class="stats-empty">还没有负面记录，慢慢来～</div>`;
+
+    // 里程碑列表
+    const milestonesHtml = completedMilestones.length > 0
+      ? `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px">
+          ${completedMilestones.map(m => `
+            <span style="padding:6px 12px; background:linear-gradient(135deg, #FFF7ED, #DBEAFE); border-radius:999px; font-size:12px; border:1px solid #FDE68A">
+              ${m.emoji} ${m.title}
+            </span>
+          `).join('')}
+        </div>`
+      : `<div class="stats-empty" style="padding:16px 8px">还没有里程碑，坚持记录会解锁更多 ✨</div>`;
+
+    const noDataHtml = !hasData ? `
+      <div class="card" style="text-align:center; padding:36px 20px">
+        <div style="font-size:48px; margin-bottom:12px">📊</div>
+        <h3 style="font-size:16px; font-weight:600; margin-bottom:6px; color:var(--text)">还没有记录数据</h3>
+        <p style="color:var(--text-muted); font-size:13px; line-height:1.6; margin:0">
+          回到日历记录心情，<br>这里会展示你的成长轨迹
+        </p>
+      </div>
+    ` : '';
+
+    const statsGridHtml = hasData ? `
+      <div class="stats-grid">
+        <div class="stat-card accent">
+          <div class="stat-label">连续记录</div>
+          <div class="stat-value">${overview.streak}<span class="stat-unit">天</span></div>
+          <div class="stat-sub">总计 ${overview.totalDays} 天 · ${overview.totalRecords} 条记录</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-label">本周记录</div>
+          <div class="stat-value">${overview.weekRecordedDays}<span class="stat-unit">/ ${overview.weekDays} 天</span></div>
+          <div class="stat-sub">本月 ${overview.monthRecordedDays} 天</div>
+        </div>
+        <div class="stat-card happy">
+          <div class="stat-label">高兴</div>
+          <div class="stat-value">${pie.counts.happy}<span class="stat-unit">次</span></div>
+          <div class="stat-sub">${pie.total > 0 ? Math.round(pie.counts.happy / pie.total * 100) : 0}%</div>
+        </div>
+        <div class="stat-card calm">
+          <div class="stat-label">平静</div>
+          <div class="stat-value">${pie.counts.calm}<span class="stat-unit">次</span></div>
+          <div class="stat-sub">${pie.total > 0 ? Math.round(pie.counts.calm / pie.total * 100) : 0}%</div>
+        </div>
+      </div>
+    ` : '';
+
+    const pieHtml = hasData ? `
+      <div class="card">
+        <div class="section-title">心情分布</div>
+        <div class="section-sub">${overview.now}</div>
+        <div class="pie-wrap">
+          ${statsService.renderPieSVG(pie.counts, pie.total)}
+          <div class="pie-legend">
+            ${legend}
+          </div>
+        </div>
+      </div>
+    ` : '';
+
+    const ratingHtml = (hasData && rating.solvedCount > 0 || topMethods.length > 0) ? `
+      <div class="card">
+        <div class="section-title">负面情绪解决</div>
+        ${rating.solvedCount > 0 ? `
+          <div class="section-sub">累计完成 ${rating.solvedCount} 次 · 平均评分 ${rating.avgRating}/5</div>
+          <div class="rating-bar-wrap"><div class="rating-bar" style="width:${rating.avgRatingPct}%"></div></div>
+          <div class="rating-stars">${statsService.renderStars(rating.avgRating)}</div>
+        ` : `<div class="section-sub">还没有完成的负面情绪记录<br>保存负面记录后 1 小时会收到评分提醒</div>`}
+      </div>
+
+      <div class="card">
+        <div class="section-title">最常用的方法</div>
+        <div class="section-sub">按使用次数排名</div>
+        ${topMethodsHtml}
+      </div>
+    ` : '';
+
+    const milestonesCardHtml = hasData ? `
+      <div class="card">
+        <div class="section-title">已解锁里程碑</div>
+        <div class="section-sub">${completedMilestones.length} / ${milestoneService.DEFINITIONS.length}</div>
+        ${milestonesHtml}
+      </div>
+    ` : '';
+
+    const html = `
+      ${ui.topbar('stats')}
+      <div class="stats-page">
+        ${noDataHtml}
+        ${statsGridHtml}
+        ${pieHtml}
+        ${ratingHtml}
+        ${milestonesCardHtml}
+      </div>
+    `;
+    ui.render(html);
+  },
+
+  // 当天详情：时间轴 + ↓ 箭头
+  dayDetail() {
+    const date = router.getParam('date') || ui._todayStr();
+    const dayRecords = AppState.records
+      .filter(r => (r.timestamp || '').slice(0, 10) === date)
+      .sort((a, b) => (a.timestamp || '').localeCompare(b.timestamp || ''));
+
+    let contentHtml;
+    if (dayRecords.length === 0) {
+      contentHtml = `
+        <div class="card">
+          <div class="placeholder">
+            <div class="emoji">📭</div>
+            <h2>这天还没有记录</h2>
+            <p>点击下方按钮添加一条</p>
+          </div>
+        </div>
+      `;
+    } else {
+      contentHtml = dayRecords.map((r, i) => {
+        const time = (r.timestamp || '').slice(11, 16) || '--:--';
+        const color = ui._moodColor(r.mood);
+        const moodLabel = { happy: '高兴', calm: '平静', negative: '负面' }[r.mood] || r.mood;
+        const emotion = r.emotion ? ` · ${r.emotion}` : '';
+        const context = r.context
+          ? `<div style="font-size:12px; color:var(--text-muted); margin-top:6px">📍 ${r.context}</div>`
+          : '';
+        const note = r.note
+          ? `<div style="font-size:13px; color:var(--text-secondary); margin-top:8px; padding:8px 10px; background:var(--surface-muted); border-radius:6px">${r.note}</div>`
+          : '';
+        const arrow = i < dayRecords.length - 1
+          ? `<div style="text-align:center; color:var(--text-muted); font-size:20px; padding:4px 0">↓</div>`
+          : '';
+
+        return `
+          <div class="card" style="padding:14px 16px">
+            <div style="display:flex; align-items:center; gap:10px">
+              <div style="color:${color}; width:24px; height:24px">${moodIcons[r.mood] || ''}</div>
+              <div style="flex:1">
+                <div style="font-size:14px; font-weight:600">${moodLabel}${emotion}</div>
+                <div style="font-size:12px; color:var(--text-muted)">${time}</div>
+              </div>
+            </div>
+            ${context}
+            ${note}
+          </div>
+          ${arrow}
+        `;
+      }).join('');
+    }
+
+    const html = `
+      ${ui.topbar()}
+      <div style="margin-bottom:16px">
+        <h2 style="font-size:17px; font-weight:600">${date}</h2>
+        <p style="color:var(--text-muted); font-size:13px; margin-top:2px">当天记录 · ${dayRecords.length} 条</p>
+      </div>
+      ${contentHtml}
+      <button class="fab" onclick="router.go('/record')">+ 记录心情</button>
+    `;
+    ui.render(html);
+  }
+};
+
+// ===== UI 工具：渲染辅助 =====
+const ui = {
+  // 顶部导航
+  topbar(active) {
+    const aiConfigured = llmService.isConfigured();
+    return `
+      <div class="topbar">
+        <div class="brand">Mind Log</div>
+        <div class="nav">
+          <button class="nav-link ${active === 'calendar' ? 'active' : ''}" onclick="router.go('/')">日历</button>
+          <button class="nav-link ${active === 'stats' ? 'active' : ''}" onclick="router.go('/stats')">统计</button>
+          <button class="nav-link ${aiConfigured ? 'ai-on' : ''}" onclick="openSettings()" title="AI 设置">${aiConfigured ? 'AI ✓' : '⚙'}</button>
+        </div>
+      </div>
+    `;
+  },
+
+  // 渲染主内容
+  render(html) {
+    document.getElementById('app').innerHTML = html;
+  },
+
+  // 显示 toast 反馈（3 秒后消失）
+  toast(message, type = 'info') {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = message;
+    if (type === 'success') el.style.background = 'var(--success)';
+    if (type === 'orange') el.style.background = 'var(--orange)';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  },
+
+  // 生成日历 HTML
+  calendarHtml() {
+    const year = calState.cursor.getFullYear();
+    const month = calState.cursor.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const startOffset = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // 周一=0
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayStr = this._todayStr();
+
+    // 按日期分组记录，每天的最新一条心情 + 计数
+    const byDate = {};
+    AppState.records.forEach(r => {
+      const dayStr = (r.timestamp || '').slice(0, 10);
+      if (!dayStr) return;
+      if (!byDate[dayStr]) byDate[dayStr] = [];
+      byDate[dayStr].push(r);
+    });
+
+    const cells = [];
+    // 前置空白
+    for (let i = 0; i < startOffset; i++) {
+      cells.push(`<div class="cal-cell empty"></div>`);
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const dayRecords = byDate[dateStr] || [];
+      const isToday = dateStr === todayStr;
+
+      let iconHtml = '';
+      let count = 0;
+      if (dayRecords.length > 0) {
+        // 按时间排序取最新一条
+        const sorted = [...dayRecords].sort((a, b) =>
+          (b.timestamp || '').localeCompare(a.timestamp || '')
+        );
+        const latest = sorted[0];
+        const color = this._moodColor(latest.mood);
+        iconHtml = `<div class="cal-mood-icon" style="color:${color}">${moodIcons[latest.mood] || ''}</div>`;
+        count = dayRecords.length;
+      }
+
+      const countBadge = count > 1
+        ? `<div class="cal-count">+${count - 1}</div>`
+        : '';
+
+      cells.push(`
+        <div class="cal-cell ${isToday ? 'today' : ''}" onclick="router.go('/day?date=${dateStr}')">
+          <div class="cal-day-num">${d}</div>
+          ${iconHtml}
+          ${countBadge}
+        </div>
+      `);
+    }
+
+    return `
+      <div class="calendar-wrap">
+        <div class="cal-head">
+          <button class="cal-nav-btn" onclick="calState.prev(); ui.rerender()">‹</button>
+          <div class="cal-title">${year}年${month + 1}月</div>
+          <button class="cal-nav-btn" onclick="calState.next(); ui.rerender()">›</button>
+          <button class="cal-today-btn" onclick="calState.today(); ui.rerender()">今天</button>
+        </div>
+        <div class="cal-weekdays">
+          <div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
+        </div>
+        <div class="cal-grid">${cells.join('')}</div>
+      </div>
+    `;
+  },
+
+  // 重新渲染当前路由页面
+  rerender() {
+    router.handle();
+  },
+
+  // 生成情境标签 chips HTML（支持选中状态、其他自定义）
+  // selectedContext: 当前选中的情境；otherText: 其他自定义文本
+  contextChips(selectedContext, otherText = '') {
+    const chips = presetContexts.map(ctx => `
+      <button class="chip ${selectedContext === ctx ? 'selected' : ''}" onclick="selectContext('${ctx}')">${ctx}</button>
+    `).join('');
+
+    const isOtherSelected = selectedContext && !presetContexts.includes(selectedContext);
+    const otherDisplay = isOtherSelected ? selectedContext : '';
+
+    return `
+      <div class="context-chips">
+        ${chips}
+        <button class="chip other-chip ${isOtherSelected ? 'selected' : ''}" onclick="toggleOtherInput()">
+          ${isOtherSelected ? '其他：' + otherDisplay : '+ 其他'}
+        </button>
+      </div>
+      <div id="otherInputWrap" style="display:${isOtherSelected ? 'block' : 'none'}; margin-top:8px">
+        <input type="text" class="note-input" id="otherContextInput" placeholder="描述一下情境..." value="${otherDisplay}" oninput="selectContext(this.value, true)" style="min-height:auto; padding:8px 12px">
+      </div>
+    `;
+  },
+
+  // 当前表单选中的情境（保存在内存）
+  _formContext: null,
+  setContext(v) { this._formContext = v; },
+  getContext() { return this._formContext; },
+  clearContext() { this._formContext = null; },
+
+  // 工具
+  _todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  },
+  _moodColor(mood) {
+    return { happy: 'var(--happy)', calm: 'var(--calm)', negative: 'var(--negative)' }[mood] || 'var(--text-muted)';
+  }
+};
+
+// 情境选择的全局辅助函数（被 onclick 调用）
+function selectContext(value, isTextInput) {
+  ui.setContext(value);
+  if (!isTextInput) {
+    // 点击 chip：要么选中，要么取消选中
+    if (ui.getContext() === value) {
+      ui.setContext(null);
+    }
+    ui.rerender();
+  }
+}
+
+function toggleOtherInput() {
+  const wrap = document.getElementById('otherInputWrap');
+  if (wrap.style.display === 'none') {
+    wrap.style.display = 'block';
+    document.getElementById('otherContextInput').focus();
+  } else {
+    wrap.style.display = 'none';
+    if (ui.getContext() && !presetContexts.includes(ui.getContext())) {
+      ui.setContext(null);
+    }
+  }
+}
+
+// 礼花特效：从屏幕底部中央一点向上喷射，物理仿真
+function fireConfetti() {
+  const colors = ['#FBBF24', '#F97316', '#2563EB', '#10B981', '#EF4444', '#A855F7', '#EC4899'];
+  const wrap = document.createElement('div');
+  wrap.className = 'confetti-wrap';
+  document.body.appendChild(wrap);
+
+  // 喷射原点：屏幕水平中央、距底部 20px
+  const ORIGIN_X = window.innerWidth / 2;
+  const ORIGIN_Y = window.innerHeight - 20;
+  const particles = [];
+
+  // 80 片彩纸，从原点向上喷射，初速度随机散开
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 6 + Math.random() * 8;
+    piece.style.width = size + 'px';
+    piece.style.height = size + 'px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.transform = `translate(${ORIGIN_X - size/2}px, ${ORIGIN_Y - size/2}px)`;
+    // 随机形状：圆形 / 长条 / 方形
+    const shape = Math.random();
+    if (shape < 0.4) piece.style.borderRadius = '50%';
+    else if (shape < 0.7) piece.style.height = (size * 0.4) + 'px';
+    wrap.appendChild(piece);
+
+    // 初速度方向：以正上方(-π/2)为中心，集中喷射 ±0.2π（礼花筒感）
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.4;
+    // 大冲击力：初速度 30-52（约 2.5 倍之前），模拟礼花筒瞬间爆发
+    const speed = 30 + Math.random() * 22;
+    particles.push({
+      el: piece,
+      x: ORIGIN_X,
+      y: ORIGIN_Y,
+      size,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed, // 负值（向上）
+      rotation: 0,
+      rotationSpeed: (Math.random() - 0.5) * 25
+    });
+  }
+
+  // 物理仿真循环：低重力 + 低摩擦，让粒子惯性大、飞得高
+  const gravity = 0.32;     // 比之前 0.45 更低，飞得更高
+  const friction = 0.996;   // 比之前 0.99 更低，惯性更大
+  let frame = 0;
+  const screenH = window.innerHeight;
+
+  function animate() {
+    frame++;
+    let alive = false;
+    for (const p of particles) {
+      p.vy += gravity;          // 重力
+      p.vx *= friction;         // 水平摩擦
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.rotationSpeed;
+
+      // 出屏幕底部就开始淡出
+      let opacity = 1;
+      if (p.y > screenH - 50) {
+        opacity = Math.max(0, 1 - (p.y - (screenH - 50)) / 80);
+      }
+      if (p.y < screenH + 30) alive = true; // 还在屏幕里
+
+      p.el.style.transform =
+        `translate(${p.x - p.size/2}px, ${p.y - p.size/2}px) rotate(${p.rotation}deg)`;
+      p.el.style.opacity = opacity;
+    }
+
+    if (alive && frame < 360) {
+      requestAnimationFrame(animate);
+    } else {
+      wrap.remove();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// 保存高兴/平静心情记录（不含负面分支）
+async function saveSimpleMood(mood) {
+  const noteEl = document.getElementById('noteInput');
+  const note = noteEl ? noteEl.value.trim() : '';
+  const context = ui.getContext();
+
+  const record = {
+    id: Date.now(),
+    mood,
+    context,
+    note,
+    methods: [],
+    timestamp: new Date().toISOString(),
+    effectiveness: null
+  };
+
+  await api.saveRecord(record);
+
+  // 正向反馈文字
+  const feedbacks = {
+    happy: '今天又是不错的一天，记录本身就是一种自我照顾 ✨',
+    calm: '能感受到平静本身就是一种力量 🌿'
+  };
+  ui.toast(feedbacks[mood] || '记录完成', 'success');
+
+  // 800ms 后跳回日历
+  setTimeout(() => router.go('/'), 800);
+  // 跳转后 200ms 检查里程碑（连续记录天数可能达标）
+  setTimeout(() => milestoneService.triggerMilestones(), 1000);
+}
+
+// ===== 负面情绪分支辅助函数 =====
+
+// 进入负面流程（清空状态）
+function startNegativeFlow() {
+  negState.start();
+  router.go('/record/negative');
+}
+
+// Step 1：选择情绪
+function selectNegEmotion(emotion) {
+  negState.emotion = emotion;
+  negState.step = 2;
+  ui.rerender();
+}
+
+// Step 1：添加自定义情绪
+async function addCustomEmotion() {
+  const input = document.getElementById('customEmotionInput');
+  const value = input.value.trim();
+  if (!value) return;
+  await api.saveCustomEmotion(value);
+  selectNegEmotion(value);
+}
+
+// Step 2：选择情境
+function selectNegContext(value, isTextInput) {
+  if (isTextInput) {
+    // 文本输入时只更新状态，不 rerender（避免光标丢失）
+    negState.context = value;
+  } else {
+    // 点击 chip：选中或取消
+    negState.context = (negState.context === value) ? null : value;
+    ui.rerender();
+  }
+}
+
+// Step 2：切换"其他"输入框
+function toggleNegOtherInput() {
+  const wrap = document.getElementById('negOtherWrap');
+  if (wrap.style.display === 'none') {
+    wrap.style.display = 'block';
+    negState.context = '';
+    document.getElementById('negContextInput').focus();
+  } else {
+    wrap.style.display = 'none';
+    if (negState.context && !presetContexts.includes(negState.context)) {
+      negState.context = null;
+    }
+    ui.rerender();
+  }
+}
+
+// Step 3：切换方法选择（多选）
+function toggleNegMethod(method) {
+  const idx = negState.selectedMethods.indexOf(method);
+  if (idx === -1) {
+    negState.selectedMethods.push(method);
+  } else {
+    negState.selectedMethods.splice(idx, 1);
+  }
+  ui.rerender();
+}
+
+// Step 3：添加自定义方法
+function addCustomMethod() {
+  const input = document.getElementById('customMethodInput');
+  const value = input.value.trim();
+  if (!value) return;
+  if (!negState.customMethods.includes(value)) {
+    negState.customMethods.push(value);
+  }
+  if (!negState.selectedMethods.includes(value)) {
+    negState.selectedMethods.push(value);
+  }
+  input.value = '';
+  ui.rerender();
+}
+
+// Step 3：换一换通用建议
+// 策略：优先用本地池（不重复），用完后调 LLM 生成新建议；LLM 失败/未配置则重置本地池
+let _adviceLoading = false; // 防止 LLM 调用期间重复点击
+async function cycleAdvice(e) {
+  if (e) e.stopPropagation();
+  if (_adviceLoading) return; // 防止重复触发
+
+  const shown = negState.shownAdvice || [];
+  const current = negState.currentAdvice || [];
+  const fullPool = presetAdvice[negState.emotion] || [];
+
+  // 未展示过的池（既不在 shown 里，也不在当前批里）
+  const unshownPool = fullPool.filter(m => !shown.includes(m) && !current.includes(m));
+
+  let newAdvice;
+
+  if (unshownPool.length >= 4) {
+    // 情况 1：未展示池 >= 4 条，随机抽 4 条（完全不重复）
+    newAdvice = [...unshownPool].sort(() => Math.random() - 0.5).slice(0, 4);
+    negState.shownAdvice = [...new Set([...shown, ...newAdvice])];
+  } else if (unshownPool.length > 0) {
+    // 情况 2：未展示池 1-3 条，先取完未展示的，再从已展示池补足（不和当前批重复）
+    const part = [...unshownPool].sort(() => Math.random() - 0.5);
+    const need = 4 - part.length;
+    const fallback = fullPool.filter(m => !current.includes(m) && !part.includes(m));
+    newAdvice = [...part, ...fallback.sort(() => Math.random() - 0.5).slice(0, need)];
+    negState.shownAdvice = [...new Set([...shown, ...newAdvice])];
+    ui.toast('本地建议即将展示完，下次将使用 AI 生成', 'orange');
+  } else {
+    // 情况 3：本地池全部展示完
+    if (llmService.isConfigured()) {
+      _adviceLoading = true;
+      ui.toast('正在让 AI 生成新建议...', 'info');
+      try {
+        const historyMethods = AppState.records
+          .filter(r => r.mood === 'negative' && r.emotion === negState.emotion)
+          .flatMap(r => r.methods || []);
+        const aiSuggestions = await llmService.getAISuggestion(
+          negState.emotion, negState.context, [...new Set(historyMethods)]
+        );
+
+        if (aiSuggestions && aiSuggestions.length > 0) {
+          newAdvice = aiSuggestions;
+          ui.toast('AI 生成了新建议 ✨', 'success');
+          // AI 建议不加入 shownAdvice，下次仍可继续生成新建议
+        } else {
+          // AI 调用失败，重置本地池
+          negState.shownAdvice = [...current];
+          const candidates = fullPool.filter(m => !current.includes(m));
+          newAdvice = [...candidates].sort(() => Math.random() - 0.5).slice(0, 4);
+          ui.toast('AI 调用失败，本地建议重新开始', 'orange');
+        }
+      } finally {
+        _adviceLoading = false;
+      }
+    } else {
+      // 未配置 AI，重置本地池
+      negState.shownAdvice = [...current];
+      const candidates = fullPool.filter(m => !current.includes(m));
+      newAdvice = [...candidates].sort(() => Math.random() - 0.5).slice(0, 4);
+      ui.toast('未配置 AI，本地建议重新开始 ↻\n（设置里可接入大模型）', 'orange');
+    }
+  }
+
+  negState.currentAdvice = newAdvice;
+  ui.rerender();
+}
+
+// Step 3 保存：写入负面记录
+async function saveNegativeMood() {
+  if (negState.selectedMethods.length === 0) {
+    ui.toast('至少选一个方法', 'orange');
+    return;
+  }
+  const record = {
+    id: Date.now(),
+    mood: 'negative',
+    emotion: negState.emotion,
+    context: negState.context || null,
+    note: '',
+    methods: [...negState.selectedMethods],
+    timestamp: new Date().toISOString(),
+    effectiveness: null
+  };
+  await api.saveRecord(record);
+
+  // 启动 1 小时后回填提醒（浏览器开着时由定时器触发）
+  effectivenessService.scheduleReminder(record);
+
+  ui.toast('你能识别并记录这种感受，已经迈出掌控它的第一步 🌱', 'success');
+
+  // 清空状态
+  negState.reset();
+
+  // 跳回日历
+  setTimeout(() => router.go('/'), 1500);
+  // 跳转后检查里程碑（连续记录天数 / 不同方法数 可能达标）
+  setTimeout(() => milestoneService.triggerMilestones(), 1700);
+}
+
+// ===== 启动 =====
+async function init() {
+  await api.loadAll();
+  calState.init();
+  router.init();
+  // 启动扫描：如果有 pending 回填（超 1 小时未填），弹最新一条
+  effectivenessService.checkPendingOnStartup();
+  console.log('Mind Log 启动完成', { user: AppState.user, records: AppState.records.length });
+  console.log('%c测试回填弹窗：在控制台输入 testEffectModal()', 'color: #2563EB; font-weight: bold');
+}
+
+init();
+</script>
+</body>
+</html>

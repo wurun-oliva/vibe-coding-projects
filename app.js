@@ -1,7 +1,7 @@
 // V1 数字分身 · 预设问答库(关键词匹配)
 'use strict';
 
-// 开屏动画控制:播完或跳过后淡出,本次会话不再显示
+// 开屏动画控制:视频播完停在最后一帧,等待用户点击"建立链接"才进入
 (function() {
   var overlay = document.getElementById('introOverlay');
   var video = document.getElementById('introVideo');
@@ -20,11 +20,13 @@
     setTimeout(function() { overlay.style.display = 'none'; }, 700);
   }
 
+  // 视频播完后暂停在最后一帧,不自动结束,等待用户点击
   if (video) {
-    video.addEventListener('ended', endIntro);
-    // 兜底:5 秒后强制结束(防止视频卡住)
-    setTimeout(endIntro, 5000);
+    video.addEventListener('ended', function() {
+      video.pause();
+    });
   }
+  // 只有"建立链接"或"跳过"才结束开屏
   if (skip) skip.addEventListener('click', endIntro);
   var linkBtn = document.getElementById('introLink');
   if (linkBtn) linkBtn.addEventListener('click', endIntro);

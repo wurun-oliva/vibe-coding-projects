@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>吴润 · 个人主页</title>
   <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./libs/three/three.module.js",
+      "three/addons/": "./libs/three/"
+    }
+  }
+  </script>
 </head>
 <body>
 
@@ -97,14 +105,12 @@
     </div>
   </section>
 
-  <!-- 兴趣 -->
+  <!-- 兴趣 · 3D 章鱼画廊 -->
   <section id="interests" class="section">
     <h2>兴趣</h2>
-    <div class="interest-grid">
-      <div class="interest-card"><span class="interest-icon">画</span><h3>绘画</h3></div>
-      <div class="interest-card"><span class="interest-icon">陶</span><h3>陶艺</h3></div>
-      <div class="interest-card"><span class="interest-icon">身</span><h3>健身</h3></div>
-      <div class="interest-card"><span class="interest-icon">书</span><h3>阅读</h3></div>
+    <p class="section-sub">拖拽旋转章鱼 · 点击图片查看兴趣</p>
+    <div class="gallery-wrap" id="galleryWrap">
+      <canvas id="galleryCanvas"></canvas>
     </div>
   </section>
 
@@ -190,5 +196,6 @@
   </footer>
 
   <script src="app.js"></script>
+  <script type="module" src="gallery.js"></script>
 </body>
 </html>

@@ -214,24 +214,26 @@ a:hover { text-decoration: underline; }
 .skill-card h3 { font-size: 1.05rem; color: var(--blue-deep); margin-bottom: 6px; }
 .skill-card p { color: var(--muted); font-size: 0.9rem; }
 
-/* 兴趣 */
-.interest-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
+/* 兴趣 · 3D 章鱼画廊 */
+.section-sub {
+  color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;
 }
-.interest-card {
-  padding: 24px 16px; text-align: center;
-  background: var(--orange-soft); border-radius: 12px;
-  transition: transform .2s;
+.gallery-wrap {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #020029;
 }
-.interest-card:hover { transform: translateY(-3px); }
-.interest-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 48px; height: 48px; border-radius: 50%;
-  background: var(--orange); color: #fff; font-size: 1.2rem;
-  margin-bottom: 10px;
+#galleryCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
-.interest-card h3 { font-size: 1rem; }
+@media (max-width: 640px) {
+  .gallery-wrap { height: 380px; }
+}
 
 /* 项目 */
 .project-grid {

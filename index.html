@@ -13,6 +13,11 @@
     <video class="intro-video" id="introVideo" autoplay muted playsinline>
       <source src="intro.mp4" type="video/mp4">
     </video>
+    <div class="intro-content">
+      <p class="intro-sys" id="introSys">> 检测到访客。正在同步神经链接……</p>
+      <p class="intro-sys" id="introSys2">> 章鱼唤醒中，请稍候……</p>
+      <button class="intro-link" id="introLink">建立链接</button>
+    </div>
     <button class="intro-skip" id="introSkip" aria-label="跳过动画">跳过 →</button>
   </div>
 
@@ -137,10 +142,15 @@
 
   <!-- 数字分身聊天区 -->
   <section id="twin" class="section twin-section">
-    <h2>数字分身</h2>
-    <p class="twin-hint">问我关于吴润的任何事，我替她回答。</p>
+    <div class="twin-header">
+      <img src="octopus.jpg" alt="章鱼虚拟形象" class="twin-avatar">
+      <div>
+        <h2>数字分身 · 章鱼</h2>
+        <p class="twin-hint">问我关于吴润的任何事，我替她回答。</p>
+      </div>
+    </div>
     <div class="chat-box" id="chatBox">
-      <div class="msg msg-bot">你好！我是吴润的数字分身。可以问我她的专业、兴趣、最近在做什么。</div>
+      <div class="msg msg-bot">你好！我是吴润的数字分身·章鱼。可以问我她的专业、兴趣、最近在做什么。</div>
     </div>
     <div class="chat-quick">
       <button class="chip" data-q="你叫什么">你叫什么</button>

@@ -26,12 +26,14 @@
     setTimeout(endIntro, 5000);
   }
   if (skip) skip.addEventListener('click', endIntro);
+  var linkBtn = document.getElementById('introLink');
+  if (linkBtn) linkBtn.addEventListener('click', endIntro);
 })();
 
 const QA = [
   {
     keys: ['名字', '叫什么', '你是谁', '你叫'],
-    a: '我是吴润的数字分身。吴润是天津大学深圳学院智能医学工程专业的学生。'
+    a: '我是吴润的数字分身·章鱼🐙。吴润是天津大学深圳学院智能医学工程专业的学生。'
   },
   {
     keys: ['专业', '学校', '学什么', '读什么'],

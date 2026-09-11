@@ -34,6 +34,56 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: brightness(0.7);
+}
+.intro-content {
+  position: absolute;
+  text-align: center;
+  z-index: 2;
+}
+.intro-sys {
+  font-family: 'Courier New', monospace;
+  color: #7fffd4;
+  font-size: 1rem;
+  margin: 8px 0;
+  text-shadow: 0 0 10px rgba(127,255,212,0.6);
+  opacity: 0;
+  animation: sysFade 1s ease forwards;
+}
+.intro-sys:nth-child(1) { animation-delay: 0.3s; }
+.intro-sys:nth-child(2) { animation-delay: 1.8s; }
+.intro-sys::after {
+  content: '▋';
+  animation: blink 0.8s infinite;
+  margin-left: 2px;
+}
+@keyframes sysFade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.intro-link {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 12px 32px;
+  background: transparent;
+  color: #ff7a3d;
+  border: 2px solid #ff7a3d;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  letter-spacing: 2px;
+  opacity: 0;
+  animation: sysFade 1s ease 3.2s forwards;
+  transition: all 0.3s;
+}
+.intro-link:hover {
+  background: #ff7a3d;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255,122,61,0.6);
 }
 .intro-skip {
   position: absolute;
@@ -48,6 +98,7 @@
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: background 0.2s;
+  z-index: 3;
 }
 .intro-skip:hover {
   background: rgba(255,255,255,0.3);
@@ -205,6 +256,13 @@ a:hover { text-decoration: underline; }
 .twin-section { background: linear-gradient(180deg, #fff 0%, var(--blue-soft) 100%); max-width: none; }
 .twin-section > * { max-width: 640px; margin-left: auto; margin-right: auto; }
 .twin-hint { color: var(--muted); margin-bottom: 18px; }
+.twin-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.twin-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  object-fit: cover; border: 2px solid var(--blue);
+  box-shadow: 0 2px 8px rgba(30,111,235,.25);
+  flex-shrink: 0;
+}
 .chat-box {
   background: #fff; border: 1px solid var(--line);
   border-radius: 14px; padding: 18px; height: 280px;

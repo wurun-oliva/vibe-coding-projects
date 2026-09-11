@@ -1,6 +1,33 @@
 // V1 数字分身 · 预设问答库(关键词匹配)
 'use strict';
 
+// 开屏动画控制:播完或跳过后淡出,本次会话不再显示
+(function() {
+  var overlay = document.getElementById('introOverlay');
+  var video = document.getElementById('introVideo');
+  var skip = document.getElementById('introSkip');
+  if (!overlay) return;
+
+  // 已看过则直接跳过(避免刷新重播)
+  if (sessionStorage.getItem('introPlayed')) {
+    overlay.style.display = 'none';
+    return;
+  }
+
+  function endIntro() {
+    overlay.classList.add('hidden');
+    sessionStorage.setItem('introPlayed', '1');
+    setTimeout(function() { overlay.style.display = 'none'; }, 700);
+  }
+
+  if (video) {
+    video.addEventListener('ended', endIntro);
+    // 兜底:5 秒后强制结束(防止视频卡住)
+    setTimeout(endIntro, 5000);
+  }
+  if (skip) skip.addEventListener('click', endIntro);
+})();
+
 const QA = [
   {
     keys: ['名字', '叫什么', '你是谁', '你叫'],

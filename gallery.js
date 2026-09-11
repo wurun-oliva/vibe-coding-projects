@@ -5,7 +5,7 @@ import { GLTFLoader } from 'three/addons/GLTFLoader.js';
 
 const wrap = document.getElementById('galleryWrap');
 const canvas = document.getElementById('galleryCanvas');
-if (!wrap || !canvas) return;
+if (!wrap || !canvas) throw new Error('gallery elements missing');
 
 // 容器尺寸
 function getSize() {

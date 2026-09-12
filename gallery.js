@@ -243,7 +243,7 @@ const shadowMat = new THREE.MeshBasicMaterial({
   color: 0x000010, transparent: true, opacity: 0.45, depthWrite: false,
 });
 const shadowGeo = new THREE.CircleGeometry(2.0, 32);
-const shadow = new THREE.Mesh(shadowMat, shadowGeo);
+const shadow = new THREE.Mesh(shadowGeo, shadowMat);
 shadow.rotation.x = -Math.PI / 2;
 shadow.position.y = -2.0;
 scene.add(shadow);

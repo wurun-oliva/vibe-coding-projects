@@ -1,37 +1,98 @@
-// V1 数字分身 · 预设问答库(关键词匹配)
+// V2.3 · 开屏终端启动序列 + 数字分身聊天区
 'use strict';
 
-// 开屏动画控制:视频播完停在最后一帧,等待用户点击"建立链接"才进入
+/* ============================================================
+   开屏动画：终端启动序列（视频作背景）→ 进度条 → 建立链接
+   ============================================================ */
 (function() {
   var overlay = document.getElementById('introOverlay');
   var video = document.getElementById('introVideo');
   var skip = document.getElementById('introSkip');
-  if (!overlay) return;
+  var logEl = document.getElementById('bootLog');
+  var barEl = document.getElementById('bootBar');
+  var statusEl = document.getElementById('bootStatus');
+  var linkBtn = document.getElementById('introLink');
+  if (!overlay || !logEl) return;
 
-  // 已看过则直接跳过(避免刷新重播)
-  if (sessionStorage.getItem('introPlayed')) {
-    overlay.style.display = 'none';
-    return;
-  }
+  var BOOT_LINES = [
+    { t: '> 正在初始化神经链接', r: ' [ OK ]', cls: 'ok' },
+    { t: '> 加载章鱼核心系统', r: ' [ OK ]', cls: 'ok' },
+    { t: '> 校验访问权限', r: ' [ OK ]', cls: 'ok' },
+    { t: '> 同步记忆库 v2.3', r: ' [ OK ]', cls: 'ok' },
+    { t: '> 检测到访客信号', r: ' [ READY ]', cls: 'acc' }
+  ];
+
+  var lineIdx = 0;
+  var charIdx = 0;
+  var finished = false;
 
   function endIntro() {
+    if (finished) return;
+    finished = true;
     overlay.classList.add('hidden');
-    sessionStorage.setItem('introPlayed', '1');
     setTimeout(function() { overlay.style.display = 'none'; }, 700);
   }
 
-  // 视频播完后暂停在最后一帧,不自动结束,等待用户点击
-  if (video) {
-    video.addEventListener('ended', function() {
-      video.pause();
-    });
+  // 逐行打出启动日志（多行终端输出）
+  function typeLine() {
+    if (lineIdx >= BOOT_LINES.length) {
+      runProgress();
+      return;
+    }
+    var line = BOOT_LINES[lineIdx];
+    var text = line.t;
+    var span = document.createElement('span');
+    span.className = 'l' + lineIdx;
+    logEl.appendChild(span);
+    var cur = '';
+    var timer = setInterval(function() {
+      cur = text.slice(0, ++charIdx);
+      span.textContent = cur;
+      if (charIdx >= text.length) {
+        clearInterval(timer);
+        var res = document.createElement('span');
+        res.className = line.cls;
+        res.textContent = line.r;
+        span.appendChild(res);
+        lineIdx++;
+        charIdx = 0;
+        setTimeout(typeLine, 180);
+      }
+    }, 24);
   }
-  // 只有"建立链接"或"跳过"才结束开屏
+
+  // 进度条 0 → 100
+  function runProgress() {
+    statusEl.textContent = 'BOOTING...';
+    var p = 0;
+    var timer = setInterval(function() {
+      p += Math.random() * 7 + 2;
+      if (p >= 100) {
+        p = 100;
+        clearInterval(timer);
+        barEl.style.width = '100%';
+        statusEl.textContent = 'SYSTEM READY';
+        linkBtn.classList.add('show');
+      } else {
+        barEl.style.width = p + '%';
+        statusEl.textContent = 'BOOTING ' + Math.floor(p) + '%';
+      }
+    }, 55);
+  }
+
+  typeLine();
+
+  // 视频静音循环在最后帧暂停，等待用户点击
+  if (video) {
+    video.addEventListener('ended', function() { video.pause(); });
+  }
   if (skip) skip.addEventListener('click', endIntro);
-  var linkBtn = document.getElementById('introLink');
   if (linkBtn) linkBtn.addEventListener('click', endIntro);
 })();
 
+/* ============================================================
+   数字分身 · 预设问答库（关键词匹配）
+   ============================================================ */
 const QA = [
   {
     keys: ['名字', '叫什么', '你是谁', '你叫'],
@@ -79,12 +140,30 @@ const chatBox = document.getElementById('chatBox');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 
-function addMsg(text, who) {
+function addMsg(text, who, immediate) {
   const div = document.createElement('div');
   div.className = 'msg msg-' + who;
-  div.textContent = text;
+  if (immediate) {
+    div.textContent = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return;
+  }
+  // 打字机回复：逐字输出 + 呼吸光标
   chatBox.appendChild(div);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  const caret = document.createElement('span');
+  caret.className = 'typing-caret';
+  let i = 0;
+  const timer = setInterval(function() {
+    if (i < text.length) {
+      div.textContent = text.slice(0, ++i);
+      div.appendChild(caret);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    } else {
+      clearInterval(timer);
+      caret.remove();
+    }
+  }, 22);
 }
 
 function answer(q) {
@@ -99,8 +178,8 @@ function answer(q) {
 
 function handleAsk(q) {
   if (!q.trim()) return;
-  addMsg(q, 'user');
-  setTimeout(function() { addMsg(answer(q), 'bot'); }, 350);
+  addMsg(q, 'user', true);
+  setTimeout(function() { addMsg(answer(q), 'bot', false); }, 300);
   chatInput.value = '';
 }
 

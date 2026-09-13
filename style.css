@@ -67,6 +67,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 88px; }
 
 ::selection { background: rgba(255, 119, 16, 0.75); color: #fff; }
 
@@ -332,6 +333,148 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
   transition: all 0.2s;
 }
 .intro-skip:hover { background: rgba(255, 255, 255, 0.22); color: #fff; }
+
+/* ---------- 侧边目录栏（TOC） ---------- */
+.toc {
+  position: fixed;
+  left: clamp(16px, 3vw, 40px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 10px;
+  border-left: 1px solid rgba(0, 229, 255, 0.14);
+}
+.toc-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  opacity: 0.45;
+  transition: opacity 0.25s ease;
+}
+.toc-line {
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: #8b93c0;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+.toc-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: #8b93c0;
+  white-space: nowrap;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+.toc-link:hover { opacity: 0.85; }
+.toc-link:hover .toc-text { color: #e8ecff; }
+.toc-link.active {
+  opacity: 1;
+}
+.toc-link.active .toc-line {
+  width: 24px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+}
+.toc-link.active .toc-text {
+  color: #e8ecff;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+}
+
+/* ---------- 眼睛跟随悬浮按钮 ---------- */
+.eye-cta {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 55;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(4, 4, 36, 0.92);
+  border: 1.5px solid rgba(0, 229, 255, 0.45);
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.18), 0 10px 30px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  width: 60px;
+  height: 60px;
+  box-sizing: border-box;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s, box-shadow 0.3s;
+}
+.eye-cta:hover {
+  width: 150px;
+  border-color: rgba(0, 229, 255, 0.8);
+  box-shadow: 0 0 36px rgba(0, 229, 255, 0.35), 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.eye-cta-dot {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00ff9d;
+  box-shadow: 0 0 8px rgba(0, 255, 157, 0.9);
+  animation: eye-dot-pulse 2.4s ease-in-out infinite;
+}
+@keyframes eye-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.eye-cta-eyes {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.eye {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #d7e6ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: inset 0 0 4px rgba(2, 0, 41, 0.25);
+  animation: eye-blink 3.6s ease-in-out infinite;
+}
+.eye:nth-child(2) { animation-delay: 0.9s; }
+@keyframes eye-blink {
+  0%, 93%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.08); }
+  97% { transform: scaleY(1); }
+}
+.pupil {
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #1c2a6e, #020029);
+  will-change: transform;
+}
+.eye-cta-text {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: #e8ecff;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
+}
+.eye-cta:hover .eye-cta-text {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 /* ---------- 导航 ---------- */
 .nav {
@@ -943,6 +1086,9 @@ body { counter-reset: sec; }
 .footer .ver { color: var(--orange); text-shadow: var(--glow-orange); }
 
 /* ---------- 响应式 ---------- */
+@media (max-width: 1280px) {
+  .toc { display: none; }
+}
 @media (max-width: 640px) {
   .hud-badge { display: none; }
   .nav-inner { flex-direction: column; gap: 10px; padding: 12px 18px; }
@@ -963,3 +1109,8 @@ body { counter-reset: sec; }
   .reveal { opacity: 1; transform: none; }
   #cursor-glow, #particles { display: none; }
 }
+
+
+/* ---------- 自定义十字准星光标（青绿发光，热点居中） ---------- */
+* { cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%220%200%2040%2040%22%3E%3Cg%20stroke%3D%22rgba%280%2C229%2C255%2C0.22%29%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%3E%3Cline%20x1%3D%2220%22%20y1%3D%225%22%20x2%3D%2220%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%2220%22%20y1%3D%2228%22%20x2%3D%2220%22%20y2%3D%2235%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2220%22%20x2%3D%2212%22%20y2%3D%2220%22%2F%3E%3Cline%20x1%3D%2228%22%20y1%3D%2220%22%20x2%3D%2235%22%20y2%3D%2220%22%2F%3E%3C%2Fg%3E%3Cg%20stroke%3D%22%2300E5FF%22%20stroke-width%3D%222.6%22%20stroke-linecap%3D%22round%22%3E%3Cline%20x1%3D%2220%22%20y1%3D%224%22%20x2%3D%2220%22%20y2%3D%2213%22%2F%3E%3Cline%20x1%3D%2220%22%20y1%3D%2227%22%20x2%3D%2220%22%20y2%3D%2236%22%2F%3E%3Cline%20x1%3D%224%22%20y1%3D%2220%22%20x2%3D%2213%22%20y2%3D%2220%22%2F%3E%3Cline%20x1%3D%2227%22%20y1%3D%2220%22%20x2%3D%2236%22%20y2%3D%2220%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%223.4%22%20fill%3D%22%2300E5FF%22%2F%3E%3C%2Fsvg%3E") 20 20, auto !important; }
+input, textarea { cursor: text !important; }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>吴润 · 个人主页</title>
-  <link rel="stylesheet" href="style.css?v=2.6">
+  <link rel="stylesheet" href="style.css?v=2.9">
   <script type="importmap">
   {
     "imports": {
@@ -53,6 +53,16 @@
     </div>
     <button class="intro-skip" id="introSkip" aria-label="跳过动画">跳过 →</button>
   </div>
+
+  <!-- 侧边目录栏 -->
+  <nav class="toc" id="toc" aria-label="页面目录">
+    <a href="#about" class="toc-link" data-target="about"><span class="toc-line"></span><span class="toc-text">关于</span></a>
+    <a href="#skills" class="toc-link" data-target="skills"><span class="toc-line"></span><span class="toc-text">技能</span></a>
+    <a href="#interests" class="toc-link" data-target="interests"><span class="toc-line"></span><span class="toc-text">兴趣</span></a>
+    <a href="#projects" class="toc-link" data-target="projects"><span class="toc-line"></span><span class="toc-text">项目</span></a>
+    <a href="#twin" class="toc-link" data-target="twin"><span class="toc-line"></span><span class="toc-text">数字分身</span></a>
+    <a href="#contact" class="toc-link" data-target="contact"><span class="toc-line"></span><span class="toc-text">联系</span></a>
+  </nav>
 
   <!-- 顶部锚点导航 -->
   <header class="nav">
@@ -236,8 +246,18 @@
     <p>© 2026 吴润 · <span class="ver">V2.3 TECH</span> · <span id="footerClock">--:--:--</span></p>
   </footer>
 
+  <!-- 眼睛跟随悬浮按钮 -->
+  <a href="mailto:3026445054@tju.edu.cn" class="eye-cta" id="eyeCta" aria-label="联系我">
+    <span class="eye-cta-dot" aria-hidden="true"></span>
+    <span class="eye-cta-eyes" aria-hidden="true">
+      <span class="eye"><span class="pupil"></span></span>
+      <span class="eye"><span class="pupil"></span></span>
+    </span>
+    <span class="eye-cta-text">联系我</span>
+  </a>
+
   <script src="app.js?v=2.7"></script>
-  <script src="effects.js?v=2.4"></script>
+  <script src="effects.js?v=2.6"></script>
   <script type="module" src="gallery.js?v=2"></script>
 </body>
 </html>

@@ -195,12 +195,18 @@ const finePointer = window.matchMedia('(pointer: fine)').matches;
    8. 导航滚动高亮（scrollspy）
    ============================================================ */
 (function() {
-  const links = Array.prototype.slice.call(document.querySelectorAll('.nav-links a'));
-  if (!links.length) return;
-  const ids = links
-    .map(a => a.getAttribute('href'))
-    .filter(h => h && h.startsWith('#') && h.length > 1)
-    .map(h => h.slice(1));
+  const groups = [
+    Array.prototype.slice.call(document.querySelectorAll('.nav-links a')),
+    Array.prototype.slice.call(document.querySelectorAll('.toc-link'))
+  ];
+  const all = groups.flat();
+  if (!all.length) return;
+  const ids = [...new Set(
+    all
+      .map(a => a.getAttribute('href'))
+      .filter(h => h && h.startsWith('#') && h.length > 1)
+      .map(h => h.slice(1))
+  )];
   function onScroll() {
     const y = window.scrollY + 140;
     let current = '';
@@ -208,10 +214,10 @@ const finePointer = window.matchMedia('(pointer: fine)').matches;
       const sec = document.getElementById(id);
       if (sec && sec.offsetTop <= y) current = id;
     }
-    links.forEach(a => {
+    groups.forEach(group => group.forEach(a => {
       const on = a.getAttribute('href') === '#' + current;
       a.classList.toggle('active', on);
-    });
+    }));
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
@@ -263,4 +269,42 @@ const finePointer = window.matchMedia('(pointer: fine)').matches;
       blip(540, 0.07, 'triangle', 0.025);
     }
   }, true);
+})();
+
+/* ============================================================
+   10. 眼睛跟随按钮（瞳孔追踪鼠标，平滑 lerp）
+   ============================================================ */
+(function() {
+  const cta = document.getElementById('eyeCta');
+  if (!cta || !finePointer || reduceMotion) return;
+  const pupils = cta.querySelectorAll('.pupil');
+  if (!pupils.length) return;
+  let tx = innerWidth / 2, ty = innerHeight / 2;
+  let rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    tx = e.clientX;
+    ty = e.clientY;
+  }, { passive: true });
+  document.addEventListener('mouseleave', () => {
+    tx = innerWidth / 2;
+    ty = innerHeight / 2;
+  });
+  (function loop() {
+    const r = cta.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dx = tx - cx;
+    const dy = ty - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    const MAX = 4;
+    const k = Math.min(1, dist / 160);
+    const targetX = (dx / dist) * MAX * k;
+    const targetY = (dy / dist) * MAX * k;
+    rx += (targetX - rx) * 0.14;
+    ry += (targetY - ry) * 0.14;
+    pupils.forEach(p => {
+      p.style.transform = 'translate(' + rx.toFixed(2) + 'px,' + ry.toFixed(2) + 'px)';
+    });
+    requestAnimationFrame(loop);
+  })();
 })();

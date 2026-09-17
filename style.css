@@ -224,6 +224,27 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
   background: radial-gradient(130% 95% at 50% 42%, transparent 55%, rgba(2, 0, 41, 0.5) 100%);
   pointer-events: none;
 }
+/* 移动端视频被拦截时的动态背景兜底 */
+.intro-overlay.no-video {
+  background:
+    radial-gradient(70% 55% at 30% 25%, rgba(0, 229, 255, 0.14), transparent 65%),
+    radial-gradient(55% 45% at 75% 80%, rgba(255, 119, 16, 0.13), transparent 65%),
+    linear-gradient(160deg, #020029 0%, #050a3a 55%, #020029 100%);
+}
+.intro-overlay.no-video::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(40% 32% at 50% 30%, rgba(0, 229, 255, 0.10), transparent 70%),
+    radial-gradient(34% 28% at 65% 70%, rgba(255, 119, 16, 0.10), transparent 70%);
+  animation: no-video-drift 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes no-video-drift {
+  0%   { transform: translate3d(-2%, -1%, 0) scale(1); }
+  100% { transform: translate3d(3%, 2%, 0) scale(1.08); }
+}
 .intro-content {
   position: relative;
   z-index: 3;

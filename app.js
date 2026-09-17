@@ -85,6 +85,14 @@
   // 视频静音循环在最后帧暂停，等待用户点击
   if (video) {
     video.addEventListener('ended', function() { video.pause(); });
+    // 移动端 autoplay 兜底：显式请求播放；被浏览器拦截时降级为动态背景
+    video.muted = true;
+    var playP = video.play();
+    if (playP) {
+      playP.catch(function() {
+        overlay.classList.add('no-video');
+      });
+    }
   }
   if (skip) skip.addEventListener('click', endIntro);
   if (linkBtn) linkBtn.addEventListener('click', endIntro);

@@ -87,12 +87,30 @@
     video.addEventListener('ended', function() { video.pause(); });
     // 移动端 autoplay 兜底：显式请求播放；被浏览器拦截时降级为动态背景
     video.muted = true;
-    var playP = video.play();
-    if (playP) {
-      playP.catch(function() {
+    var tryPlay = function() {
+      var p = video.play();
+      if (p) {
+        p.then(function() {
+          overlay.classList.remove('no-video');
+        }).catch(function() {});
+      }
+    };
+    var p0 = video.play();
+    if (p0) {
+      p0.catch(function() {
         overlay.classList.add('no-video');
       });
     }
+    // 首次触摸/点击时再试播放（手势可解除移动端自动播放限制）
+    var once = function() {
+      tryPlay();
+      document.removeEventListener('touchstart', once);
+      document.removeEventListener('pointerdown', once);
+      document.removeEventListener('click', once);
+    };
+    document.addEventListener('touchstart', once, { passive: true });
+    document.addEventListener('pointerdown', once);
+    document.addEventListener('click', once);
   }
   if (skip) skip.addEventListener('click', endIntro);
   if (linkBtn) linkBtn.addEventListener('click', endIntro);

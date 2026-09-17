@@ -387,38 +387,32 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
   text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
 }
 
-/* ---------- 眼睛跟随悬浮按钮 ---------- */
+/* ---------- 眼睛跟随按钮（Hero 主区） ---------- */
 .eye-cta {
-  position: fixed;
-  right: 28px;
-  bottom: 28px;
-  z-index: 55;
-  display: flex;
+  position: relative;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
+  padding: 12px 24px;
   background: rgba(4, 4, 36, 0.92);
-  border: 1.5px solid rgba(0, 229, 255, 0.45);
+  border: 1.5px solid rgba(0, 229, 255, 0.5);
   border-radius: 999px;
-  box-shadow: 0 0 24px rgba(0, 229, 255, 0.18), 0 10px 30px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 22px rgba(0, 229, 255, 0.2);
   backdrop-filter: blur(8px);
-  width: 60px;
-  height: 60px;
-  box-sizing: border-box;
   text-decoration: none;
   white-space: nowrap;
-  overflow: hidden;
-  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  transition: all 0.25s;
 }
 .eye-cta:hover {
-  width: 150px;
-  border-color: rgba(0, 229, 255, 0.8);
-  box-shadow: 0 0 36px rgba(0, 229, 255, 0.35), 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 229, 255, 0.85);
+  box-shadow: 0 0 34px rgba(0, 229, 255, 0.4);
+  transform: translateY(-2px);
 }
 .eye-cta-dot {
   position: absolute;
-  top: 5px;
-  right: 6px;
+  top: 7px;
+  right: 9px;
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -432,13 +426,13 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
 }
 .eye-cta-eyes {
   display: flex;
-  gap: 4px;
+  gap: 5px;
   flex-shrink: 0;
 }
 .eye {
   position: relative;
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #ffffff, #d7e6ff);
   display: flex;
@@ -456,24 +450,18 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
 }
 .pupil {
   display: block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: radial-gradient(circle at 40% 35%, #1c2a6e, #020029);
   will-change: transform;
 }
 .eye-cta-text {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.2em;
+  font-size: 13px;
+  letter-spacing: 0.22em;
   color: #e8ecff;
-  opacity: 0;
-  transform: translateX(8px);
-  transition: opacity 0.3s ease 0.05s, transform 0.3s ease 0.05s;
-}
-.eye-cta:hover .eye-cta-text {
-  opacity: 1;
-  transform: translateX(0);
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
 }
 
 /* ---------- 导航 ---------- */
@@ -1098,6 +1086,7 @@ body { counter-reset: sec; }
   .section { padding: 48px 20px; }
   .hero-cta { flex-direction: column; align-items: center; }
   .btn { width: 80%; text-align: center; }
+  .eye-cta { width: 80%; justify-content: center; box-sizing: border-box; }
   .boot-log { font-size: 12px; }
   .intro-link { letter-spacing: 0.18em; padding: 12px 26px; }
   .intro-skip { top: 18px; right: 18px; }
@@ -1108,6 +1097,126 @@ body { counter-reset: sec; }
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   .reveal { opacity: 1; transform: none; }
   #cursor-glow, #particles { display: none; }
+}
+
+/* ---------- 反馈入口 + 弹窗（V3） ---------- */
+.fb-open {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid #ff9433;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #FF7710, #e04f00);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  box-shadow: 0 0 22px rgba(255, 119, 16, 0.45), 0 10px 26px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.fb-open:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 34px rgba(255, 119, 16, 0.7);
+}
+.fb-open-icon { flex-shrink: 0; }
+
+.fb-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 0, 41, 0.72);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s, visibility 0.28s;
+  padding: 20px;
+}
+.fb-modal.open { opacity: 1; visibility: visible; }
+
+.fb-panel {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: rgba(10, 10, 52, 0.97);
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  border-radius: 14px;
+  padding: 22px 24px 24px;
+  box-shadow: 0 0 40px rgba(0, 229, 255, 0.22), 0 24px 60px rgba(0, 0, 0, 0.5);
+  transform: translateY(14px) scale(0.98);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fb-modal.open .fb-panel { transform: none; }
+
+.fb-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #8b93c0;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.fb-close:hover { color: #fff; }
+
+.fb-panel h3 {
+  font-family: var(--font-mono);
+  letter-spacing: 0.3em;
+  margin: 8px 0 8px;
+}
+.fb-note { color: var(--cyan); font-size: 12.5px; letter-spacing: 0.06em; margin: 0 0 4px; }
+.fb-hint { color: #8b93c0; font-size: 12px; margin: 0 0 16px; }
+
+.fb-form { display: flex; flex-direction: column; gap: 14px; }
+.fb-field { display: flex; flex-direction: column; gap: 6px; }
+.fb-field > span { font-size: 12px; color: #8b93c0; letter-spacing: 0.12em; }
+.fb-field em { font-style: normal; color: #5a618a; }
+.fb-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.fb-field input,
+.fb-field select,
+.fb-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(4, 4, 36, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #e8ecff;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.fb-field input:focus,
+.fb-field select:focus,
+.fb-field textarea:focus {
+  outline: none;
+  border-color: rgba(0, 229, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.12);
+}
+.fb-field select { cursor: pointer; }
+.fb-field select option { background: #0a0a34; color: #e8ecff; }
+.fb-field textarea { resize: vertical; min-height: 88px; }
+
+.fb-status { min-height: 18px; font-size: 12.5px; letter-spacing: 0.04em; }
+.fb-status.ok { color: #00ff9d; }
+.fb-status.error { color: #ff5470; }
+.fb-submit { width: 100%; text-align: center; }
+.fb-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+@media (max-width: 640px) {
+  .fb-open { right: 16px; bottom: 16px; padding: 10px 16px; }
+  .fb-row { grid-template-columns: 1fr; }
 }
 
 

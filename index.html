@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>吴润 · 个人主页</title>
-  <link rel="stylesheet" href="style.css?v=2.9">
+  <link rel="stylesheet" href="style.css?v=2.11">
   <script type="importmap">
   {
     "imports": {
@@ -32,7 +32,7 @@
     <span class="corner c-bl"></span>
     <span class="corner c-br"></span>
     <span class="hud-badge top-left"><span class="dot"></span>SYS.ONLINE</span>
-    <span class="hud-badge top-right">VER 2.3 · TECH</span>
+    <span class="hud-badge top-right">VER 3.0 · TECH</span>
     <span class="hud-badge bottom-left">LOC: SZ · 22.54N 114.06E</span>
     <span class="hud-badge bottom-right" id="hudClock">--:--:--</span>
   </div>
@@ -90,6 +90,14 @@
       <div class="hero-cta">
         <a href="#twin" class="btn btn-primary">和数字分身聊聊</a>
         <a href="#projects" class="btn btn-ghost">看作品</a>
+        <a href="mailto:3026445054@tju.edu.cn" class="eye-cta" id="eyeCta" aria-label="联系我">
+          <span class="eye-cta-dot" aria-hidden="true"></span>
+          <span class="eye-cta-eyes" aria-hidden="true">
+            <span class="eye"><span class="pupil"></span></span>
+            <span class="eye"><span class="pupil"></span></span>
+          </span>
+          <span class="eye-cta-text">联系我</span>
+        </a>
       </div>
     </div>
   </section>
@@ -225,15 +233,11 @@
   <!-- 联系 -->
   <section id="contact" class="section section-alt">
     <h2>联系我</h2>
-    <p>欢迎 HR 老师联系，或同行交流。</p>
+    <p>欢迎交流</p>
     <div class="contact-grid">
       <div class="contact-item reveal">
         <span class="contact-label">邮箱</span>
         <a href="mailto:3026445054@tju.edu.cn" class="contact-value">3026445054@tju.edu.cn</a>
-      </div>
-      <div class="contact-item reveal">
-        <span class="contact-label">微信</span>
-        <span class="contact-value">[微信号]</span>
       </div>
       <div class="contact-item reveal">
         <span class="contact-label">GitHub</span>
@@ -243,21 +247,67 @@
   </section>
 
   <footer class="footer">
-    <p>© 2026 吴润 · <span class="ver">V2.3 TECH</span> · <span id="footerClock">--:--:--</span></p>
+    <p>© 2026 吴润 · <span class="ver">V3.0 TECH</span> · <span id="footerClock">--:--:--</span></p>
   </footer>
 
-  <!-- 眼睛跟随悬浮按钮 -->
-  <a href="mailto:3026445054@tju.edu.cn" class="eye-cta" id="eyeCta" aria-label="联系我">
-    <span class="eye-cta-dot" aria-hidden="true"></span>
-    <span class="eye-cta-eyes" aria-hidden="true">
-      <span class="eye"><span class="pupil"></span></span>
-      <span class="eye"><span class="pupil"></span></span>
-    </span>
-    <span class="eye-cta-text">联系我</span>
-  </a>
+  <!-- 反馈入口 -->
+  <button class="fb-open" id="fbOpen" aria-label="留下反馈">
+    <svg class="fb-open-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8z"/>
+    </svg>
+    <span>反馈</span>
+  </button>
+
+  <!-- 反馈弹窗 -->
+  <div class="fb-modal" id="fbModal" role="dialog" aria-modal="true" aria-labelledby="fbTitle">
+    <div class="fb-panel">
+      <div class="win-bar"><span></span><span></span><span></span><em>feedback.log</em></div>
+      <button class="fb-close" id="fbClose" aria-label="关闭">✕</button>
+      <h3 id="fbTitle">反馈</h3>
+      <p class="fb-note">你的反馈不会公开，只有我能看到。</p>
+      <p class="fb-hint">可以说说：哪里看不懂、哪里不好找，或哪里让你眼前一亮。</p>
+      <form class="fb-form" id="fbForm" novalidate>
+        <label class="fb-field">
+          <span>昵称 <em>（可选）</em></span>
+          <input type="text" name="name" maxlength="20" placeholder="怎么称呼你？" autocomplete="off">
+        </label>
+        <div class="fb-row">
+          <label class="fb-field">
+            <span>关系</span>
+            <select name="relation">
+              <option>同学</option>
+              <option>老师</option>
+              <option>家人</option>
+              <option>朋友</option>
+              <option>同事</option>
+              <option>其他</option>
+              <option>不便透露</option>
+            </select>
+          </label>
+          <label class="fb-field">
+            <span>设备</span>
+            <select name="device">
+              <option>电脑</option>
+              <option>手机</option>
+              <option>平板</option>
+              <option>其他</option>
+            </select>
+          </label>
+        </div>
+        <label class="fb-field">
+          <span>反馈内容 <em>*</em></span>
+          <textarea name="message" rows="4" maxlength="500" placeholder="写下你想说的…" required></textarea>
+        </label>
+        <div class="fb-status" id="fbStatus" role="status"></div>
+        <button type="submit" class="btn btn-primary fb-submit" id="fbSubmit">发送反馈</button>
+      </form>
+    </div>
+  </div>
 
   <script src="app.js?v=2.7"></script>
-  <script src="effects.js?v=2.6"></script>
+  <script src="effects.js?v=2.7"></script>
+  <script src="libs/supabase/supabase.min.js"></script>
+  <script src="feedback.js?v=1"></script>
   <script type="module" src="gallery.js?v=2"></script>
 </body>
 </html>

@@ -250,7 +250,7 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
   display: none;
   position: absolute;
   left: 50%;
-  bottom: -18%;
+  bottom: 0;
   transform: translateX(-50%);
   width: min(92vmin, 520px);
   height: min(92vmin, 520px);

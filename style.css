@@ -438,6 +438,37 @@ a:hover { color: #fff; text-shadow: var(--glow-cyan); }
 }
 .intro-skip:hover { background: rgba(255, 255, 255, 0.22); color: #fff; }
 
+/* 开屏「AI 生成」角标（AI 生成内容显式标识） */
+.intro-ai-badge {
+  position: absolute;
+  left: 26px;
+  bottom: 26px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  border-radius: 20px;
+  background: rgba(2, 0, 41, 0.55);
+  color: rgba(232, 236, 255, 0.85);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+}
+.intro-ai-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+}
+.intro-ai-badge.hidden { display: none; }
+
 /* ---------- 侧边目录栏（TOC） ---------- */
 .toc {
   position: fixed;
@@ -1176,6 +1207,14 @@ body { counter-reset: sec; }
   border-top: 1px solid rgba(0, 229, 255, 0.08);
 }
 .footer .ver { color: var(--orange); text-shadow: var(--glow-orange); }
+.footer-ai {
+  margin-top: 8px;
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+  opacity: 0.85;
+  line-height: 1.6;
+}
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 1280px) {

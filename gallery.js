@@ -1,11 +1,28 @@
 // 兴趣 · 3D 章鱼画廊（嵌入式）
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/OrbitControls.js';
-import { GLTFLoader } from 'three/addons/GLTFLoader.js';
+// 兼容性：直接相对路径导入，不依赖 Import Map（旧浏览器/微信 WebView 可能不支持）
+import * as THREE from './libs/three/three.module.js';
+import { OrbitControls } from './libs/three/OrbitControls.js';
+import { GLTFLoader } from './libs/three/GLTFLoader.js';
 
 const wrap = document.getElementById('galleryWrap');
 const canvas = document.getElementById('galleryCanvas');
 if (!wrap || !canvas) throw new Error('gallery elements missing');
+
+// WebGL 不可用 / 初始化失败时的静态兜底：显示章鱼图片，避免兴趣区空白
+function showFallback() {
+  if (wrap.querySelector('.gallery-fallback')) return;
+  const img = document.createElement('img');
+  img.className = 'gallery-fallback';
+  img.src = 'octopus.jpg';
+  img.alt = '章鱼兴趣展示';
+  img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+  canvas.style.display = 'none';
+  wrap.appendChild(img);
+}
+
+// 移动端 / 微信内置浏览器：降低材质复杂度（MeshPhysicalMaterial 的 sheen/clearcoat 在部分 GPU/WebView 上兼容性差）
+const ua = navigator.userAgent;
+const useLightMat = /Android|iPhone|iPad|iPod|MicroMessenger/i.test(ua);
 
 // 容器尺寸
 function getSize() {
@@ -22,12 +39,20 @@ const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
 camera.position.set(0, 3.5, 9);
 camera.lookAt(0, 0, 0);
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setSize(w, h);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+} catch (e) {
+  // 华为等设备 WebGL 初始化失败：降级为静态章鱼图片，不让兴趣区空白
+  console.error('WebGL 不可用，已降级为静态章鱼展示:', e);
+  showFallback();
+  throw e;
+}
 
 window.addEventListener('resize', () => {
   const s = getSize();
@@ -82,29 +107,54 @@ gltfLoader.load(
             oldMat[key].needsUpdate = true;
           }
         });
-        const mat = new THREE.MeshPhysicalMaterial({
-          map: oldMat.map || null,
-          color: oldMat.color || new THREE.Color(0xffffff),
-          normalMap: oldMat.normalMap || null,
-          roughnessMap: oldMat.roughnessMap || null,
-        });
-        ['map', 'normalMap', 'roughnessMap'].forEach((key) => {
-          if (mat[key]) {
-            mat[key].colorSpace = THREE.SRGBColorSpace;
-            mat[key].needsUpdate = true;
+        let mat;
+        if (useLightMat) {
+          // 移动端/微信：MeshStandardMaterial，去掉 sheen/clearcoat，兼容性优先
+          mat = new THREE.MeshStandardMaterial({
+            map: oldMat.map || null,
+            color: oldMat.color || new THREE.Color(0xffffff),
+            normalMap: oldMat.normalMap || null,
+            roughnessMap: oldMat.roughnessMap || null,
+            roughness: 0.55,
+            metalness: 0.0,
+          });
+          ['map', 'normalMap', 'roughnessMap'].forEach((key) => {
+            if (mat[key]) {
+              mat[key].colorSpace = THREE.SRGBColorSpace;
+              mat[key].needsUpdate = true;
+            }
+          });
+          if (mat.map) {
+            mat.emissiveMap = mat.map;
+            mat.emissive = new THREE.Color(0xFF7710);
+            mat.emissiveIntensity = 0.3;
           }
-        });
-        mat.roughness = 0.55;
-        mat.metalness = 0.0;
-        mat.sheen = 1.0;
-        mat.sheenColor = new THREE.Color(0xFFB380);
-        mat.sheenRoughness = 0.35;
-        mat.clearcoat = 0.4;
-        mat.clearcoatRoughness = 0.5;
-        if (mat.map) {
-          mat.emissiveMap = mat.map;
-          mat.emissive = new THREE.Color(0xFF7710);
-          mat.emissiveIntensity = 0.4;
+        } else {
+          // 桌面端：保留毛茸茸质感（MeshPhysicalMaterial + sheen/clearcoat）
+          mat = new THREE.MeshPhysicalMaterial({
+            map: oldMat.map || null,
+            color: oldMat.color || new THREE.Color(0xffffff),
+            normalMap: oldMat.normalMap || null,
+            roughnessMap: oldMat.roughnessMap || null,
+          });
+          ['map', 'normalMap', 'roughnessMap'].forEach((key) => {
+            if (mat[key]) {
+              mat[key].colorSpace = THREE.SRGBColorSpace;
+              mat[key].needsUpdate = true;
+            }
+          });
+          mat.roughness = 0.55;
+          mat.metalness = 0.0;
+          mat.sheen = 1.0;
+          mat.sheenColor = new THREE.Color(0xFFB380);
+          mat.sheenRoughness = 0.35;
+          mat.clearcoat = 0.4;
+          mat.clearcoatRoughness = 0.5;
+          if (mat.map) {
+            mat.emissiveMap = mat.map;
+            mat.emissive = new THREE.Color(0xFF7710);
+            mat.emissiveIntensity = 0.4;
+          }
         }
         mat.transparent = true;
         mat.opacity = 0.92;
@@ -127,7 +177,11 @@ gltfLoader.load(
     octopusMesh = model;
   },
   (xhr) => { console.log(`章鱼加载: ${(xhr.loaded / xhr.total * 100).toFixed(1)}%`); },
-  (err) => { console.error('章鱼加载失败:', err); }
+  (err) => {
+    // GLB 加载失败：降级为静态章鱼图片
+    console.error('章鱼 GLB 加载失败，已降级为静态展示:', err);
+    showFallback();
+  }
 );
 
 /* 椭圆环轨道：6 张图 */

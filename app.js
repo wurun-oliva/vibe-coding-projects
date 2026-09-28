@@ -83,24 +83,28 @@
   typeLine();
 
   // 视频静音循环在最后帧暂停，等待用户点击
+  // 兼容策略（华为/微信 WebView）：HTML 默认带 no-video（CSS/SVG 章鱼背景先显示），
+  // 只有视频真正开始播放（playing 事件或 play() Promise resolve）才切换为视频；
+  // play() 不返回 Promise / 抛异常 / 被浏览器拦截时保持降级背景，绝不黑屏。
   if (video) {
     video.addEventListener('ended', function() { video.pause(); });
-    // 移动端 autoplay 兜底：显式请求播放；被浏览器拦截时降级为动态背景
     video.muted = true;
-    var tryPlay = function() {
-      var p = video.play();
-      if (p) {
-        p.then(function() {
-          overlay.classList.remove('no-video');
-        }).catch(function() {});
-      }
+    var playing = false;
+    var showVideo = function() {
+      if (playing) return;
+      playing = true;
+      overlay.classList.remove('no-video');
     };
-    var p0 = video.play();
-    if (p0) {
-      p0.catch(function() {
-        overlay.classList.add('no-video');
-      });
-    }
+    video.addEventListener('playing', showVideo);
+    var tryPlay = function() {
+      try {
+        var p = video.play();
+        if (p && typeof p.then === 'function') {
+          p.then(showVideo).catch(function() {});
+        }
+      } catch (e) { /* 保持 no-video 降级背景 */ }
+    };
+    tryPlay();
     // 首次触摸/点击时再试播放（手势可解除移动端自动播放限制）
     var once = function() {
       tryPlay();

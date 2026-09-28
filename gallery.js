@@ -43,7 +43,8 @@ let renderer;
 try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setSize(w, h);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // 性能优化：限制像素比。桌面 1.5 封顶；移动端/微信 1.2（高 DPR 折叠屏掉帧明显）
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, useLightMat ? 1.2 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
@@ -196,8 +197,8 @@ const imageMeshes = [];
 const planeGeo = new THREE.PlaneGeometry(IMAGE_W, IMAGE_H);
 const texLoader = new THREE.TextureLoader();
 const imageFiles = [
-  'octopus-1.png', 'octopus-2.png', 'octopus-3.png',
-  'octopus-4.png', 'octopus-5.png', 'octopus-6.png',
+  'octopus-1.webp', 'octopus-2.webp', 'octopus-3.webp',
+  'octopus-4.webp', 'octopus-5.webp', 'octopus-6.webp',
 ];
 const imageLabels = ['健身', '烘焙', '种植', '阅读', '陶艺', '绘画'];
 
@@ -302,10 +303,17 @@ shadow.rotation.x = -Math.PI / 2;
 shadow.position.y = -2.0;
 scene.add(shadow);
 
-/* 动画循环 */
+/* 动画循环：帧率自适应（桌面 60 FPS / 移动端 40 FPS，低端设备自动降帧），
+   通过跳过帧减轻 GPU 负担，避免微信 WebView 掉帧 */
+const TARGET_FPS = useLightMat ? 40 : 60;
+const FRAME_MS = 1000 / TARGET_FPS;
 const clock = new THREE.Clock();
-function animate() {
+let _lastFrame = performance.now();
+function animate(now) {
   requestAnimationFrame(animate);
+  const dt = now - _lastFrame;
+  if (dt < FRAME_MS) return; // 未到渲染间隔，跳过本帧
+  _lastFrame = now;
   const t = clock.getElapsedTime();
   ring.rotation.y = t * 0.15;
   imageMeshes.forEach((mesh) => {

@@ -207,17 +207,26 @@ const finePointer = window.matchMedia('(pointer: fine)').matches;
       .filter(h => h && h.startsWith('#') && h.length > 1)
       .map(h => h.slice(1))
   )];
+  // 性能优化：section 引用缓存一次 + requestAnimationFrame 节流，滚动时不反复触发布局查询
+  const secs = ids.map(id => document.getElementById(id)).filter(Boolean);
+  const activeMap = new Map(); // a -> href，避免重复 getAttribute
+  all.forEach(a => activeMap.set(a, a.getAttribute('href')));
+  let ticking = false;
   function onScroll() {
-    const y = window.scrollY + 140;
-    let current = '';
-    for (const id of ids) {
-      const sec = document.getElementById(id);
-      if (sec && sec.offsetTop <= y) current = id;
-    }
-    groups.forEach(group => group.forEach(a => {
-      const on = a.getAttribute('href') === '#' + current;
-      a.classList.toggle('active', on);
-    }));
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const y = window.scrollY + 140;
+      let current = '';
+      for (const sec of secs) {
+        if (sec.offsetTop <= y) current = sec.id;
+      }
+      groups.forEach(group => group.forEach(a => {
+        const on = activeMap.get(a) === '#' + current;
+        a.classList.toggle('active', on);
+      }));
+    });
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();

@@ -121,50 +121,25 @@
 })();
 
 /* ============================================================
-   数字分身 · 预设问答库（关键词匹配）
+   数字分身 · 真实 AI 对话（后端代理：阿里云函数计算 → DeepSeek）
    ============================================================ */
-const QA = [
-  {
-    keys: ['名字', '叫什么', '你是谁', '你叫'],
-    a: '我是吴润的数字分身·章鱼🐙。吴润是天津大学深圳学院智能医学工程专业的学生。'
-  },
-  {
-    keys: ['专业', '学校', '学什么', '读什么'],
-    a: '吴润在天津大学深圳学院读智能医学工程。'
-  },
-  {
-    keys: ['兴趣', '爱好', '喜欢'],
-    a: '吴润喜欢绘画、陶艺、健身和阅读。技术之外,她也在用艺术和运动平衡自己。'
-  },
-  {
-    keys: ['在做', '最近', '现在', '忙什么'],
-    a: '吴润最近在学 Vibe Coding,用自然语言驱动 AI 把想法做成可用的小产品,比如这个个人主页。'
-  },
-  {
-    keys: ['vibe', '编程', '代码'],
-    a: 'Vibe Coding 是吴润目前在学的方向:用自然语言和 AI 协作开发,把模糊的想法快速变成看得见的产品。'
-  },
-  {
-    keys: ['联系', '邮箱', '微信', '怎么找'],
-    a: '可以通过邮箱 3026445054@tju.edu.cn 联系吴润,页面底部的联系区也有更多信息。'
-  },
-  {
-    keys: ['项目', '作品', '做过'],
-    a: '吴润的项目有:个人主页(就是这个,含数字分身)、心理记录 Mind Log、健身记录。点击项目卡片可以体验在线 Demo。'
-  },
-  {
-    keys: ['心理', '心情'],
-    a: '心理记录(Mind Log)是吴润做的心情记录工具,支持情绪标签与可视化,蓝橙配色。项目区有在线 Demo 可体验。'
-  },
-  {
-    keys: ['健身', '运动'],
-    a: '健身记录是吴润做的每日运动记录工具,帮助坚持健身习惯。项目区有在线 Demo 可体验。'
-  },
-  {
-    keys: ['你好', 'hi', 'hello', '嗨'],
-    a: '你好!我是吴润的数字分身,可以问我她的专业、兴趣、最近在做什么。'
-  }
-];
+const TWIN_API_URL = 'https://wrdigital-twin-qhebqexvif.cn-shenzhen.fcapp.run';
+const MAX_HISTORY = 20; // 前端最多携带 20 轮上下文（后端上限 40 轮）
+
+let chatHistory = []; // 多轮上下文：{role, content}
+
+function callTwin(messages) {
+  return fetch(TWIN_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages: messages })
+  }).then(function(res) {
+    return res.json();
+  }).then(function(data) {
+    if (data.error) throw new Error(data.error);
+    return data.reply;
+  });
+}
 
 const chatBox = document.getElementById('chatBox');
 const chatForm = document.getElementById('chatForm');
@@ -196,21 +171,29 @@ function addMsg(text, who, immediate) {
   }, 22);
 }
 
-function answer(q) {
-  const lower = q.toLowerCase();
-  for (const item of QA) {
-    if (item.keys.some(function(k) { return lower.indexOf(k.toLowerCase()) !== -1; })) {
-      return item.a;
-    }
-  }
-  return '这个问题我暂时答不上来,换个问法试试?比如问我她的专业、兴趣或最近在做什么。';
-}
-
-function handleAsk(q) {
-  if (!q.trim()) return;
+function handleAsk(raw) {
+  const q = (raw || '').trim();
+  if (!q) return;
   addMsg(q, 'user', true);
-  setTimeout(function() { addMsg(answer(q), 'bot', false); }, 300);
   chatInput.value = '';
+  chatHistory.push({ role: 'user', content: q });
+  if (chatHistory.length > MAX_HISTORY * 2) {
+    chatHistory = chatHistory.slice(chatHistory.length - MAX_HISTORY * 2);
+  }
+  // 等待回复时的占位气泡
+  const loading = document.createElement('div');
+  loading.className = 'msg msg-bot';
+  loading.textContent = '…';
+  chatBox.appendChild(loading);
+  chatBox.scrollTop = chatBox.scrollHeight;
+  callTwin(chatHistory).then(function(reply) {
+    loading.remove();
+    addMsg(reply, 'bot', false);
+    chatHistory.push({ role: 'assistant', content: reply });
+  }).catch(function() {
+    loading.remove();
+    addMsg('信号连接不稳定，请稍后再试。', 'bot', true);
+  });
 }
 
 chatForm.addEventListener('submit', function(e) {

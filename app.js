@@ -118,6 +118,13 @@
   }
   if (skip) skip.addEventListener('click', endIntro);
   if (linkBtn) linkBtn.addEventListener('click', endIntro);
+
+  // 兼容兜底（夸克/微信等移动端 WebView 会节流高频 setInterval，
+  // 打字序列或进度条可能卡住导致按钮不出现）：
+  // 1) 12 秒后无论序列是否完成都强制进入主页
+  // 2) 点击开屏任意处直接跳过
+  setTimeout(endIntro, 12000);
+  overlay.addEventListener('click', endIntro);
 })();
 
 /* ============================================================
@@ -137,6 +144,8 @@ function callTwin(messages) {
     return res.json();
   }).then(function(data) {
     if (data.error) throw new Error(data.error);
+    // 响应必须是带文本的 reply，否则按失败处理（欠费/异常响应都走兜底文字）
+    if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('empty reply');
     return data.reply;
   });
 }
@@ -146,6 +155,7 @@ const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 
 function addMsg(text, who, immediate) {
+  text = String(text == null ? '' : text);
   const div = document.createElement('div');
   div.className = 'msg msg-' + who;
   if (immediate) {
@@ -166,9 +176,18 @@ function addMsg(text, who, immediate) {
       chatBox.scrollTop = chatBox.scrollHeight;
     } else {
       clearInterval(timer);
+      clearTimeout(force);
       caret.remove();
     }
   }, 22);
+  // 兜底：部分 WebView（微信内置浏览器等）会节流/暂停高频定时器，
+  // 无论打字是否完成，都在预计时长后强制显示完整文本
+  const force = setTimeout(function() {
+    clearInterval(timer);
+    div.textContent = text;
+    caret.remove();
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, text.length * 22 + 2000);
 }
 
 function handleAsk(raw) {

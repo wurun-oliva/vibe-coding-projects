@@ -97,6 +97,7 @@
    数字分身 · 真实 AI 对话（后端代理：阿里云函数计算 → DeepSeek）
    ============================================================ */
 const TWIN_API_URL = 'https://wrdigital-twin-qhebqexvif.cn-shenzhen.fcapp.run';
+const TWIN_AUTH_TOKEN = 'octo-dt-2026'; // 轻量防滥用鉴权（与后端函数校验值一致）
 const MAX_HISTORY = 20; // 前端最多携带 20 轮上下文（后端上限 40 轮）
 
 let chatHistory = []; // 多轮上下文：{role, content}
@@ -104,7 +105,7 @@ let chatHistory = []; // 多轮上下文：{role, content}
 function callTwin(messages) {
   return fetch(TWIN_API_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Auth-Token': TWIN_AUTH_TOKEN },
     body: JSON.stringify({ messages: messages })
   }).then(function(res) {
     return res.json();
@@ -120,24 +121,52 @@ const chatBox = document.getElementById('chatBox');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 
+/* ============ 轻量 Markdown 渲染（先转义防 XSS，仅白名单标签） ============ */
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function renderMarkdown(text) {
+  var s = escapeHtml(String(text == null ? '' : text));
+  // 代码块
+  s = s.replace(/```([\s\S]*?)```/g, function(m, code) {
+    return '<pre><code>' + code.replace(/^\n|\n$/g, '') + '</code></pre>';
+  });
+  // 行内代码
+  s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>');
+  // 加粗
+  s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // 斜体（不误伤已处理的加粗）
+  s = s.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
+  // 链接（仅 http(s)，新窗口打开）
+  s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  // 无序列表项 → 圆点前缀
+  s = s.replace(/^\s*[-*]\s+/gm, '• ');
+  // 标题符号去掉（保留文字）
+  s = s.replace(/^#{1,6}\s+/gm, '');
+  // 换行
+  s = s.replace(/\n/g, '<br>');
+  return s;
+}
+
 function addMsg(text, who, immediate) {
   text = String(text == null ? '' : text);
   const div = document.createElement('div');
   div.className = 'msg msg-' + who;
   if (immediate) {
-    div.textContent = text;
+    div.innerHTML = renderMarkdown(text);
     chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
     return;
   }
-  // 打字机回复：逐字输出 + 呼吸光标
+  // 打字机回复：逐字输出 + 呼吸光标（实时 Markdown 渲染）
   chatBox.appendChild(div);
   const caret = document.createElement('span');
   caret.className = 'typing-caret';
   let i = 0;
   const timer = setInterval(function() {
     if (i < text.length) {
-      div.textContent = text.slice(0, ++i);
+      div.innerHTML = renderMarkdown(text.slice(0, ++i));
       div.appendChild(caret);
       chatBox.scrollTop = chatBox.scrollHeight;
     } else {
@@ -150,7 +179,7 @@ function addMsg(text, who, immediate) {
   // 无论打字是否完成，都在预计时长后强制显示完整文本
   const force = setTimeout(function() {
     clearInterval(timer);
-    div.textContent = text;
+    div.innerHTML = renderMarkdown(text);
     caret.remove();
     chatBox.scrollTop = chatBox.scrollHeight;
   }, text.length * 22 + 2000);

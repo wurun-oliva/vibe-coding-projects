@@ -29,12 +29,9 @@
     <span class="hud-badge bottom-right" id="hudClock">--:--:--</span>
   </div>
 
-  <!-- 开屏动画：全屏视频 + 半透明终端窗口（默认 no-video：视频能播才切换，播放不了显示章鱼动态背景，避免黑屏） -->
+  <!-- 开屏动画：章鱼主题动态背景（纯 CSS/SVG，不依赖视频，夸克/微信等 WebView 兼容） -->
   <div class="intro-overlay no-video" id="introOverlay">
-    <video class="intro-video" id="introVideo" autoplay muted playsinline loop>
-      <source src="intro.mp4" type="video/mp4">
-    </video>
-    <!-- 移动端视频被拦截时的章鱼主题动态背景（纯 CSS/SVG，不依赖 autoplay） -->
+    <!-- 章鱼主题动态背景（纯 CSS/SVG，不依赖 autoplay） -->
     <div class="no-video-orb orb-cyan" aria-hidden="true"></div>
     <div class="no-video-orb orb-orange" aria-hidden="true"></div>
     <div class="no-video-octo" aria-hidden="true">

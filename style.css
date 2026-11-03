@@ -1366,3 +1366,31 @@ body { counter-reset: sec; }
 /* ---------- 自定义十字准星光标（青绿发光，热点居中） ---------- */
 * { cursor: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%220%200%2040%2040%22%3E%3Cg%20stroke%3D%22rgba%280%2C229%2C255%2C0.22%29%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%3E%3Cline%20x1%3D%2220%22%20y1%3D%225%22%20x2%3D%2220%22%20y2%3D%2212%22%2F%3E%3Cline%20x1%3D%2220%22%20y1%3D%2228%22%20x2%3D%2220%22%20y2%3D%2235%22%2F%3E%3Cline%20x1%3D%225%22%20y1%3D%2220%22%20x2%3D%2212%22%20y2%3D%2220%22%2F%3E%3Cline%20x1%3D%2228%22%20y1%3D%2220%22%20x2%3D%2235%22%20y2%3D%2220%22%2F%3E%3C%2Fg%3E%3Cg%20stroke%3D%22%2300E5FF%22%20stroke-width%3D%222.6%22%20stroke-linecap%3D%22round%22%3E%3Cline%20x1%3D%2220%22%20y1%3D%224%22%20x2%3D%2220%22%20y2%3D%2213%22%2F%3E%3Cline%20x1%3D%2220%22%20y1%3D%2227%22%20x2%3D%2220%22%20y2%3D%2236%22%2F%3E%3Cline%20x1%3D%224%22%20y1%3D%2220%22%20x2%3D%2213%22%20y2%3D%2220%22%2F%3E%3Cline%20x1%3D%2227%22%20y1%3D%2220%22%20x2%3D%2236%22%20y2%3D%2220%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%223.4%22%20fill%3D%22%2300E5FF%22%2F%3E%3C%2Fsvg%3E") 20 20, auto !important; }
 input, textarea { cursor: text !important; }
+
+/* ============ 聊天气泡内 Markdown 元素样式 ============ */
+.msg code {
+  background: rgba(0, 229, 255, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.92em;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+}
+.msg pre {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 8px 10px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 6px 0;
+  max-width: 100%;
+}
+.msg pre code {
+  background: none;
+  padding: 0;
+}
+.msg a {
+  color: #00E5FF;
+  text-decoration: underline;
+  word-break: break-all;
+}
+.msg strong { font-weight: 700; }
+.msg em { font-style: italic; }

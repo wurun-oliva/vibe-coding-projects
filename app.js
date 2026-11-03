@@ -6,7 +6,6 @@
    ============================================================ */
 (function() {
   var overlay = document.getElementById('introOverlay');
-  var video = document.getElementById('introVideo');
   var skip = document.getElementById('introSkip');
   var logEl = document.getElementById('bootLog');
   var barEl = document.getElementById('bootBar');
@@ -82,40 +81,7 @@
 
   typeLine();
 
-  // 视频静音循环在最后帧暂停，等待用户点击
-  // 兼容策略（华为/微信 WebView）：HTML 默认带 no-video（CSS/SVG 章鱼背景先显示），
-  // 只有视频真正开始播放（playing 事件或 play() Promise resolve）才切换为视频；
-  // play() 不返回 Promise / 抛异常 / 被浏览器拦截时保持降级背景，绝不黑屏。
-  if (video) {
-    video.addEventListener('ended', function() { video.pause(); });
-    video.muted = true;
-    var playing = false;
-    var showVideo = function() {
-      if (playing) return;
-      playing = true;
-      overlay.classList.remove('no-video');
-    };
-    video.addEventListener('playing', showVideo);
-    var tryPlay = function() {
-      try {
-        var p = video.play();
-        if (p && typeof p.then === 'function') {
-          p.then(showVideo).catch(function() {});
-        }
-      } catch (e) { /* 保持 no-video 降级背景 */ }
-    };
-    tryPlay();
-    // 首次触摸/点击时再试播放（手势可解除移动端自动播放限制）
-    var once = function() {
-      tryPlay();
-      document.removeEventListener('touchstart', once);
-      document.removeEventListener('pointerdown', once);
-      document.removeEventListener('click', once);
-    };
-    document.addEventListener('touchstart', once, { passive: true });
-    document.addEventListener('pointerdown', once);
-    document.addEventListener('click', once);
-  }
+  // 开屏不使用视频（纯 CSS/SVG 章鱼背景），避免夸克等浏览器将页面识别为视频播放器
   if (skip) skip.addEventListener('click', endIntro);
   if (linkBtn) linkBtn.addEventListener('click', endIntro);
 

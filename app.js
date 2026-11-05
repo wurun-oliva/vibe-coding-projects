@@ -1,4 +1,6 @@
 // V2.3 · 开屏终端启动序列 + 数字分身聊天区
+// + [稳定性] 请求超时中止 + 防连点 + 失败兜底
+// + [SSE] 流式回复：边接收边渲染，真实打字感，无需假打字机
 'use strict';
 
 /* ============================================================
@@ -94,32 +96,87 @@
 })();
 
 /* ============================================================
-   数字分身 · 真实 AI 对话（后端代理：阿里云函数计算 → DeepSeek）
+   数字分身 · 真实 AI 对话（SSE 流式 · 阿里云函数计算 → DeepSeek）
    ============================================================ */
 const TWIN_API_URL = 'https://wrdigital-twin-qhebqexvif.cn-shenzhen.fcapp.run';
 const TWIN_AUTH_TOKEN = 'octo-dt-2026'; // 轻量防滥用鉴权（与后端函数校验值一致）
 const MAX_HISTORY = 20; // 前端最多携带 20 轮上下文（后端上限 40 轮）
+const REQUEST_TIMEOUT_MS = 30000; // [稳定性] 单次请求超时上限
+const SSE_TIMEOUT_MS = 60000; // [SSE] 整体流式完成上限（首字快，但整段不应超过此值）
 
 let chatHistory = []; // 多轮上下文：{role, content}
+let chatBusy = false; // 请求进行中标记，防止连点产生并发请求
 
-function callTwin(messages) {
-  return fetch(TWIN_API_URL, {
+// 反转义后端 SSE 编码的字面 \n 为真实换行
+function unescapeText(s) {
+  return String(s == null ? '' : s).replace(/\\n/g, '\n');
+}
+
+// [SSE] 流式请求：逐块把增量交给 onChunk，结束交给 onDone，出错交给 onFail
+function callTwinStream(messages, handlers) {
+  var controller = new AbortController();
+  var hardTimer = setTimeout(function () { controller.abort(); }, SSE_TIMEOUT_MS);
+  var sep = TWIN_API_URL.indexOf('?') === -1 ? '?' : '&';
+  var url = TWIN_API_URL + sep + 'stream=1';
+
+  fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Auth-Token': TWIN_AUTH_TOKEN },
-    body: JSON.stringify({ messages: messages })
-  }).then(function(res) {
-    return res.json();
-  }).then(function(data) {
-    if (data.error) throw new Error(data.error);
-    // 响应必须是带文本的 reply，否则按失败处理（欠费/异常响应都走兜底文字）
-    if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('empty reply');
-    return data.reply;
+    body: JSON.stringify({ messages: messages }),
+    signal: controller.signal
+  }).then(function (res) {
+    if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    var full = '';
+    var stopped = false;
+
+    function pump() {
+      if (stopped) return Promise.resolve();
+      return reader.read().then(function (r) {
+        if (r.done) { stopped = true; clearTimeout(hardTimer); handlers.onDone(full); return; }
+        buffer += decoder.decode(r.value, { stream: true });
+        var idx;
+        while (!stopped && (idx = buffer.indexOf('\n\n')) !== -1) {
+          var block = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 2);
+          var lines = block.split('\n');
+          for (var i = 0; i < lines.length && !stopped; i++) {
+            var ln = lines[i];
+            if (ln.indexOf('data:') === 0) {
+              var d = ln.slice(5).replace(/^\s+/, '');
+              if (d === '[DONE]') { stopped = true; clearTimeout(hardTimer); handlers.onDone(full); return; }
+              var text = unescapeText(d);
+              if (text) { full += text; handlers.onChunk(text); }
+            }
+          }
+        }
+        return pump();
+      });
+    }
+    return pump();
+  }).then(function () {}, function (err) {
+    clearTimeout(hardTimer);
+    handlers.onFail(err);
   });
 }
 
 const chatBox = document.getElementById('chatBox');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
+// 尝试定位发送按钮；找不到也安全（有 chatBusy 逻辑防重复）
+let sendBtn = null;
+if (chatForm) {
+  sendBtn = chatForm.querySelector('button[type="submit"], button.submit, [data-role="send"], button');
+}
+
+// 请求期间禁用输入，防止重复提交
+function setBusy(busy) {
+  chatBusy = busy;
+  if (chatInput) chatInput.disabled = busy;
+  if (sendBtn) sendBtn.disabled = busy;
+}
 
 /* ============ 轻量 Markdown 渲染（先转义防 XSS，仅白名单标签） ============ */
 function escapeHtml(s) {
@@ -159,7 +216,7 @@ function addMsg(text, who, immediate) {
     chatBox.scrollTop = chatBox.scrollHeight;
     return;
   }
-  // 打字机回复：逐字输出 + 呼吸光标（实时 Markdown 渲染）
+  // 普通模式打字机（本版以流式为主，此函数仍保留供兜底/兼容）
   chatBox.appendChild(div);
   const caret = document.createElement('span');
   caret.className = 'typing-caret';
@@ -175,8 +232,6 @@ function addMsg(text, who, immediate) {
       caret.remove();
     }
   }, 22);
-  // 兜底：部分 WebView（微信内置浏览器等）会节流/暂停高频定时器，
-  // 无论打字是否完成，都在预计时长后强制显示完整文本
   const force = setTimeout(function() {
     clearInterval(timer);
     div.innerHTML = renderMarkdown(text);
@@ -188,25 +243,47 @@ function addMsg(text, who, immediate) {
 function handleAsk(raw) {
   const q = (raw || '').trim();
   if (!q) return;
+  if (chatBusy) return; // 请求进行中，忽略重复提交
+  setBusy(true);
   addMsg(q, 'user', true);
   chatInput.value = '';
   chatHistory.push({ role: 'user', content: q });
   if (chatHistory.length > MAX_HISTORY * 2) {
     chatHistory = chatHistory.slice(chatHistory.length - MAX_HISTORY * 2);
   }
-  // 等待回复时的占位气泡
-  const loading = document.createElement('div');
-  loading.className = 'msg msg-bot';
-  loading.textContent = '…';
-  chatBox.appendChild(loading);
+
+  // 新建 bot 气泡：初始仅一个呼吸光标，边收流边更新内容（真实流式）
+  const div = document.createElement('div');
+  div.className = 'msg msg-bot';
+  const caret = document.createElement('span');
+  caret.className = 'typing-caret';
+  div.appendChild(caret);
+  chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
-  callTwin(chatHistory).then(function(reply) {
-    loading.remove();
-    addMsg(reply, 'bot', false);
-    chatHistory.push({ role: 'assistant', content: reply });
-  }).catch(function() {
-    loading.remove();
-    addMsg('信号连接不稳定，请稍后再试。', 'bot', true);
+
+  let full = '';
+  let finalized = false;
+  function renderNow() {
+    div.innerHTML = renderMarkdown(full);
+    div.appendChild(caret);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  function finalize(finalText) {
+    if (finalized) return;
+    finalized = true;
+    full = (finalText == null ? '' : finalText);
+    if (!full.trim()) full = '信号连接不稳定，请稍后再试。';
+    caret.remove();
+    div.innerHTML = renderMarkdown(full);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    chatHistory.push({ role: 'assistant', content: full });
+    setBusy(false);
+  }
+
+  callTwinStream(chatHistory, {
+    onChunk: function (text) { full += text; renderNow(); },
+    onDone: function (t) { finalize(t); },
+    onFail: function () { finalize('信号连接不稳定，请稍后再试。'); }
   });
 }
 

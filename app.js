@@ -9,6 +9,7 @@
    ============================================================ */
 (function() {
   var overlay = document.getElementById('introOverlay');
+  var video = document.getElementById('introVideo');
   var skip = document.getElementById('introSkip');
   var logEl = document.getElementById('bootLog');
   var barEl = document.getElementById('bootBar');
@@ -81,6 +82,34 @@
   }
 
   typeLine();
+
+  // 视频能够播放时切换到视频背景；自动播放受限时保留 CSS/SVG 兜底。
+  if (video) {
+    video.muted = true;
+    var videoShown = false;
+    var showVideo = function() {
+      if (videoShown) return;
+      videoShown = true;
+      overlay.classList.remove('no-video');
+    };
+    video.addEventListener('playing', showVideo);
+    var tryPlay = function() {
+      try {
+        var playResult = video.play();
+        if (playResult && typeof playResult.then === 'function') {
+          playResult.then(showVideo).catch(function() {});
+        }
+      } catch (e) { /* 保留降级背景 */ }
+    };
+    tryPlay();
+    var retryOnGesture = function() {
+      tryPlay();
+      document.removeEventListener('pointerdown', retryOnGesture);
+      document.removeEventListener('touchstart', retryOnGesture);
+    };
+    document.addEventListener('pointerdown', retryOnGesture, { once: true });
+    document.addEventListener('touchstart', retryOnGesture, { once: true, passive: true });
+  }
 
   if (skip) skip.addEventListener('click', endIntro);
   if (linkBtn) linkBtn.addEventListener('click', endIntro);

@@ -124,6 +124,7 @@ function unescapeText(s) {
 function callTwinStream(messages, handlers) {
   var controller = new AbortController();
   var hardTimer = setTimeout(function () { controller.abort(); }, SSE_TIMEOUT_MS);
+  var requestTimer = setTimeout(function () { controller.abort(); }, REQUEST_TIMEOUT_MS);
   var sep = TWIN_API_URL.indexOf('?') === -1 ? '?' : '&';
   var url = TWIN_API_URL + sep + 'stream=1';
 
@@ -133,6 +134,7 @@ function callTwinStream(messages, handlers) {
     body: JSON.stringify({ messages: messages }),
     signal: controller.signal
   }).then(function (res) {
+    clearTimeout(requestTimer);
     if (!res.ok || !res.body) {
       // 读取错误正文（FC 限流 429 / 参数错误等），构造含状态的错误
       return (res && res.text ? res.text() : Promise.resolve('')).then(function (t) {
@@ -148,7 +150,7 @@ function callTwinStream(messages, handlers) {
     function pump() {
       if (stopped) return Promise.resolve();
       return reader.read().then(function (r) {
-        if (r.done) { stopped = true; clearTimeout(hardTimer); handlers.onDone(full); return; }
+        if (r.done) { stopped = true; clearTimeout(hardTimer); clearTimeout(requestTimer); handlers.onDone(full); return; }
         buffer += decoder.decode(r.value, { stream: true });
         var idx;
         while (!stopped && (idx = buffer.indexOf('\n\n')) !== -1) {
@@ -159,7 +161,7 @@ function callTwinStream(messages, handlers) {
             var ln = lines[i];
             if (ln.indexOf('data:') === 0) {
               var d = ln.slice(5).replace(/^\s+/, '');
-              if (d === '[DONE]') { stopped = true; clearTimeout(hardTimer); handlers.onDone(full); return; }
+              if (d === '[DONE]') { stopped = true; clearTimeout(hardTimer); clearTimeout(requestTimer); handlers.onDone(full); return; }
               var text = unescapeText(d);
               if (text) { full += text; handlers.onChunk(text); }
             }
@@ -171,6 +173,7 @@ function callTwinStream(messages, handlers) {
     return pump();
   }).then(function () {}, function (err) {
     clearTimeout(hardTimer);
+    clearTimeout(requestTimer);
     handlers.onFail(err);
   });
 }
@@ -389,7 +392,12 @@ function handleAsk(raw) {
       var em = err && err.message || '';
       if (/429|Too Many Requests|限流/i.test(em)) msg = '访问量太大啦（限制每分钟 20 次），请稍等几秒再试。';
       else if (/AbortError|aborted|timed?out|超时|上游超时/i.test(em)) msg = '回复超时，请稍后再试一次。';
-      finalize(msg);
+      finalized = true;
+      clearThink();
+      caret.remove();
+      div.textContent = msg;
+      chatBox.scrollTop = chatBox.scrollHeight;
+      setBusy(false);
     }
   });
 }

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>吴润 · 个人主页</title>
-  <link rel="stylesheet" href="style.css?v=2.16">
+  <link rel="stylesheet" href="style.css?v=2.17">
 </head>
 <body>
 
@@ -112,7 +112,7 @@
       <img src="avatar.jpg" alt="吴润头像" class="avatar">
       <h1>吴润</h1>
       <p class="hero-tagline">天津大学深圳学院 · 智能医学工程专业</p>
-      <p class="hero-sub"><span id="typedLine"></span><span class="typed-caret"></span></p>
+          <p class="hero-sub"><span id="typedLine"></span><span class="typed-caret"></span></p>
       <div class="hero-cta">
         <a href="#twin" class="btn btn-primary">和数字分身聊聊</a>
         <a href="#projects" class="btn btn-ghost">看作品</a>
@@ -234,14 +234,16 @@
       <img src="octopus.jpg" alt="章鱼虚拟形象" class="twin-avatar" loading="lazy">
       <div>
         <h2>数字分身 · 章鱼</h2>
-        <p class="twin-hint">// 问我关于吴润的任何事，我替她回答</p>
+        <p class="twin-hint">基于吴润确认过的资料回答 · AI 数字分身</p>
       </div>
+      <span class="twin-live"><i></i> ONLINE</span>
     </div>
     <div class="twin-window reveal">
-      <div class="win-bar"><span></span><span></span><span></span><em>octopus@twin ~ %</em></div>
+      <div class="win-bar"><span></span><span></span><span></span><em>OCTOPUS AI <b>·</b> PERSONAL KNOWLEDGE</em></div>
       <div class="chat-box" id="chatBox">
         <div class="msg msg-bot">你好！我是吴润的数字分身·章鱼。可以问我她的专业、兴趣、最近在做什么。</div>
       </div>
+      <div class="chat-quick-label">试着问我 <span>QUICK PROMPTS</span></div>
       <div class="chat-quick">
         <button class="chip" data-q="你叫什么">你叫什么</button>
         <button class="chip" data-q="专业">专业</button>
@@ -250,7 +252,7 @@
         <button class="chip" data-q="联系">怎么联系</button>
       </div>
       <form class="chat-input" id="chatForm">
-        <input type="text" id="chatInput" placeholder="输入你的问题…" autocomplete="off">
+        <input type="text" id="chatInput" placeholder="问问吴润的项目、专业或兴趣…" autocomplete="off" maxlength="2000" aria-label="输入你想问数字分身的问题">
         <button type="submit" class="btn btn-primary">发送</button>
       </form>
     </div>

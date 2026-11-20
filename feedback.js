@@ -66,28 +66,31 @@
     submitBtn.textContent = '发送中…';
     showStatus('', '');
 
-    var res = await sb.from('feedback').insert({
-      name: form.elements.name.value.trim() || null,
-      relation: form.elements.relation.value,
-      device: form.elements.device.value,
-      message: message,
-      version: version
-    });
+    try {
+      var res = await sb.from('feedback').insert({
+        name: form.elements.name.value.trim() || null,
+        relation: form.elements.relation.value,
+        device: form.elements.device.value,
+        message: message,
+        version: version
+      });
 
-    if (res.error) {
-      console.error('feedback insert error:', res.error);
+      if (res.error) {
+        console.error('feedback insert error:', res.error);
+        showStatus('提交失败，请稍后重试', 'error');
+        return;
+      }
+
+      showStatus('已收到，谢谢反馈！', 'ok');
+      form.reset();
+      setTimeout(closeModal, 1400);
+    } catch (err) {
+      console.error('feedback request failed:', err);
+      showStatus('网络连接失败，请检查网络后重试', 'error');
+    } finally {
       submitting = false;
       submitBtn.disabled = false;
       submitBtn.textContent = '发送反馈';
-      showStatus('提交失败，请稍后重试', 'error');
-      return;
     }
-
-    showStatus('已收到，谢谢反馈！', 'ok');
-    form.reset();
-    submitBtn.disabled = false;
-    submitBtn.textContent = '发送反馈';
-    submitting = false;
-    setTimeout(closeModal, 1400);
   });
 })();

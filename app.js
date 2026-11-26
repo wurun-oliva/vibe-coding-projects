@@ -460,3 +460,114 @@ chatForm.addEventListener('submit', function(e) {
 document.querySelectorAll('.chip').forEach(function(chip) {
   chip.addEventListener('click', function() { handleAsk(chip.dataset.q); });
 });
+
+/* 项目详情弹窗 */
+(function() {
+  var modal = document.getElementById('projectModal');
+  var title = document.getElementById('projectModalTitle');
+  var eyebrow = document.getElementById('projectModalEyebrow');
+  var summary = document.getElementById('projectModalSummary');
+  var content = document.getElementById('projectModalContent');
+  var links = document.getElementById('projectModalLinks');
+  var close = document.getElementById('projectModalClose');
+  if (!modal || !title || !content || !close) return;
+
+  var projects = {
+    portfolio: {
+      title: '个人主页 · 深海数据舱', category: 'PORTFOLIO / VIBE CODING',
+      summary: '从需求构思到上线的个人主页课程项目，用一个可交互的网站呈现个人经历、兴趣和作品。',
+      blocks: [
+        ['项目目标', '把个人介绍从静态简历变成可探索、可互动的线上作品。'],
+        ['实现内容', '单页个人主页、3D 章鱼兴趣画廊、项目展示、反馈表单，以及连接阿里云函数与 DeepSeek 的流式数字分身。'],
+        ['技术与协作', 'HTML、CSS、原生 JavaScript、Three.js、Supabase、GitHub Pages；使用 Vibe Coding 与 AI 协作迭代。'],
+        ['我的收获', '练习了从想法拆解、界面实现、前后端联调到部署维护的完整流程。']
+      ], hrefs: [['在线体验', 'https://wurun-oliva.github.io/vibe-coding-projects/'], ['查看源码', 'https://github.com/wurun-oliva/vibe-coding-projects']]
+    },
+    mindlog: {
+      title: 'Mind Log · 心情记录', category: 'PERSONAL TOOL / IN PROGRESS',
+      summary: '一个用于记录日常情绪、帮助自我觉察的个人工具，目前仍在全面升级中。',
+      blocks: [
+        ['项目目标', '让情绪记录更容易坚持，并通过回顾帮助了解自己的状态变化。'],
+        ['当前状态', '项目正在全面升级，功能与体验仍在调整；这里展示的是项目方向，不代表最终版本。'],
+        ['后续方向', '逐步完善情绪记录、标签管理与趋势回顾体验。']
+      ], hrefs: [['打开当前版本', 'mood-tracker.html']]
+    },
+    fitness: {
+      title: '健身记录', category: 'PERSONAL TOOL',
+      summary: '用轻量记录方式追踪日常训练，帮助观察运动习惯和训练进度。',
+      blocks: [
+        ['项目目标', '把每天的运动内容记录下来，降低回顾训练过程的成本。'],
+        ['实现内容', '记录运动项目、训练内容与进度，并在页面中查看历史记录。'],
+        ['项目特点', '轻量、直接，围绕个人日常使用场景设计。']
+      ], hrefs: [['在线体验', 'sport-tracker.html']]
+    },
+    eeg: {
+      title: 'EEG 运动想象分类', category: 'BCI / COURSE COLLABORATION',
+      summary: '校企合作课程项目，探索在线脑电运动想象解码，项目来源为翔宇医疗。',
+      blocks: [
+        ['项目目标', '从 EEG 信号中识别运动想象类别，逐步推进到在线持续预测与演示。'],
+        ['分类任务', '基于 EEG 脑电信号识别四类运动想象：左手、右手、双脚和舌头。当前展示的波形来自一个 3 秒分析窗口（751 个采样点），包含 22 个 EEG 通道。'],
+        ['已完成工作', '完成 CSP + LDA 离线四分类管线；A01 五折准确率为 75.69% ± 5.57%，使用收缩改进后为 77.78% ± 4.3%。以上为离线评估结果，不代表在线实时表现。'],
+        ['当前阶段', '正在推进在线解码模块，关注滑动窗口持续预测、推理延迟和演示可视化，并逐步验证跨被试泛化。'],
+        ['技术方向', '脑机接口（BCI）、EEG 信号处理、CSP 特征提取与 LDA 分类。']
+      ], image: { src: 'eeg-window-example.png', alt: '22 通道 EEG 三秒窗口波形及一次运动想象分类结果', caption: 'EEG 时间窗示例：上方为 22 通道的 3 秒波形，下方为一次四分类预测示例。单次窗口可视化不代表整体模型准确率。' }, hrefs: []
+    }
+  };
+
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('project-modal-open');
+  }
+  function openModal(key, trigger) {
+    var item = projects[key];
+    if (!item) return;
+    title.textContent = item.title;
+    eyebrow.textContent = item.category;
+    summary.textContent = item.summary;
+    content.replaceChildren();
+    item.blocks.forEach(function(block) {
+      var section = document.createElement('section');
+      section.className = 'project-detail-block';
+      var heading = document.createElement('h3');
+      heading.textContent = block[0];
+      var paragraph = document.createElement('p');
+      paragraph.textContent = block[1];
+      section.append(heading, paragraph);
+      content.appendChild(section);
+    });
+    if (item.image) {
+      var figure = document.createElement('figure');
+      figure.className = 'project-detail-figure';
+      var image = document.createElement('img');
+      image.src = item.image.src;
+      image.alt = item.image.alt;
+      image.loading = 'lazy';
+      var caption = document.createElement('figcaption');
+      caption.textContent = item.image.caption;
+      figure.append(image, caption);
+      content.appendChild(figure);
+    }
+    links.replaceChildren();
+    item.hrefs.forEach(function(link) {
+      var a = document.createElement('a');
+      a.href = link[1];
+      a.textContent = link[0];
+      if (/^https?:/.test(link[1])) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+      links.appendChild(a);
+    });
+    modal.dataset.returnFocus = trigger ? 'true' : 'false';
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('project-modal-open');
+    close.focus();
+  }
+  document.querySelectorAll('.project-detail-trigger').forEach(function(button) {
+    button.addEventListener('click', function() { openModal(button.dataset.project, button); });
+  });
+  close.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(event) { if (event.target === modal) closeModal(); });
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+})();

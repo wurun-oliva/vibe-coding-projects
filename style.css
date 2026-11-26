@@ -1020,6 +1020,11 @@ body { counter-reset: sec; }
 }
 .project-card h3 { font-size: 1.1rem; margin-bottom: 8px; letter-spacing: 0.04em; }
 .project-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 14px; }
+.project-detail-trigger { display:block; width:100%; padding:0; text-align:left; color:inherit; background:transparent; border:0; font:inherit; cursor:pointer; }
+.project-detail-trigger:focus-visible { outline:2px solid var(--cyan); outline-offset:5px; border-radius:8px; }
+.project-detail-hint { display:inline-flex; gap:8px; align-items:center; color:#8bafd1; font:11px var(--font-mono); letter-spacing:.06em; }
+.project-detail-hint b { color:var(--orange); font-size:14px; }
+.project-card:hover .project-detail-hint { color:var(--cyan); }
 .project-links { display: flex; gap: 16px; }
 .project-links .link {
   font-family: var(--font-mono);
@@ -1027,6 +1032,40 @@ body { counter-reset: sec; }
   letter-spacing: 0.06em;
 }
 .project-links .link::before { content: '▸ '; color: var(--orange); }
+.project-modal { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:22px; background:rgba(1,3,24,.78); backdrop-filter:blur(10px); opacity:0; visibility:hidden; transition:opacity .24s,visibility .24s; }
+.project-modal.open { opacity:1; visibility:visible; }
+.project-modal-panel { position:relative; width:min(100%,680px); max-height:min(82vh,760px); overflow:auto; padding:34px clamp(22px,5vw,46px) 38px; border:1px solid rgba(0,229,255,.32); border-radius:18px; background:radial-gradient(500px 220px at 100% 0%,rgba(0,229,255,.09),transparent 70%),linear-gradient(145deg,#0b103b,#050626); box-shadow:0 28px 100px rgba(0,0,0,.58),0 0 38px rgba(0,229,255,.12); transform:translateY(14px) scale(.985); transition:transform .24s; }
+.project-modal.open .project-modal-panel { transform:none; }
+.project-modal-close { position:absolute; top:15px; right:18px; width:36px; height:36px; border:1px solid rgba(255,255,255,.12); border-radius:50%; color:#aab5d4; background:rgba(255,255,255,.04); font-size:23px; cursor:pointer; }
+.project-modal-eyebrow { color:var(--cyan); font:10px var(--font-mono); letter-spacing:.2em; }
+.project-modal-panel h2 { margin:10px 44px 10px 0; color:var(--text); font-size:clamp(1.35rem,4vw,1.8rem); }
+.project-modal-summary { margin-bottom:24px; color:#aab6d4; }
+.project-modal-content { display:grid; gap:16px; }
+.project-detail-block { padding:15px 17px; border:1px solid rgba(0,229,255,.12); border-radius:12px; background:rgba(6,10,43,.55); }
+.project-detail-block h3 { margin-bottom:7px; color:#ffbd8b; font-size:.9rem; }
+.project-detail-block p { color:#b7c1db; font-size:.88rem; line-height:1.75; }
+.project-detail-figure { margin:0; overflow:hidden; border:1px solid rgba(0,229,255,.2); border-radius:12px; background:#f7f8fb; }
+.project-detail-figure img { display:block; width:100%; height:auto; }
+.project-detail-figure figcaption { padding:11px 14px; color:#aebbd8; background:rgba(5,8,35,.96); font-size:.78rem; line-height:1.65; }
+.project-modal-links { display:flex; flex-wrap:wrap; gap:14px; margin-top:22px; }
+.project-modal-links a { padding:8px 13px; border:1px solid rgba(0,229,255,.24); border-radius:999px; font-size:.82rem; }
+body.project-modal-open { overflow:hidden; }
+.project-modal { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:22px; background:rgba(1,3,24,.78); backdrop-filter:blur(10px); opacity:0; visibility:hidden; transition:opacity .24s,visibility .24s; }
+.project-modal.open { opacity:1; visibility:visible; }
+.project-modal-panel { position:relative; width:min(100%,680px); max-height:min(82vh,760px); overflow:auto; padding:34px clamp(22px,5vw,46px) 38px; border:1px solid rgba(0,229,255,.32); border-radius:18px; background:radial-gradient(500px 220px at 100% 0%,rgba(0,229,255,.09),transparent 70%),linear-gradient(145deg,#0b103b,#050626); box-shadow:0 28px 100px rgba(0,0,0,.58),0 0 38px rgba(0,229,255,.12); transform:translateY(14px) scale(.985); transition:transform .24s; }
+.project-modal.open .project-modal-panel { transform:none; }
+.project-modal-close { position:absolute; top:15px; right:18px; width:36px; height:36px; border:1px solid rgba(255,255,255,.12); border-radius:50%; color:#aab5d4; background:rgba(255,255,255,.04); font-size:23px; cursor:pointer; }
+.project-modal-eyebrow { color:var(--cyan); font:10px var(--font-mono); letter-spacing:.2em; }
+.project-modal-panel h2 { margin:10px 44px 10px 0; color:var(--text); font-size:clamp(1.35rem,4vw,1.8rem); }
+.project-modal-summary { margin-bottom:24px; color:#aab6d4; }
+.project-modal-content { display:grid; gap:16px; }
+.project-detail-block { padding:15px 17px; border:1px solid rgba(0,229,255,.12); border-radius:12px; background:rgba(6,10,43,.55); }
+.project-detail-block h3 { margin-bottom:7px; color:#ffbd8b; font-size:.9rem; }
+.project-detail-block p,.project-detail-block li { color:#b7c1db; font-size:.88rem; line-height:1.75; }
+.project-detail-block ul { padding-left:20px; }
+.project-modal-links { display:flex; flex-wrap:wrap; gap:14px; margin-top:22px; }
+.project-modal-links a { padding:8px 13px; border:1px solid rgba(0,229,255,.24); border-radius:999px; font-size:.82rem; }
+body.project-modal-open { overflow:hidden; }
 
 /* ---------- 数字分身：终端窗口 ---------- */
 .twin-section { max-width: none; background: radial-gradient(700px 280px at 50% 0%, rgba(0, 229, 255, 0.075), transparent 72%), rgba(4, 4, 38, 0.55); }

@@ -204,32 +204,60 @@
     <h2>项目</h2>
     <div class="project-grid">
       <article class="project-card reveal">
+        <button class="project-detail-trigger" type="button" data-project="portfolio" aria-label="查看个人主页项目详情">
         <div class="project-tag">个人主页</div>
         <h3>个人主页 V1</h3>
         <p>用 Vibe Coding 方法从 0 到 1 做的个人主页，含数字分身聊天区。</p>
+        <span class="project-detail-hint">查看项目详情 <b>↗</b></span>
+        </button>
         <div class="project-links">
           <a href="https://wurun-oliva.github.io/vibe-coding-projects/" class="link" target="_blank" rel="noopener noreferrer">在线 Demo</a>
           <a href="https://github.com/wurun-oliva/vibe-coding-projects" class="link" target="_blank" rel="noopener noreferrer">源码</a>
         </div>
       </article>
       <article class="project-card reveal">
+        <button class="project-detail-trigger" type="button" data-project="mindlog" aria-label="查看 Mind Log 项目详情">
         <div class="project-tag">记录</div>
         <h3>心理记录 · Mind Log</h3>
-        <p>记录每日心情与情绪变化,蓝橙配色,支持情绪标签与可视化。</p>
+        <p>记录每日心情与情绪变化，探索情绪标签与可视化表达。</p>
+        <span class="project-detail-hint">开发中 · 查看项目详情 <b>↗</b></span>
+        </button>
         <div class="project-links">
           <a href="mood-tracker.html" class="link">在线 Demo</a>
         </div>
       </article>
       <article class="project-card reveal">
+        <button class="project-detail-trigger" type="button" data-project="fitness" aria-label="查看健身记录项目详情">
         <div class="project-tag">记录</div>
         <h3>健身记录</h3>
         <p>每日运动记录,记录训练内容与进度,帮助坚持健身习惯。</p>
+        <span class="project-detail-hint">查看项目详情 <b>↗</b></span>
+        </button>
         <div class="project-links">
           <a href="sport-tracker.html" class="link">在线 Demo</a>
         </div>
       </article>
+      <article class="project-card reveal project-card-eeg">
+        <button class="project-detail-trigger" type="button" data-project="eeg" aria-label="查看 EEG 分类项目详情">
+          <div class="project-tag">脑机接口 · 课程项目</div>
+          <h3>EEG 运动想象分类</h3>
+          <p>探索基于脑电信号的运动想象识别，推进离线分类到在线解码。</p>
+          <span class="project-detail-hint">查看项目详情 <b>↗</b></span>
+        </button>
+      </article>
     </div>
   </section>
+
+  <div class="project-modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle" aria-hidden="true">
+    <div class="project-modal-panel">
+      <button class="project-modal-close" id="projectModalClose" type="button" aria-label="关闭项目详情">×</button>
+      <p class="project-modal-eyebrow" id="projectModalEyebrow">PROJECT / DETAIL</p>
+      <h2 id="projectModalTitle"></h2>
+      <p class="project-modal-summary" id="projectModalSummary"></p>
+      <div class="project-modal-content" id="projectModalContent"></div>
+      <div class="project-modal-links" id="projectModalLinks"></div>
+    </div>
+  </div>
 
   <!-- 数字分身聊天区 -->
   <section id="twin" class="section twin-section">

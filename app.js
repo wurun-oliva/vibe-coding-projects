@@ -484,13 +484,14 @@ document.querySelectorAll('.chip').forEach(function(chip) {
       ], hrefs: [['在线体验', 'https://wurun-oliva.github.io/vibe-coding-projects/'], ['查看源码', 'https://github.com/wurun-oliva/vibe-coding-projects']]
     },
     mindlog: {
-      title: 'Mind Log · 心情记录', category: 'PERSONAL TOOL / IN PROGRESS',
-      summary: '一个用于记录日常情绪、帮助自我觉察的个人工具，目前仍在全面升级中。',
+      title: 'Mind Log · 情绪支持与心情日记', category: 'PERSONAL TOOL / V5.2.0',
+      summary: '把即时情绪支持和轻量心情记录放在一起：需要时先照顾此刻，也可以在之后回看自己的记录。',
       blocks: [
-        ['项目目标', '让情绪记录更容易坚持，并通过回顾帮助了解自己的状态变化。'],
-        ['当前状态', '项目正在全面升级，功能与体验仍在调整；这里展示的是项目方向，不代表最终版本。'],
-        ['后续方向', '逐步完善情绪记录、标签管理与趋势回顾体验。']
-      ], hrefs: [['打开当前版本', 'mood-tracker.html']]
+        ['即时支持', '可以自由表达，也可以快速选择感受；根据当前状态查看调节建议，并自主选择开始、更换或停止。支持感官 grounding、身体放松、温和呼吸、情绪表达、整理思绪和短暂转移注意等方式。'],
+        ['心情日记', '支持快速记录当日心情和近期回顾。记录由用户主动保存，七日视图用于回看，不用连续打卡推动使用。'],
+        ['数据与隐私', '记录保存在当前浏览器，可导出或经确认删除。清除浏览器网站数据可能导致本机记录丢失。'],
+        ['AI 功能说明', '公开静态版使用本地规则提供建议；AI 回应是需单独启动本机服务的实验功能，GitHub Pages 上不启用，也不会把日记内容自动发送到模型。']
+      ], hrefs: [['在线体验', 'mind-log.html']]
     },
     fitness: {
       title: '健身记录', category: 'PERSONAL TOOL',

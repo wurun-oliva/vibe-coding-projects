@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><!--LOCAL_AI_TOKEN-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f3ed">
+<title>Mind Log · 给此刻一点空间</title>
+<style>
+:root{--bg:#f6f3ee;--paper:#fffefa;--ink:#282923;--muted:#77796f;--line:#e8e4dc;--green:#526c5b;--green2:#e8eee8;--coral:#d47e68;--coral2:#f7e9e3;--blue:#e9eef2;--shadow:0 18px 55px #29291f0b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}.shell{max-width:1080px;margin:auto;padding:24px 28px 70px}.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:54px}.brand{display:flex;gap:11px;align-items:center;font-weight:650;letter-spacing:.02em}.mark{width:30px;height:30px;border-radius:11px;background:var(--green);display:grid;place-items:center;color:white;font-size:16px}.top-right{display:flex;align-items:center;gap:18px;color:var(--muted);font-size:13px}.textbtn{border:0;background:none;color:var(--muted);padding:6px}.textbtn:hover{color:var(--ink)}
+main{max-width:760px;margin:0 auto}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:700}.hero{margin-bottom:30px}.hero h1{font-size:clamp(34px,6vw,54px);line-height:1.16;letter-spacing:-.045em;font-weight:570;margin:13px 0 15px}.hero p{color:var(--muted);max-width:540px;margin:0;font-size:16px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:30px;box-shadow:var(--shadow);margin-bottom:18px}.panel h2{font-size:21px;font-weight:600;letter-spacing:-.02em;margin:0 0 8px}.sub{overflow-wrap:anywhere;color:var(--muted);font-size:14px;margin:0 0 22px}.entry-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:15px}.entry-card{border:1px solid var(--line);border-radius:18px;padding:20px;background:#fff;min-height:156px;display:flex;flex-direction:column;align-items:flex-start;text-align:left;transition:.2s}.entry-card:hover,.choice:hover{border-color:#a9b8aa;transform:translateY(-2px)}.entry-card .symbol{font-size:22px;margin-bottom:12px}.entry-card strong{font-size:16px;font-weight:600}.entry-card span:last-child{font-size:13px;color:var(--muted);margin-top:5px}.moods{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.choice{border:1px solid var(--line);background:#fff;border-radius:15px;padding:14px 12px;text-align:left;transition:.2s}.choice .emoji{font-size:20px;display:block;margin-bottom:6px}.choice strong{font-size:14px;font-weight:580}.choice small{display:block;color:var(--muted);font-size:12px;margin-top:2px}.choice.selected{border:1.5px solid var(--green);background:var(--green2)}
+textarea{width:100%;resize:vertical;min-height:125px;border:1px solid var(--line);border-radius:15px;padding:15px;background:#fffefa;outline:none;line-height:1.7}textarea:focus,input:focus{border-color:#8ca08f;box-shadow:0 0 0 3px #526c5b12}input[type=range]{width:100%;accent-color:var(--green)}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.btn{border:0;border-radius:999px;padding:12px 21px;background:var(--green);color:#fff;font-weight:600;transition:.2s}.btn:hover{background:#405748;transform:translateY(-1px)}.btn.secondary{background:var(--green2);color:var(--green)}.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.hidden{display:none!important}.back{border:0;background:none;color:var(--muted);padding:0;margin-bottom:20px}.scoreline{display:flex;justify-content:space-between;align-items:center;margin:15px 0 8px}.score{font-size:34px;font-weight:600;color:var(--green);font-variant-numeric:tabular-nums}.hint{color:var(--muted);font-size:13px}.recommend{background:var(--green2);border-radius:18px;padding:20px;margin:18px 0}.recommend .tag{font-size:11px;color:var(--green);font-weight:700;letter-spacing:.08em}.recommend h3{font-size:21px;margin:6px 0;font-weight:620}.recommend p{margin:0;color:#59645b;font-size:14px}.method-list{display:grid;gap:9px;margin-top:14px}.method{border:1px solid var(--line);background:white;border-radius:14px;padding:13px 15px;text-align:left}.method.active{border-color:var(--green);background:#f4f7f3}.method strong{display:block;font-size:14px}.method small{color:var(--muted)}.step-count{font-size:12px;color:var(--muted);letter-spacing:.08em}.guide{background:#f4f2ec;border-radius:20px;padding:25px;margin:20px 0;text-align:center}.guide .big{font-size:38px;margin-bottom:8px}.guide h3{font-size:22px;margin:4px 0 10px}.guide p{overflow-wrap:anywhere;color:#686a61;margin:0 auto;max-width:460px}.progress{height:4px;background:#e9e6de;border-radius:8px;overflow:hidden;margin:18px 0}.progress span{display:block;height:100%;background:var(--green);width:0;transition:.3s}.chat{display:grid;gap:12px;margin:18px 0}.bubble{padding:14px 16px;border-radius:17px;max-width:88%;background:#f0f1eb}.bubble.user{margin-left:auto;background:var(--green2)}.bubble p{margin:0}.rating{font-size:13px;color:var(--muted)}.rating strong{font-size:20px;color:var(--ink);margin-left:7px}.divider{height:1px;background:var(--line);margin:22px 0}.result{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.resultbox{padding:17px;background:#f5f3ed;border-radius:15px}.resultbox small{color:var(--muted)}.resultbox strong{display:block;font-size:27px;margin-top:5px}.delta{font-size:13px;color:var(--green);margin-top:6px}.notice{font-size:12px;color:var(--muted);margin-top:16px}.history-item{border-top:1px solid var(--line);padding:15px 0}.history-item:first-child{border-top:0}.history-item strong{font-size:14px}.history-item{overflow-wrap:anywhere}.history-item p{color:var(--muted);font-size:13px;margin:3px 0}.empty{color:var(--muted);font-size:14px;padding:18px 0}.footer{max-width:760px;margin:28px auto 0;color:#92938a;font-size:12px;display:flex;justify-content:space-between;gap:15px}.modal{position:fixed;inset:0;background:#20241f66;display:grid;place-items:center;padding:20px;z-index:5}.modalbox{background:var(--paper);border-radius:22px;padding:25px;max-width:520px;width:100%;max-height:85vh;overflow:auto}.modalbox h2{margin-top:0}.pill{display:inline-block;background:var(--coral2);color:#9c5b4b;border-radius:99px;padding:4px 10px;font-size:12px}
+@media(max-width:650px){.shell{padding:17px 16px 45px}.top{margin-bottom:36px}.top-right{gap:8px}.panel{padding:21px;border-radius:20px}.entry-grid{grid-template-columns:1fr}.entry-card{min-height:125px}.moods{grid-template-columns:repeat(2,1fr)}.result{grid-template-columns:1fr 1fr}.footer{display:block}.hero h1{font-size:38px}}
+
+.week-bars{display:flex;align-items:flex-end;gap:9px;height:92px;margin:18px 0 8px}
+.week-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.week-bar{width:100%;max-width:34px;min-height:5px;border-radius:8px 8px 3px 3px;background:#b9c7ba}
+.week-day small{font-size:11px;color:var(--muted)}
+.insight-line{background:#f2f3ed;border-radius:13px;padding:13px 15px;color:#59645b;font-size:13px;margin-top:12px}
+
+/* B: editorial playground — 独立概念样式 */
+:root{--bg:#f4efdf;--paper:#fbf8ef;--ink:#282637;--muted:#666276;--line:#cfc6cd;--green:#55488c;--green2:#e8e0f1;--coral:#c9796f;--coral2:#f4dfd8;--shadow:none}body{background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif}.shell{max-width:1320px;padding:0 5vw 65px}.top{height:74px;border-bottom:2px solid var(--ink);margin-bottom:0}.brand{font:900 25px Georgia;letter-spacing:-.08em}.mark{display:none}.top-right{color:var(--ink)}main{max-width:none}.demo-banner{background:#29263b;color:#fff;padding:9px 14px;margin:18px 0;font-size:12px}.hero{display:grid;grid-template-columns:1fr .8fr;min-height:370px;border-bottom:2px solid var(--ink);margin:0}.hero-copy{padding:60px 4vw 45px 0}.hero h1{font-family:'Songti SC',Georgia,serif;font-size:clamp(48px,6vw,86px);font-weight:600;letter-spacing:-.06em;line-height:1.15}.hero p{color:#555064}.hero-art{background:#c7bdda;display:grid;place-items:center;border-left:2px solid var(--ink);position:relative}.hero-art:before{content:'✳';position:absolute;top:14%;right:13%;font-size:38px;color:#f3d271}.hero-art svg{width:min(65%,290px);filter:drop-shadow(7px 7px 0 #6e62845c);transition:transform .25s}.hero-art[data-mood="焦虑"] svg{transform:rotate(5deg)}.hero-art[data-mood="疲惫"] svg{transform:rotate(-6deg)}.panel{border:0;border-radius:0;background:transparent;padding:32px 0;border-bottom:1px solid var(--ink);margin:0;box-shadow:none}.panel h2{font-family:'Songti SC',Georgia,serif;font-size:26px}.entry-grid{gap:0;border:1.5px solid var(--ink)}.entry-card{border:0;border-radius:0;background:transparent;min-height:145px}.entry-card+ .entry-card{border-left:1.5px solid var(--ink)}.entry-card:hover,.choice:hover{transform:none;background:#e4dced}.moods{gap:8px}.choice{border:1px solid var(--ink);border-radius:5px;background:transparent}.choice.selected{background:#ded3ed;border-color:var(--purple,#55488c)}.btn{background:#55488c}.btn:hover{background:#3d326f}.btn.secondary{background:#e4dced;color:#3d326f}.btn.ghost{border-color:#9891a2}.method{border-radius:4px;background:#f9f5ee}.method.active{border-color:#55488c;background:#e7ddf0}.recommend,.guide,.resultbox,.insight-line{border-radius:4px;background:#e3d9ee}.guide{border:1px solid #55488c}.bubble{background:#e5ddec}.bubble.user{background:#f2dfc7}.modalbox{border:2px solid var(--ink);border-radius:8px;background:#fbf8ef}.footer{max-width:none}.footer span{color:#5d566a}section:not(#home){max-width:820px;margin:45px auto 0}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #d27c6b;outline-offset:3px}.resultSummary{overflow-wrap:anywhere}@media(max-width:700px){.shell{padding:0 5vw 40px}.top{height:64px}.top-right{gap:4px}.hero{display:flex;flex-direction:column;min-height:0}.hero-copy{padding:34px 0}.hero h1{font-size:48px}.hero-art{height:220px;border-left:0;border-top:2px solid var(--ink)}.hero-art svg{width:145px}.entry-grid{grid-template-columns:1fr 1fr}.entry-card{padding:16px 12px;min-height:145px}.moods{grid-template-columns:repeat(2,1fr)}.panel{padding:24px 0}section:not(#home){margin:30px auto 0}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.mascot-wrap{display:grid;place-items:center}.hero-art .mascot-svg{width:min(65%,260px);filter:none}.mascot-body{fill:#68609c}.mascot-top{fill:#484279}.mascot-limb{fill:none;stroke:#51497f;stroke-width:8;stroke-linecap:round}.mascot-tomato .mascot-body{fill:#df6553}.mascot-tomato .mascot-top{fill:#758051}.mascot-tomato .mascot-limb{stroke:#b84e41}.mascot-picker{position:absolute;right:15px;bottom:12px;display:flex;gap:6px}.mascot-picker button{border:1px solid #5b4d72;background:#f8f3eb;color:#332c43;border-radius:999px;padding:6px 12px;min-height:36px}.mascot-picker button[aria-pressed="true"]{background:#403653;color:white}.feedback-companion{display:flex;align-items:center;gap:16px;background:#e8e0f1;padding:10px 16px;margin:12px 0 22px}.feedback-companion .mascot-svg{width:90px;flex:none}.feedback-companion p{margin:0;font-size:14px}.mascot-flower[hidden]{display:none}@media(max-width:700px){.hero-art .mascot-svg{width:145px}.mascot-picker{right:10px;bottom:8px}.feedback-companion .mascot-svg{width:75px}}
+.return-note{display:flex;gap:14px;align-items:center;background:#f3e2aa;border:1px solid #aa9464;padding:18px;margin-bottom:18px}.return-note.hidden{display:none}.return-note-art{width:96px;flex:0 0 96px}.return-note-art svg{width:100%;height:auto}.return-note-copy{min-width:0}.return-note-copy strong{font-family:'Songti SC',Georgia,serif;font-size:19px}.return-note-copy p{margin:6px 0;overflow-wrap:anywhere}.return-note-copy .actions{margin-top:12px}@media(max-width:480px){.return-note{align-items:flex-start;padding:14px;gap:8px}.return-note-art{width:65px;flex-basis:65px}.return-note-copy .actions{gap:8px}.return-note-copy .btn{min-height:44px}}
+.score-companion{display:flex;align-items:center;gap:18px;padding:18px;background:#eee7f2;margin-top:18px}.score-companion.hidden,.score-values .hidden{display:none}.score-companion #resultMascot{width:90px;flex:0 0 90px}.score-companion svg{width:100%;height:auto}.score-companion-content{min-width:0}.score-values{display:flex;flex-wrap:wrap;gap:20px;margin:10px 0}.score-values div{display:flex;align-items:baseline;gap:8px}.score-values strong{font-size:23px}.score-companion p{margin:4px 0}.score-companion .hint{line-height:1.5}@media(max-width:480px){.score-companion{gap:10px;padding:14px}.score-companion #resultMascot{width:65px;flex-basis:65px}.score-values{gap:10px}}
+.support-paths{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}.support-paths.single-path{grid-template-columns:1fr}.support-path{min-height:88px;border:1.5px solid var(--ink);border-radius:5px;background:#f9f5ee;color:var(--ink);padding:15px 17px;text-align:left;transition:background .2s,transform .2s}.support-path:hover{background:#e8e0f1;transform:translateY(-1px)}.support-path.primary{background:#55488c;color:#fff;border-color:#55488c}.support-path.primary:hover{background:#403571}.support-path strong{display:block;font-size:16px;margin-bottom:3px}.support-path small{display:block;font-size:12px;line-height:1.5;color:inherit;opacity:.78}.free-entry-footer{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.ai-response{margin:18px 0 4px;padding:20px 22px;background:#f3e2aa;border:2px solid var(--ink);box-shadow:7px 7px 0 #55488c;position:relative}.ai-response-head{display:flex;align-items:center;gap:12px}.ai-response-head .eyebrow{color:#55488c}.ai-response-head strong{display:block;font-family:'Songti SC',Georgia,serif;font-size:20px;margin-top:1px}.ai-response-mark{width:46px;height:46px;flex:0 0 46px;border-radius:48% 52% 46% 54%;background:#68609c;position:relative;transform:rotate(-3deg)}.ai-response-mark:before{content:'••';position:absolute;left:14px;top:8px;color:#282135;font-size:14px;letter-spacing:5px}.ai-response-mark:after{content:'';position:absolute;left:17px;top:29px;width:13px;height:5px;border-bottom:2px solid #282135;border-radius:0 0 12px 12px}.ai-response-text{font-family:'Songti SC',Georgia,serif;font-size:20px;line-height:1.7;margin:16px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}.ai-recommendation{margin-top:18px;padding:15px 17px;background:#fbf8ef;border:1px solid #8d839f}.ai-recommendation .eyebrow{margin-bottom:3px}.ai-recommendation strong{font-family:'Songti SC',Georgia,serif;font-size:21px}.ai-recommendation small{margin-left:8px;color:var(--muted)}.ai-recommendation p{margin:5px 0 0;color:var(--muted);font-size:13px}.ai-response-loading{background:#e8e0f1;box-shadow:7px 7px 0 #c9796f}.ai-response-loading .ai-response-mark{animation:ai-breathe 1.2s ease-in-out infinite}.ai-response-error{background:#f4dfd8;box-shadow:7px 7px 0 #9e6e68}.ai-response .actions{margin-top:16px}.ai-preview{white-space:pre-wrap;overflow-wrap:anywhere;background:#f1ece2;border-left:4px solid #55488c;padding:12px 14px;max-height:180px;overflow:auto}@keyframes ai-breathe{50%{transform:rotate(3deg) scale(1.06)}}
+@media(max-width:700px){.support-paths{grid-template-columns:1fr}.support-path{min-height:76px}.ai-response{padding:17px 16px;box-shadow:4px 4px 0 #55488c}.ai-response-loading{box-shadow:4px 4px 0 #c9796f}.ai-response-error{box-shadow:4px 4px 0 #9e6e68}.ai-response-text{font-size:18px}.free-entry-footer .btn{min-height:44px}}@media(prefers-reduced-motion:reduce){.ai-response-loading .ai-response-mark{animation:none}}
+.ai-correction{margin-top:18px;padding-top:16px;border-top:1px solid #8d839f}
+.ai-correction label{display:block;font-weight:700;margin-bottom:8px}
+.ai-correction textarea{min-height:76px}
+.ai-correction-recap{overflow-wrap:anywhere;white-space:pre-wrap}
+.ai-correction-status:empty{display:none}
+
+/* The weather journal */
+:root {
+ --bg: #f7f3ed; --paper: #fffbf3; --ink: #211b3b; --muted: #5d556a;
+ --line: #c9bfd2; --green: #473783; --green2: #eae1f3;
+ --serif: 'Songti SC', 'Noto Serif CJK SC', 'SimSun', Georgia, serif;
+}
+/* Cotton-paper fibres. Inline tile keeps the texture available offline. */
+body {
+ background-image:url("data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 width%3D%22246%22 height%3D%22208%22 viewBox%3D%220 0 246 208%22%3E%3Cg fill%3D%22none%22 stroke-linecap%3D%22round%22%3E%3Cpath stroke%3D%22%236e6080%22 stroke-opacity%3D%22.18%22 stroke-width%3D%22.75%22 d%3D%22M9 17l2.3 1m29 7l.9 2.1m23-14l3.2-.9m31 8l1.6 2.1m34-16l2.2 1.5m27 26l2.9-.6m20-21l1.4 1.8m30 7l3.3 1.1M21 51l.7 2.3m29 12l3.3-.4m22-24l2.2-1.3m38 20l1.8 1.6m22-12l2.6.4m36 14l.6 2.8m21-27l2.4 1.4m31 20l3 .8M8 90l3 1.1m24 10l1.3-2.6m29-15l3.5.4m27 24l1.8 1.4m27-33l.6 2.6m33 16l3-.8m24-12l2.7 1.1m39 6l.8 2.8M18 131l2.7-.7m37-10l2 2.7m32 11l2.9-.9m22 20l1.2-2.2m35-28l3.1 1.2m20 24l1.9 1.8m34-29l2.6-.2m26 26l2.1 2.2M10 174l1.2 2.6m27 15l3.1-1.1m29-31l2.1 1.9m18 30l2.7.8m37 5l.9-2.5m29-17l3.4.5m26 13l2.8-.9m28-20l1.2 2.5m18 22l2 1.3%22/%3E%3Cpath stroke%3D%22%23ae7d52%22 stroke-opacity%3D%22.2%22 stroke-width%3D%22.85%22 d%3D%22M19 7l1.5.9m32 26l2.7.5m31-19l2.2 1.1m31 22l.4 2.2m20-18l3.1-1m29-13l1.8 1.9m26 16l2.6-.2m28 22l1.7 1M29 75l3.2-.4m34-18l1.4 2.4m31 14l2.2 1m41-16l2.5-.9m21 21l.9 2.1m34-11l2.4 1.7m30 12l2.7-.5M14 109l1.2 2.2m27 24l2.2.7m29-26l2.9-1.1m28 20l1.4 1.7m35-19l2.5 1m32 6l.8 2.7m32-23l1.7 1.2m29 26l2.5-.4M26 159l2.4 1.2m24 16l1.1-2.3m29-14l2.8.8m22 18l2.2-.5m27-20l1.9 1.8m35 1l3 .4m23-9l1.1 2.2m39 3l2.7-.6m-24 40l2 .5M16 201l2.2-1m50 .5l2.9.8m41-10l1.7 1.6m44 9l2.2-.4%22/%3E%3C/g%3E%3C/svg%3E");
+ background-repeat:repeat;
+}
+.shell {max-width:1240px;padding-inline:clamp(16px,5vw,68px)}
+.top {height:69px;border-bottom:1px solid var(--ink)}
+.brand {font-size:31px;line-height:1}
+.top-right .textbtn {min-height:44px;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.hero {
+ display:grid;grid-template-columns:1fr minmax(0,.95fr);align-items:stretch;
+ gap:clamp(26px,6vw,88px);min-height:0;margin:0;padding:clamp(24px,4.4vw,60px) 0;
+ border-bottom:1px solid var(--ink);
+}
+.hero-copy {align-self:center;padding:0;min-width:0}
+.hero h1 {margin:0 0 23px;font:800 clamp(52px,6.4vw,88px)/1.12 var(--serif);letter-spacing:-.075em}
+.hero h1 em {color:var(--green);font-style:normal}
+.hero p {color:var(--muted);font-size:15px;max-width:26em;line-height:1.7}
+.home-destinations {display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:26px}
+.home-destination {
+ display:grid;grid-template-columns:1fr auto;align-content:start;gap:5px 8px;
+ padding:13px 15px;border:1px solid var(--ink);border-radius:4px;
+ color:var(--ink);text-align:left;text-decoration:none;line-height:1.45;min-width:0;
+}
+.home-destination strong {font-size:16px}
+.home-destination small {grid-column:1/-1;font-size:13px;line-height:1.5}
+.home-destination.support-destination {background:var(--green);border-color:var(--green);color:#fff}
+.home-destination.support-destination:hover,.home-destination.support-destination[aria-expanded="true"] {background:#312460}
+.home-destination.diary-destination {background:#f3e5c9}
+.home-destination.diary-destination:hover {background:#eddbb4}
+.home-destination:focus-visible {outline:3px solid #d27c6b;outline-offset:3px}
+.hero-art {
+ --scene:#bdaee2;--sun:#f5c779;--hatch:#53418a;
+ position:relative;isolation:isolate;min-height:365px;height:auto;
+ background:var(--scene);border:1px solid var(--ink);box-shadow:6px 6px 0 var(--ink);
+ display:grid;grid-template-rows:1fr auto;justify-items:stretch;overflow:hidden;
+}
+.hero-art:before {content:none}
+.hero-art[data-mood="平静"] {--scene:#b7c9b7;--sun:#f1df9d;--hatch:#3e5b4a}
+.hero-art[data-mood="焦虑"],.hero-art[data-mood="烦躁"] {--scene:#e6aa9a;--sun:#f6d791;--hatch:#803d55}
+.hero-art[data-mood="疲惫"],.hero-art[data-mood="空虚"] {--scene:#aeb7d7;--sun:#e6dff5;--hatch:#474a85}
+.hero-art[data-mood="低落"],.hero-art[data-mood="难过"] {--scene:#acbbce;--sun:#dbe5e7;--hatch:#485d7a}
+.hero-art[data-mood="说不清"] {--scene:#ceb8c5;--sun:#f4dab2;--hatch:#745873}
+.weather-print {position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;color:var(--hatch)}
+.weather-disc {
+ position:absolute;top:8%;left:16%;width:66%;aspect-ratio:1;border-radius:50%;
+ background:var(--sun);border:1px solid var(--hatch);
+ background-image:radial-gradient(currentColor .7px,transparent .9px);background-size:7px 7px;
+}
+.weather-orbit {position:absolute;inset:28% 8% 36%;border:1px dashed;border-radius:50%;transform:rotate(-19deg)}
+.weather-star {position:absolute;top:5%;right:9%;font:normal clamp(28px,5vw,65px)/1 Georgia,serif}
+.weather-cloud {
+ position:absolute;width:32%;height:19%;left:-1%;bottom:15%;transform:rotate(-8deg);
+ background:repeating-linear-gradient(-30deg,transparent 0 4px,currentColor 4px 5px);opacity:.74;
+ border-radius:50% 65% 55% 46%;
+}
+.hero-art .mascot-wrap {padding:10px 0 0}
+.hero-art .mascot-svg {
+ width:min(65%,260px);overflow:visible;filter:drop-shadow(5px 5px 0 #30235154);
+}
+.hero-art .mascot-body {fill:#615597}
+.hero-art.mascot-tomato .mascot-body {fill:#da6655}
+.hero-art.previewing .mascot-svg {animation:weather-hop .35s ease-out}
+@keyframes weather-hop {50% {translate:0 -8px}}
+.weather-controls {display:flex;align-items:center;justify-content:space-between;gap:6px;padding:9px 12px;border-top:1px solid var(--ink);background:var(--paper)}
+.weather-controls .mascot-picker {position:static}
+.weather-controls button {
+ min-height:44px;white-space:nowrap;font-size:13px;border:1px solid var(--ink);border-radius:4px;
+ color:var(--ink);background:transparent;padding:5px 11px;
+}
+.weather-controls button[aria-pressed="true"] {background:var(--ink);color:white}
+.weather-controls button:hover:not([aria-pressed="true"]) {background:var(--green2)}
+.sr-only {position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.support-panel {
+ max-width:none;margin:23px 0 0;padding:clamp(16px,3vw,30px);
+ background:#eee7f4;border:1px solid var(--green);border-radius:4px;
+}
+.support-panel .sub {margin:1px 0 13px}
+.support-panel .textbtn {min-height:44px;padding-inline:10px}
+.support-panel .entry-grid {border:0;gap:8px;grid-template-columns:1fr 1fr}
+.support-panel .entry-card {
+ display:flex;flex-direction:row;align-items:center;gap:8px;
+ padding:8px 12px;min-height:48px;border:1px solid var(--green);border-radius:4px;
+ background:var(--paper);color:var(--ink);
+}
+.support-panel .entry-card .symbol {margin:0;font-size:17px;color:var(--green)}
+.support-panel .entry-card strong {font-size:14px;line-height:1.4}
+.support-panel .entry-card:hover,.support-panel .entry-card[aria-expanded="true"] {background:var(--green2)}
+.entry-workspace {padding:19px 0 0;max-width:none;border:0}
+.diary-shelf {margin:23px 0 0;padding:0 clamp(13px,3vw,30px);border:1px solid #c5ad83;background:#faf4e6;border-radius:4px}
+.diary-shelf #dailyPanel {border-color:#c5ad83;scroll-margin-top:14px}
+.diary-shelf #weeklyPanel {border-bottom:0}
+.diary-shelf #weeklyPanel h2 {font-size:21px}
+.composer-label {display:block;font:700 22px var(--serif);margin:0 0 10px}
+#story {background:var(--paper);border-color:var(--ink);border-radius:5px}
+.panel h2,section:not(#home) h1 {font-family:var(--serif)}
+#dailyPanel .moods {grid-template-columns:repeat(6,minmax(0,1fr))}
+#dailyPanel .choice {min-height:82px;background:var(--paper)}
+#dailyPanel .choice.selected {background:var(--green2)}
+#continuityPanel,#weeklyPanel {padding-block:25px}
+.week-bars {
+ display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;
+ height:auto;margin:13px 0 9px;
+}
+.week-day {
+ min-height:58px;justify-content:center;align-items:center;gap:3px;min-width:0;
+ border:1px solid var(--line);border-radius:4px;background:var(--paper);color:var(--ink);
+}
+.week-day[aria-pressed="true"] {border-color:var(--green);box-shadow:inset 0 -3px var(--green);background:var(--green2)}
+.week-day:not([aria-pressed="true"]):hover {border-color:var(--green)}
+.week-day .week-bar {
+ display:grid;place-items:center;width:23px;height:23px;min-height:0;
+ border-radius:50%;background:transparent;color:var(--green);font-size:16px;
+}
+.week-day[data-recorded="true"] .week-bar {background:#efe0b4}
+.week-detail {display:flex;flex-wrap:wrap;gap:3px 9px;min-height:32px;padding:4px 0;color:var(--muted)}
+.week-detail-date {color:var(--ink)}
+.ai-response {background:var(--paper);border:1px solid var(--ink);box-shadow:5px 5px 0 #aa9cc6}
+.ai-response-loading {background:#eee6f3}
+.ai-response-error {background:#f8e6de;box-shadow:5px 5px 0 #b47d74}
+.ai-response-mark {background:#eae1f3;display:grid;place-items:center;transform:none}
+.ai-response-mark:before,.ai-response-mark:after {content:none}
+.ai-response-mark svg {width:43px;height:43px}
+.ai-response-text {font-family:var(--serif);font-size:clamp(18px,2.3vw,23px)}
+.ai-recommendation {background:#f3edf7;border:0;border-left:3px solid var(--green);margin-top:17px;padding:11px 15px}
+.guide {background:#eee5f2;border-color:var(--ink)}
+.guide .big {color:var(--green)}
+.guide h3 {font-family:var(--serif)}
+.footer {align-items:center}
+.footer .textbtn {min-height:44px}
+@media(max-width:840px) {
+ #dailyPanel .moods {grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:700px) {
+ .top {height:59px}
+ .brand {font-size:27px}
+ .hero {grid-template-columns:minmax(0,1fr);gap:19px;padding:26px 0}
+ .hero h1 {font-size:clamp(42px,11vw,66px);margin-bottom:13px}
+ .hero p {font-size:14px}
+ .home-destinations {margin-top:15px}
+ .home-destination {padding:10px 9px}
+ .hero-art {min-height:213px;box-shadow:4px 4px 0 var(--ink)}
+ .hero-art .mascot-svg {width:145px}
+ .weather-disc {top:3%;left:25%;width:50%}
+ .weather-controls {padding:5px 8px}
+ .weather-controls button {padding-inline:8px}
+ #dailyPanel .choice {min-height:75px;padding:9px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top">
+ <div class="brand"><div class="mark">m</div><span>mind log</span></div>
+ <div class="top-right"><span id="savedCount">0 次体验</span><button class="textbtn" onclick="openHistory()">我的记录 ↗</button></div>
+</header>
+<main>
+<section id="home">
+ <div class="hero">
+  <div class="hero-copy">
+   <h1>今天心里<br><em>是什么天气？</em></h1>
+   <div class="home-destinations">
+    <button type="button" class="home-destination support-destination" id="openSupport" aria-expanded="false" aria-controls="supportPanel" aria-labelledby="supportLabel" aria-describedby="supportSummary" onclick="showSupport()">
+     <strong id="supportLabel">情绪急救</strong><span aria-hidden="true">↗</span>
+     <small id="supportSummary">有点难受？找个小练习缓一缓。</small>
+    </button>
+    <a class="home-destination diary-destination" id="openDiary" href="#dailyPanel" aria-labelledby="diaryLabel" aria-describedby="diarySummary">
+     <strong id="diaryLabel">心情日记</strong><span aria-hidden="true">↓</span>
+     <small id="diarySummary">记下今天的心情，改天再回看。</small>
+    </a>
+   </div>
+  </div>
+  <div class="hero-art" id="heroArt" data-mood="开心">
+   <div class="weather-print" aria-hidden="true"><span class="weather-disc"></span><span class="weather-orbit"></span><span class="weather-star">✷</span><span class="weather-cloud"></span></div>
+   <div class="mascot-wrap"><svg class="mascot-svg" viewBox="0 0 300 300" aria-hidden="true"><path class="mascot-limb mascot-legs" d="M121 227 Q116 250 106 257 M179 227 Q184 250 194 257"/><ellipse class="mascot-body" cx="150" cy="139" rx="100" ry="96"/><path class="mascot-limb mascot-arms" d="M64 161 Q38 177 43 201 M236 161 Q262 177 257 201"/><path class="mascot-top" d="M110 51 L105 28 L129 39 L149 20 L170 39 L194 28 L188 51 Q150 61 110 51Z"/><g class="mascot-eyes" fill="#282135"><ellipse cx="127" cy="152" rx="4.5" ry="6"/><ellipse cx="173" cy="152" rx="4.5" ry="6"/></g><path class="mascot-mouth" d="M143 169 Q150 176 157 169" fill="none" stroke="#282135" stroke-width="5" stroke-linecap="round"/><g class="mascot-flower" hidden><circle cx="250" cy="82" r="12" fill="#f3d17e"/><circle cx="250" cy="82" r="5" fill="#b67b4e"/></g></svg></div>
+   <div class="weather-controls">
+    <div class="mascot-picker" role="group" aria-label="选择陪伴角色"><button type="button" data-mascot="blueberry" aria-pressed="true">蓝莓</button><button type="button" data-mascot="tomato" aria-pressed="false">西红柿</button></div>
+    <button class="weather-toggle" type="button" id="weatherToggle" onclick="previewNextWeather()"><span aria-hidden="true">↻</span> 换个表情</button>
+   </div>
+   <span id="weatherAnnouncement" class="sr-only" role="status"></span>
+  </div>
+ </div>
+ <div class="panel support-panel hidden" id="supportPanel" role="region" aria-labelledby="supportTitle">
+  <div class="row"><h2 id="supportTitle" tabindex="-1">情绪急救</h2><button class="textbtn" type="button" onclick="hideSupport();openSupport.focus()">收起</button></div>
+  <p class="sub">写一句，或者只选一种感受。接下来可以看适合当下的小练习。</p>
+  <div class="entry-grid" role="group" aria-label="选择开始方式">
+   <button type="button" class="entry-card" id="openFreeEntry" aria-expanded="false" aria-controls="freeEntry" onclick="showFree()">
+    <span class="symbol" aria-hidden="true">✎</span><strong>说说发生了什么</strong>
+   </button>
+   <button type="button" class="entry-card" id="openMoodEntry" aria-expanded="false" aria-controls="moodEntry" onclick="showMoods()">
+    <span class="symbol" aria-hidden="true">◌</span><strong>先选一种感受</strong>
+   </button>
+  </div>
+  <div class="panel entry-workspace hidden" id="entryWorkspace">
+  <div id="freeEntry" class="hidden"><label class="composer-label" for="story">写下你想说的</label><textarea id="story" oninput="clearAiResponseOnEdit()" placeholder="比如：今天开会被打断，到现在还有点堵。"></textarea><div id="aiNotice" class="ai-response hidden"><div class="ai-response-head"><span class="ai-response-mark" id="aiReplyMascot" aria-hidden="true"></span><div><span class="eyebrow">由 AI 生成</span><strong id="aiResponseTitle">正在写回应</strong></div></div><p id="aiCorrectionRecap" class="hint ai-correction-recap hidden"></p><p id="aiResponseText" class="ai-response-text" role="status"></p><div id="aiRecommendation" class="ai-recommendation hidden"><div class="eyebrow">可以试试</div><strong id="aiMethodName"></strong><small id="aiMethodMeta"></small><p id="aiMethodReason"></p></div><div id="aiResponseActions" class="actions hidden"><button id="aiPrimaryAction" class="btn" onclick="acceptAiRecommendation()">开始试试</button><button id="aiChangeAction" class="btn ghost" onclick="changeAiRecommendation()">换一种方式</button><button id="aiCorrectAction" aria-controls="aiCorrectionPanel" aria-expanded="false" class="btn ghost" onclick="correctAiUnderstanding()">不是这个意思</button><button class="btn ghost" onclick="pauseAfterAi()">先到这里</button></div>
+    <div id="aiCorrectionPanel" class="ai-correction hidden">
+     <label for="aiCorrectionText">哪一点理解偏了？</label>
+     <textarea id="aiCorrectionText" maxlength="500" rows="2" placeholder="比如：不是身体累，是这件事想不明白"></textarea>
+     <p id="aiCorrectionStatus" class="hint ai-correction-status" role="status"></p>
+     <div class="actions">
+      <button class="btn" id="aiCorrectionNext" onclick="openCorrectionConsent()">按这句重新回应</button>
+      <button class="btn ghost" onclick="continueFromText(true)">直接看调节建议</button>
+      <button class="btn ghost" onclick="closeAiCorrection()">取消补充</button>
+     </div>
+    </div>
+   </div><div id="supportPaths" class="support-paths" aria-label="选择下一步"><button id="aiReplyButton" class="support-path primary" type="button" onclick="openAiConsent()"><strong>先听一句回应</strong><small>由 AI 根据这段话回复</small></button><button class="support-path" type="button" onclick="continueFromText(true)"><strong>直接看调节建议</strong><small>这段话留在本机</small></button></div><div class="free-entry-footer"><button class="btn ghost" onclick="closeEntry()">返回</button></div></div>
+  <div id="moodEntry" class="hidden"><h2>现在更像哪一种？</h2><div class="moods" id="moodGrid"></div><p class="hint">想对照练习前后的感受，可以先评分；也可以直接看建议。</p><div class="actions"><button class="btn" id="moodDirect" disabled onclick="continueFromMood(true)">看看可以怎么做</button><button class="btn secondary" id="moodNext" disabled onclick="continueFromMood()">先给感受评分（可选）</button><button class="btn ghost" onclick="closeEntry()">返回</button></div></div>
+  </div>
+ </div>
+ <div class="diary-shelf" role="region" aria-labelledby="diaryTitle">
+ <div class="panel" id="dailyPanel" tabindex="-1">
+  <h2 id="diaryTitle">心情日记</h2><p class="sub">好心情、坏心情都可以记。选好后，点「保存心情」。</p>
+  <div class="moods" id="dailyMoodGrid">
+   <button class="choice" onclick="quickPulse('平静','☼',this)"><span class="emoji">☼</span><strong>平静</strong><small>还不错</small></button>
+   <button class="choice" onclick="quickPulse('愉快','✿',this)"><span class="emoji">✿</span><strong>愉快</strong><small>心情不错</small></button>
+   <button class="choice" onclick="quickPulse('焦虑','◌',this)"><span class="emoji">◌</span><strong>焦虑</strong><small>有些担心</small></button>
+   <button class="choice" onclick="quickPulse('低落','☁',this)"><span class="emoji">☁</span><strong>低落</strong><small>有点难过</small></button>
+   <button class="choice" onclick="quickPulse('疲惫','☾',this)"><span class="emoji">☾</span><strong>疲惫</strong><small>需要休息</small></button>
+   <button class="choice" onclick="quickPulse('复杂','？',this)"><span class="emoji">？</span><strong>说不清</strong><small>混合的感受</small></button>
+  </div>
+  <div class="row" style="margin-top:14px"><span class="hint" id="pulseStatus" role="status"></span><button class="btn secondary" id="pulseSave" disabled onclick="savePulse()">保存心情</button></div>
+ </div>
+ <div class="panel" id="weeklyPanel">
+  <div class="row"><h2>最近七天</h2><span class="hint" id="weekCount">0 条状态</span></div>
+  <div id="weeklyContent" class="sub" style="margin:8px 0 0">当你开始记录，这里会逐渐呈现近期状态变化，而不只是记录次数。</div>
+ </div>
+ </div>
+ <div class="panel" id="continuityPanel">
+  <h2>上次试过的练习</h2>
+  <div id="continuityContent" class="sub" style="margin:8px 0 0">保存一次体验后，可以来这里再试那种方式。</div>
+ </div>
+</section>
+
+<section id="baseline" class="hidden">
+ <button class="back" onclick="goHome()">← 返回</button>
+ <h1 style="font-size:34px;margin:10px 0">此刻的感受有多强烈？</h1><p class="sub">选一个最接近的数字，或者跳过。</p>
+ <div class="panel"><div class="scoreline"><span class="hint">0 · 比较平静</span><span class="score" id="beforeValue">5</span><span class="hint">10 · 非常强烈</span></div><input id="beforeRange" type="range" min="0" max="10" value="5" oninput="beforeValue.textContent=this.value"><div class="actions"><button class="btn" onclick="toRecommendation()">继续</button><button class="btn ghost" onclick="skipBefore()">跳过评分</button></div></div>
+</section>
+
+<section id="recommend" class="hidden">
+ <button class="back" onclick="backFromRecommendation()">← 返回</button>
+ <h1 style="font-size:34px;margin:10px 0">选一个方式试试</h1><p class="sub">可以用这条建议，也可以从下面挑别的。</p>
+ <div class="panel"><div id="returnSuggestion" class="return-note hidden"><div id="returnMascot" class="return-note-art" aria-hidden="true"></div><div class="return-note-copy"><strong>留给你的一张小纸条</strong><p id="returnDetail"></p><div class="actions"><button class="btn secondary" onclick="startMethod()">再试一次</button><button class="btn ghost" onclick="focusMethods()">换一种方式</button><button class="btn ghost" onclick="ignoreRecommendationHistory()">这次情况不同</button></div></div></div><div class="recommend"><div class="tag" id="recTag">当前推荐 · 基于规则</div><h3 id="recTitle">感官 grounding</h3><p id="recReason"></p><p id="methodDescription" class="hint"></p><button id="ignoreHistory" class="textbtn hidden" onclick="ignoreRecommendationHistory()">这次情况不同，不参考这条记录</button></div>
+ <details id="methodChoices"><summary>换一种方式</summary><div class="method-list" id="methodList"></div></details>
+ <div class="actions"><button class="btn" id="startMethodButton" onclick="startMethod()">开始体验</button><button class="btn ghost" onclick="goHome()">暂时不做</button></div></div>
+</section>
+
+<section id="practice" class="hidden">
+ <button class="back" onclick="showSection(&quot;recommend&quot;)">← 返回选择</button>
+ <h1 style="font-size:34px;margin:10px 0" id="practiceTitle">给自己一点空间</h1><p class="sub" id="practiceIntro"></p>
+ <div class="panel">
+  <div class="row"><span class="step-count" id="stepCount"></span><span class="pill">可以随时结束</span></div><div class="progress"><span id="progressBar"></span></div>
+  <div id="stepMode"><div class="guide"><div class="big" id="stepEmoji">◌</div><h3 id="stepHeading"></h3><p id="stepText"></p></div><div class="actions"><button class="btn" id="stepNext" onclick="nextStep()">下一步</button><button class="btn ghost" onclick="finishPractice()">结束练习</button></div></div>
+  <div id="chatMode" class="hidden"><div class="chat" id="chatLog"></div><textarea id="chatInput" rows="3" placeholder="可以只写一点点，也可以说“我不知道”"></textarea><div class="actions"><button class="btn" onclick="sendChat()">发送</button><button class="btn ghost" onclick="finishPractice()">先到这里</button></div></div>
+ </div>
+</section>
+
+<section id="checkin" class="hidden">
+ <h1 style="font-size:34px;margin:10px 0">现在感觉怎么样？</h1><p class="sub">按实际感受选就好，评分可以跳过。</p>
+ <div class="panel"><div class="feedback-companion"><div id="feedbackMascot" aria-hidden="true"></div><p id="mascotFeedbackText" aria-live="polite">不必急着改变，按自己的感受选择。</p></div><strong>刚才的方式对你有什么影响？</strong><div class="method-list"><button class="method" onclick="feedbackChoice('better')">好一些了</button><button class="method" onclick="feedbackChoice('same')">没有明显变化</button><button class="method" onclick="feedbackChoice('worse')">感觉更难受了</button><button class="method" onclick="feedbackChoice('skip')">不想回答</button></div><div id="feedbackOptions" class="hidden"><p id="feedbackMessage" class="sub"></p><div class="actions" id="feedbackActions"></div></div><details><summary>记录结束后的评分和感受（可选）</summary><div class="scoreline"><span class="hint">0 · 比较平静</span><span class="score" id="afterValue">4</span><span class="hint">10 · 非常强烈</span></div><input id="afterRange" type="range" min="0" max="10" value="4" oninput="afterValue.textContent=this.value"><label class="hint" for="afterNote">如果愿意，也可以说说刚才的体验</label><textarea id="afterNote" rows="3" style="margin-top:8px;min-height:85px" placeholder="例如：稍微放松了一点，或者这个方法让我有点不自在……"></textarea><div class="actions"><button class="btn" onclick="submitCheckin()">完成</button><button class="btn ghost" onclick="submitCheckin(true)">跳过评分</button></div></details><div class="actions"><button class="btn ghost" onclick="goHome()">不保存，结束体验</button></div></div>
+</section>
+
+<section id="result" class="hidden">
+ <h1 id="resultHeading" style="font-size:34px;margin:10px 0">这次体验</h1><p class="sub" id="resultIntro">按自己的需要决定下一步。</p><div id="worseActions" class="actions hidden"><button class="btn" onclick="goHome()">不保存，结束</button><button class="btn secondary" onclick="showSection(&quot;recommend&quot;);focusMethods()">换一种方式</button></div>
+ <div class="panel"><div class="row"><strong>这次体验</strong><span class="pill" id="resultMethod"></span></div><div class="insight-line" id="resultSummary" style="white-space:pre-wrap;overflow-wrap:anywhere"></div><p id="nextReference" class="hint hidden"></p><div id="scoreCompanion" class="score-companion hidden"><div id="resultMascot" aria-hidden="true"></div><div class="score-companion-content"><strong>你记录的感受强度</strong><div class="score-values"><div id="beforeScoreItem"><span>开始前</span><strong id="resultBefore">—</strong></div><div id="afterScoreItem"><span>结束后</span><strong id="resultAfter">—</strong></div></div><p id="resultDelta" class="hint"></p><p id="resultMessage" class="hint"></p></div></div><div class="divider"></div><details><summary>可选：继续探索</summary><p class="sub" style="margin:5px 0 14px">如果现在只想离开，也完全可以。</p><div class="method-list"><button class="method" onclick="explore('plan')"><strong>理清问题，找一个可行的下一步</strong><small>把困扰拆小，不急着一次解决全部</small></button><button class="method" onclick="explore('self')"><strong>理解自己为什么会有这样的反应</strong><small>探索感受背后可能在意的事情</small></button><button class="method" onclick="explore('past')"><strong>联系过去的经历</strong><small>看看是否有值得留意的重复情境</small></button></div></details><div id="attemptOptions" class="hidden"><p id="attemptSummary" class="hint"></p><label><input type="checkbox" id="saveAttempts"> 同时保存之前尝试的方法和反馈（不用于未来推荐）</label></div><div class="divider"></div><label for="preferenceChoice">对这个方法的个人偏好（可选）</label><select id="preferenceChoice"><option value="">不记录偏好</option><option value="like">我认可这个方法适合我</option><option value="avoid">我认为这个方法不适合我</option></select><p><label><input type="checkbox" id="allowFuture" onchange="updateConsentMessage()"> 允许将本次体验用于未来推荐（可随时在记录中撤回）</label></p><p id="consentMessage" class="hint"></p><div class="actions"><button class="btn" onclick="saveAndHome()">保存并结束</button><button class="btn ghost" onclick="goHome()">不保存，结束</button><button class="btn ghost" onclick="openHistory()">查看我的记录</button></div><p class="notice">评分只是你此刻的主观感受，不是医学测量，也不能单独证明某种方法有效。</p></div>
+</section>
+
+<section id="explore" class="hidden">
+ <button class="back" onclick="showSection('result')">← 返回本次体验</button>
+ <h1 style="font-size:34px;margin:10px 0" id="exploreTitle"></h1><p class="sub" id="exploreDesc"></p>
+ <div class="panel"><div id="explorePrompt" style="font-size:17px;margin-bottom:15px"></div><textarea id="exploreAnswer" placeholder="可以写几句话，也可以留空。"></textarea><div class="actions"><button class="btn" onclick="saveExploration()">保存这部分</button><button class="btn ghost" onclick="saveAndHome()">先结束</button></div></div>
+</section>
+</main>
+<footer class="footer"><button class="textbtn" onclick="showSafety()">需要紧急支持？</button><span>日记保存在当前浏览器</span><button class="textbtn" onclick="openSettings()">数据与隐私</button></footer>
+</div>
+<div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()"><div class="modalbox" id="modalContent"></div></div>
+<script>
+const KEY='mindlog_v3_sessions';
+const moods=[['焦虑','◌','心里悬着、停不下来'],['难过','☁','低落、委屈或失望'],['烦躁','⌁','容易生气、被打扰'],['疲惫','☾','没力气、不想动'],['空虚','○','麻木、提不起兴趣'],['说不清','？','只知道现在不太好']];
+const methods={
+ grounding:{name:'感官 grounding',type:'steps',reason:'当思绪很满或有些飘忽时，把注意力轻轻带回眼前的环境，可能比继续分析更容易开始。',intro:'不需要做得标准。只留意让你感到舒服的事物；任何步骤都可以跳过。',steps:[['看一看','慢慢环顾周围，找出 5 样你看得见的东西。','◉'],['触碰一下','留意 4 种触感：衣服、椅面、桌面，或脚踩地面的感觉。','✋'],['听一听','辨认 3 种声音。远处的、近处的都可以。','♫'],['感受气味','留意 2 种气味；如果没有明显气味，跳过也没关系。','≈'],['回到此刻','感受双脚与地面的接触，轻轻告诉自己：我正在这里。','⌂']]},
+ relax:{name:'身体放松',type:'steps',reason:'如果你感到紧绷或疲惫，可以先不处理问题，给身体一点松动的空间。',intro:'只做舒服的幅度。如果任何动作让你不适，就跳过。',steps:[['找到支撑','让身体找到一个相对舒服的姿势，感受椅子或地面对你的支撑。','⌂'],['松开肩膀','轻轻抬起肩膀，再慢慢放下。不需要用力。','↓'],['放松下颌','让牙齿稍稍分开，舌头自然放松，留意脸部是否紧绷。','◡'],['伸展一下','如果舒服，轻轻活动手指、手腕或脖子；也可以保持不动。','↝'],['停留片刻','给自己十几秒，不需要完成任何事。','○']]},
+ breathe:{name:'温和呼吸',type:'steps',reason:'如果你愿意把注意力放在呼吸上，可以用自然、不过度用力的呼吸节奏稍作停留。',intro:'不需要深呼吸或憋气。保持自然呼吸；如果头晕或不舒服，马上恢复平常呼吸并结束。',steps:[['先观察','不改变呼吸，只留意空气进出时身体的感觉。','≈'],['轻轻呼气','下一次呼气时，让它自然地稍微慢一点，不要刻意拉长。','↓'],['保持自然','让吸气自己发生。不要追求固定节拍。','↑'],['再观察几次','继续自然呼吸几轮，注意身体是否有一点变化。','◌'],['结束','把注意力带回周围，按自己的节奏结束。','☼']]},
+ express:{name:'情绪表达',type:'chat',reason:'如果你更需要被听见，而不是立刻做练习，我们可以先给感受一点表达的空间。',intro:'不用组织得很完整。我会用简短的问题陪你把感受说清楚。',prompts:['如果只说一件事，现在最占据你心里的是什么？','这件事让你最难受的部分是什么？','如果这种感受在提醒你什么，它可能在提醒什么？']},
+ sort:{name:'整理思绪',type:'chat',reason:'如果脑子里有很多想法缠在一起，可以先把发生的事、你的感受和担心分开看。',intro:'我们不急着判断对错，只试着把混在一起的内容拆开。',prompts:['先只描述发生了什么：如果像摄像机一样记录，会看到什么？','你对这件事的感受是什么？脑中出现了什么解释或担心？','眼下最需要被处理的一小部分是什么？']},
+ shift:{name:'短暂转移注意',type:'steps',reason:'如果现在不想继续想这件事，可以短暂做一件低负担、具体的小事，让注意力休息一下。',intro:'可以给自己一点休息。只选你愿意且方便做的动作，也可以不做。',steps:[['选一个小动作','喝几口水、站起来伸展，或走到窗边看看。','☼'],['只做这一件事','暂时不同时刷手机或处理其他任务。','○'],['留意周围','看看光线、颜色或远处的景物，不必刻意分析。','⌂'],['给自己一点时间','停留一两分钟，按自己的节奏。','≈'],['回来看看','现在是否愿意继续处理问题？不愿意也可以。','↺']]}
+};
+let state={text:'',mood:'',before:null,after:null,method:'grounding',step:0,chatIndex:0,chatAnswers:[],note:'',explore:null,exploration:'',startedAt:null,entrySource:null};
+let storageProblem=false;
+function sessions(){try{const raw=localStorage.getItem(KEY);const value=raw===null?[]:JSON.parse(raw);if(!Array.isArray(value)||value.some(x=>!x||typeof x!=='object'||Array.isArray(x)))throw new Error('invalid records');storageProblem=false;return value}catch(e){storageProblem=true;return null}}
+function storageWarning(){alert('无法读取记录，原始数据未更改。请检查浏览器存储设置或恢复备份。')}
+function saveSessions(a){if(sessions()===null){storageWarning();return false}try{localStorage.setItem(KEY,JSON.stringify(a));updateCount();if(!document.getElementById('home').classList.contains('hidden'))renderHomeInsights();return true}catch(e){alert('记录未能保存。请检查浏览器存储空间或隐私设置后重试。');return false}}
+function updateCount(){let a=sessions();document.getElementById('savedCount').textContent=a===null?'记录暂时无法读取':a.filter(s=>s.type!=='pulse').length+' 次体验'}
+function showSection(id){['home','baseline','recommend','practice','checkin','result','explore'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}
+function goHome(){renderHomeInsights();state={text:'',mood:'',before:null,after:null,method:'grounding',step:0,chatIndex:0,chatAnswers:[],note:'',explore:null,exploration:'',startedAt:null,entrySource:null};hideSupport();showSection('home')}
+function showSupport(moveFocus = true) {
+  supportPanel.classList.remove('hidden');
+  openSupport.setAttribute('aria-expanded', 'true');
+  if (moveFocus) supportTitle.focus();
+}
+function hideSupport() {
+  hideEntry();
+  supportPanel.classList.add('hidden');
+  openSupport.setAttribute('aria-expanded', 'false');
+}
+function showFree() {
+  openEntry(freeEntry, openFreeEntry);
+  const aiReady = Boolean(document.querySelector('meta[name="local-ai-token"]')?.content);
+  aiReplyButton.classList.toggle('hidden', !aiReady);
+  supportPaths.classList.toggle('single-path', !aiReady);
+  story.focus();
+}
+function showMoods() {
+  openEntry(moodEntry, openMoodEntry);
+  state.mood = '';
+  moodDirect.disabled = true;
+  moodNext.disabled = true;
+  moodGrid.innerHTML = moods.map(([name, symbol, description]) =>
+    `<button class="choice" aria-pressed="false" onclick="selectMood('${name}',this)"><span class="emoji" aria-hidden="true">${symbol}</span><strong>${name}</strong><small>${description}</small></button>`
+  ).join('');
+  moodGrid.querySelector('button').focus();
+}
+function openEntry(panel, trigger) {
+  hideEntry();
+  showSupport(false);
+  entryWorkspace.classList.remove('hidden');
+  panel.classList.remove('hidden');
+  trigger.setAttribute('aria-expanded', 'true');
+}
+function hideEntry() {
+  entryWorkspace.classList.add('hidden');
+  freeEntry.classList.add('hidden');
+  moodEntry.classList.add('hidden');
+  openFreeEntry.setAttribute('aria-expanded', 'false');
+  openMoodEntry.setAttribute('aria-expanded', 'false');
+  clearAiResponseOnEdit();
+}
+function closeEntry() {
+  const trigger = freeEntry.classList.contains('hidden') ? openMoodEntry : openFreeEntry;
+  hideEntry();
+  trigger.focus();
+}
+function selectMood(mood, button) {
+  state.mood = mood;
+  moodDirect.disabled = false;
+  moodNext.disabled = false;
+  for (const choice of moodGrid.querySelectorAll('.choice')) {
+    const selected = choice === button;
+    choice.classList.toggle('selected', selected);
+    choice.setAttribute('aria-pressed', String(selected));
+  }
+}
+function continueFromText(direct=false){state.text=story.value.trim();if(!state.text){story.focus();return}state.mood='';state.entrySource='text';if(/自杀|轻生|结束自己的生命|杀死自己|伤害自己/.test(state.text)){showSafety();return}hideEntry();if(direct)skipBefore();else showSection('baseline')}
+function continueFromMood(direct=false){if(!state.mood)return;state.text='';state.entrySource='mood';hideEntry();if(direct)skipBefore();else showSection('baseline')}
+let aiRequestId=0,aiSuggestedMethod=null,aiSuggestedReason='';
+let acceptedCorrection = '';
+function setAiResponse(kind,title,text,suggestion=null){const method=suggestion?.method&&methods[suggestion.method]?suggestion.method:null;aiSuggestedMethod=method;aiSuggestedReason=method&&typeof suggestion.reason==='string'?suggestion.reason:'';aiNotice.className=`ai-response ai-response-${kind}`;aiNotice.setAttribute('aria-busy',kind==='loading'?'true':'false');aiResponseTitle.textContent=title;aiResponseText.textContent=text;aiRecommendation.classList.toggle('hidden',!method);if(method){aiMethodName.textContent=methods[method].name;aiMethodMeta.textContent=methods[method].type==='steps'?'约 2 分钟':'按自己的节奏';aiMethodReason.textContent=aiSuggestedReason}aiResponseActions.classList.toggle('hidden',kind==='loading');aiPrimaryAction.textContent=kind==='success'&&method?'开始试试':'直接看调节建议';aiChangeAction.classList.toggle('hidden',kind!=='success'||!method);aiCorrectAction.setAttribute('aria-expanded','false');aiCorrectAction.classList.toggle('hidden',kind!=='success');supportPaths.classList.toggle('hidden',kind!=='loading');aiReplyButton.disabled=kind==='loading'}
+function clearAiResponseOnEdit() {
+  aiRequestId++;
+  aiSuggestedMethod = null;
+  aiSuggestedReason = '';
+  acceptedCorrection = '';
+  resetAiCorrection();
+  aiCorrectionRecap.classList.add('hidden');
+  aiCorrectionRecap.textContent = '';
+  aiNotice.classList.add('hidden');
+  supportPaths.classList.remove('hidden');
+  aiReplyButton.disabled = false;
+}
+function pauseAfterAi(){hideEntry()}
+function resetAiCorrection() {
+  aiCorrectionPanel.classList.add('hidden');
+  aiCorrectionText.value = '';
+  aiCorrectionStatus.textContent = '';
+  aiCorrectionNext.disabled = false;
+  aiCorrectionText.readOnly = false;
+}
+function correctAiUnderstanding() {
+  aiCorrectionText.value = acceptedCorrection;
+  aiCorrectionPanel.classList.remove('hidden');
+  aiResponseActions.classList.add('hidden');
+  aiRecommendation.classList.add('hidden');
+  aiCorrectAction.setAttribute('aria-expanded', 'true');
+  aiCorrectionText.focus();
+}
+function closeAiCorrection() {
+  aiRequestId++;
+  resetAiCorrection();
+  aiResponseActions.classList.remove('hidden');
+  aiRecommendation.classList.toggle('hidden', !aiSuggestedMethod);
+  aiCorrectAction.setAttribute('aria-expanded', 'false');
+  aiCorrectAction.focus();
+}
+function openCorrectionConsent() {
+  const correction = aiCorrectionText.value.trim();
+  if (!correction) {
+    aiCorrectionStatus.textContent = '补充一句就可以。';
+    aiCorrectionText.focus();
+    return;
+  }
+  openAiConsent({ text: story.value.trim(), previousReply: aiResponseText.textContent, correction });
+}
+function prepareAiSession(){const text=story.value.trim();if(!text){story.focus();return false}state.text=text;state.mood='';state.before=null;state.skipBefore=false;state.entrySource='text';state.recommendationSource=null;state.returnDetail='';return true}
+function acceptAiRecommendation(){if(!prepareAiSession())return;if(!aiSuggestedMethod){hideEntry();chooseRecommendation();renderMethods();showSection('recommend');return}state.method=aiSuggestedMethod;state.recommendationReason=aiSuggestedReason;hideEntry();startMethod()}
+function changeAiRecommendation(){if(!prepareAiSession())return;state.method=null;state.recommendationReason='刚才的推荐已忽略。你可以按此刻更想要的帮助选择。';state.recommendationSource=null;state.returnDetail='';renderMethods();hideEntry();showSection('recommend');focusMethods()}
+function openAiConsent(correctionPayload = null) {
+  const text = story.value.trim();
+  if (!text) { story.focus(); return; }
+  const payload = correctionPayload ?? { text };
+  const safetyTerms = /自杀|轻生|结束自己的生命|杀死自己|伤害自己/;
+  if (safetyTerms.test(text) || (correctionPayload && safetyTerms.test(payload.correction))) {
+    showSafety();
+    return;
+  }
+  const token = document.querySelector('meta[name="local-ai-token"]')?.content;
+  if (!token) return;
+  modal.classList.remove('hidden');
+  const title = correctionPayload ? '发送补充并更新回应？' : '让 Mind Log 回应这段话？';
+  const scope = correctionPayload
+    ? '这项实验功能会把以下三段文字发送到远端 AI 服务（当前使用 DeepSeek），用来更新这次回应。历史记录、评分和偏好留在本机。'
+    : '这项实验功能会把下面这段文字发送到远端 AI 服务（当前使用 DeepSeek），用于生成一句回应和一个可更换的调节建议。只发送本次输入，不发送历史记录、评分或偏好。';
+  modalContent.innerHTML = `<div class="row"><h2>${title}</h2><button class="textbtn" onclick="closeModal()">取消</button></div><p>${scope}</p><p>服务商的数据保留和删除规则尚未核实，发送后无法保证撤回。请不要填写不愿外发的个人信息。</p><div id="aiPreview"></div><p class="notice">生成内容不是诊断或治疗建议，你可以忽略它并继续使用本地功能。</p><div class="actions"><button class="btn" id="aiConfirm">同意发送并获得回应</button><button class="btn ghost" onclick="closeModal()">暂时不用</button></div>`;
+  const preview = document.getElementById('aiPreview');
+  const entries = correctionPayload ? [
+    ['你原来写的', payload.text],
+    ['上一条 AI 回应', payload.previousReply],
+    ['你补充的', payload.correction],
+  ] : [['', text]];
+  for (const [label, value] of entries) {
+    const paragraph = document.createElement('p');
+    paragraph.className = 'ai-preview';
+    paragraph.textContent = value;
+    if (label) {
+      const heading = document.createElement('strong');
+      heading.textContent = label;
+      preview.append(heading);
+    }
+    preview.append(paragraph);
+  }
+  document.getElementById('aiConfirm').onclick = () => sendAiText(payload, token);
+}
+async function sendAiText(payload, token) {
+  closeModal();
+  const requestId = ++aiRequestId;
+  const isCorrection = Object.hasOwn(payload, 'correction');
+  if (isCorrection) {
+    aiCorrectionNext.disabled = true;
+    aiCorrectionText.readOnly = true;
+    aiCorrectionStatus.textContent = '在读你的补充…';
+  } else {
+    setAiResponse('loading', '正在写回应', '想先看看练习，也可以直接继续。');
+  }
+  try {
+    const response = await fetch('/local-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Mindlog-Token': token },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(35000),
+    });
+    const data = await response.json();
+    if (requestId !== aiRequestId) return;
+    if (response.ok) {
+      acceptedCorrection = payload.correction ?? '';
+      aiCorrectionRecap.textContent = acceptedCorrection ? '你补充了：' + acceptedCorrection : '';
+      aiCorrectionRecap.classList.toggle('hidden', !acceptedCorrection);
+      resetAiCorrection();
+      setAiResponse('success', isCorrection ? '补充后的回应' : '给你的一句回应', data.reply, { method: data.method, reason: data.reason });
+    } else if (isCorrection) {
+      showCorrectionFailure();
+    } else if (response.status === 503) {
+      setAiResponse('error', 'AI 回应还没启用', '可以先看看调节建议。');
+    } else {
+      setAiResponse('error', '这次没有连上', '暂时收不到 AI 回应。可以直接看调节建议。');
+    }
+  } catch {
+    if (requestId !== aiRequestId) return;
+    if (isCorrection) showCorrectionFailure();
+    else setAiResponse('error', '这次没有连上', '等得有点久。可以直接看调节建议。');
+  }
+}
+function showCorrectionFailure() {
+  aiCorrectionNext.disabled = false;
+  aiCorrectionText.readOnly = false;
+  aiCorrectionStatus.textContent = '回应没更新。补充还在，可以重试或先看调节建议。';
+}
+function beforeValueSet(v){state.before=v}
+function backFromRecommendation(){if(state.entrySource==='text'){showSection('home');showFree()}else showSection('baseline')}
+function skipBefore(){state.before=null;state.skipBefore=true;toRecommendation()}
+function toRecommendation(){state.before=state.skipBefore?null:Number(beforeRange.value);state.skipBefore=false;if(!state.keepMethod)chooseRecommendation();state.keepMethod=false;renderMethods();showSection('recommend')}
+function chooseRecommendation(ignoreHistory=false){
+ let m=state.mood,t=state.text,id='grounding';
+ if(m==='疲惫')id='relax';else if(m==='难过')id='express';else if(m==='烦躁')id='shift';else if(m==='空虚')id='breathe';
+ if(!m&&/生气|烦|恼火|吵/.test(t))id='shift';else if(!m&&/累|疲惫|困/.test(t))id='relax';else if(!m&&/难过|委屈|失望|哭/.test(t))id='express';
+ state.recommendationReason=t?`你写下了：${t}\n这里先提供一种可选方式；这个原型不能理解文字的全部含义。`:'根据你这次选择的感受，用简单规则提供一个起点。';state.recommendationSource=null;state.returnDetail='';
+ // 仅在明确选择同一情绪时参考授权历史；自由文字不推断相似情境。
+ const history=ignoreHistory||!m?null:sessions();
+ const eligible=history?history.filter(s=>s.allowFutureRecommendation===true&&s.mood===m&&Object.hasOwn(methods,s.method)):[];
+ const latestPreference={};for(const s of eligible){if((s.preference==='avoid'||s.preference==='like')&&latestPreference[s.method]===undefined)latestPreference[s.method]=s.preference}
+ const match=eligible.find(s=>latestPreference[s.method]!=='avoid'&&(s.preference==='like'||s.feedback==='better'));
+ if(latestPreference[id]==='avoid'){const alternative=Object.keys(methods).find(method=>latestPreference[method]!=='avoid');if(alternative){id=alternative;state.recommendationReason='你之前标记过原建议不适合你，因此提供另一种方式。你可以自行更换。'}}
+ if(match){id=match.method;state.recommendationSource=match.id;const evidence=match.preference==='like'?'你认可这个方法适合你':'你反馈好一些了';state.recommendationReason=`你曾选择「${m}」时尝试了${methods[id].name}，${evidence}。这次情况可能不同，你可以更换。`;state.returnDetail=state.recommendationReason}
+ state.method=id;
+}
+function focusMethods(){methodChoices.open=true;methodList.querySelector('button')?.focus();methodList.scrollIntoView({block:'nearest'})}
+function ignoreRecommendationHistory(){chooseRecommendation(true);renderMethods()}
+function renderMethods(){let d=methods[state.method];returnSuggestion.classList.toggle('hidden',!d||!state.returnDetail||state.recommendationSource==null);returnDetail.textContent=state.returnDetail||'';recTag.textContent=d?'当前推荐 · 基于规则':'选择一种方式';recTitle.textContent=d?d.name:'这次由你来选';methodDescription.textContent=d?(d.type==='steps'?'跟随简短步骤，按自己的速度进行，可随时结束。':'通过预设问题整理想法，可随时结束。'):'下面的方法都可以随时结束。';recReason.textContent=state.recommendationReason||(d?d.reason:'');ignoreHistory.classList.toggle('hidden',!d||state.recommendationSource==null);startMethodButton.disabled=!d;methodList.innerHTML=Object.entries(methods).map(([id,m])=>`<button class="method ${id===state.method?'active':''}" onclick="chooseMethod('${id}')"><strong>${m.name} ${id===state.method?'· 当前选择':''}</strong><small>${m.type==='steps'?'步骤式引导':'预设问题引导'}</small></button>`).join('')}
+function chooseMethod(id){state.method=id;state.recommendationSource=null;state.returnDetail='';state.recommendationReason='这是你自己选择的方式。';renderMethods()}
+function startMethod(){let m=methods[state.method];if(!m){focusMethods();return}state.step=0;state.chatIndex=0;state.chatAnswers=[];state.startedAt=new Date().toISOString();practiceTitle.textContent=m.name;practiceIntro.textContent=m.intro+(m.type==='chat'?' 这些是预设问题，不会分析你的回答；不想回答时可以结束或更换。':' 每一步都可跳过；如有不适，可以随时结束或更换。');stepMode.classList.toggle('hidden',m.type!=='steps');chatMode.classList.toggle('hidden',m.type!=='chat');if(m.type==='steps')renderStep();else{chatLog.innerHTML=`<div class="bubble"><p>${m.prompts[0]}</p></div>`;chatInput.value='';chatInput.classList.remove('hidden');document.querySelector('#chatMode .actions button').classList.remove('hidden')}showSection('practice')}
+function renderStep() {
+  const steps = methods[state.method].steps;
+  const [title, text, symbol] = steps[state.step];
+  stepCount.textContent = `第 ${state.step + 1} 步 / 共 ${steps.length} 步`;
+  progressBar.style.width = `${(state.step + 1) / steps.length * 100}%`;
+  stepEmoji.textContent = symbol;
+  stepHeading.textContent = title;
+  stepText.textContent = text;
+  stepNext.textContent = state.step === steps.length - 1 ? '完成练习' : '下一步';
+}
+function nextStep(){if(state.step<methods[state.method].steps.length-1){state.step++;renderStep()}else finishPractice()}
+function sendChat(){let v=chatInput.value.trim();if(!v)return;state.chatAnswers.push(v);chatLog.innerHTML+=`<div class="bubble user"><p>${escapeHtml(v)}</p></div>`;chatInput.value='';state.chatIndex++;let ps=methods[state.method].prompts;if(state.chatIndex<ps.length){chatLog.innerHTML+=`<div class="bubble"><p>${ps[state.chatIndex]}</p></div>`}else{chatLog.innerHTML+=`<div class="bubble"><p>谢谢你愿意说出来。我们先停在这里，不必急着得出结论。你可以结束这次体验。</p></div>`;chatInput.classList.add('hidden');document.querySelector('#chatMode .actions button').classList.add('hidden')}chatLog.scrollTop=chatLog.scrollHeight}
+function feedbackChoice(choice){state.feedback=choice;updateFeedbackMascot(choice);feedbackOptions.classList.remove('hidden');const messages={better:'你可以结束，也可以选择记录这次体验。',same:'你可以重新尝试并跳过不想做的步骤，换一种方法，或者结束。',worse:'先停止当前方式。你可以换一种低负担的方式，也可以结束。',skip:'可以直接结束，也可以继续。'};feedbackMessage.textContent=messages[choice];feedbackActions.innerHTML=(choice==='same'?'<button class="btn secondary" onclick="rememberAttempt();startMethod()">重新尝试（可跳过步骤）</button>':'')+((choice==='same'||choice==='worse')?'<button class="btn secondary" onclick="rememberAttempt();showSection(&quot;recommend&quot;)">选择其他方式</button>':'')+'<button class="btn" onclick="submitCheckin(true)">查看本次结果</button>'}
+function rememberAttempt(){if(state.feedback){(state.attempts??=[]).push({method:state.method,feedback:state.feedback});state.feedback=null}}
+function finishPractice(){updateFeedbackMascot(null);preferenceChoice.value='';allowFuture.checked=false;state.feedback=null;feedbackOptions.classList.add('hidden');afterRange.value=state.before===null?5:state.before;afterValue.textContent=afterRange.value;afterNote.value='';showSection('checkin')}
+function updateConsentMessage(){consentMessage.textContent=allowFuture.checked?'如果保存，将允许未来推荐参考本次体验。':'如果保存，本次体验不会用于未来推荐。'}
+function submitCheckin(skip=false){
+ if(!state.feedback)state.feedback='skip';state.after=skip?null:Number(afterRange.value);state.note=afterNote.value.trim();
+ worseActions.classList.toggle('hidden',state.feedback!=='worse');resultHeading.textContent=state.feedback==='worse'?'现在可以停下来':'这次体验';resultIntro.textContent=state.feedback==='worse'?'你说感觉更难受了。可以先停下，也可以换一种方式。':'按自己的需要决定下一步。';
+ const labels={better:'好一些了',same:'没有明显变化',worse:'感觉更难受了',skip:'不想回答'};
+ const context=state.text?`你写下的情境：${state.text}`:state.mood?`你选择的感受：${state.mood}`:'这次没有填写情境。';
+ resultSummary.textContent=[context,`你尝试了：${methods[state.method].name}`,`你选择的反馈：${labels[state.feedback]}`,state.note?`你补充的体验：${state.note}`:''].filter(Boolean).join('\n');
+ nextReference.classList.toggle('hidden',state.feedback!=='better');nextReference.textContent=state.feedback==='better'?'如果你愿意，下次遇到类似感受时可以考虑再试这个方法；每次情况可能不同。':'';
+ scoreCompanion.classList.toggle('hidden',state.before===null&&state.after===null);beforeScoreItem.classList.toggle('hidden',state.before===null);afterScoreItem.classList.toggle('hidden',state.after===null);resultBefore.textContent=state.before===null?'':state.before+'/10';resultAfter.textContent=state.after===null?'':state.after+'/10';setMascotMood(resultMascot,({better:'开心',same:'平静',worse:'难过',skip:'平静'})[state.feedback]||'平静',state.feedback==='better');
+ if(state.before!==null&&state.after!==null){const diff=state.before-state.after;resultDelta.textContent=diff>0?`主观强度降低了 ${diff} 分`:diff<0?`主观强度升高了 ${-diff} 分`:'评分没有变化';resultMessage.textContent='这是你填写的主观强度变化，不能单独证明方法效果。'}else{resultDelta.textContent='';resultMessage.textContent='这是你填写的主观感受强度。'}
+ attemptOptions.classList.toggle('hidden',!(state.attempts?.length));saveAttempts.checked=false;attemptSummary.textContent=state.attempts?.length?'之前尝试：'+state.attempts.map(a=>(methods[a.method]?.name||'一次方法')+'（'+({better:'好一些了',same:'没有明显变化',worse:'感觉更难受了',skip:'不想回答'})[a.feedback]+'）').join('；'):'';resultMethod.textContent=methods[state.method].name;updateConsentMessage();showSection('result');
+}
+function explore(kind){state.explore=kind;let cfg={plan:['找一个足够小的下一步','不用一次解决全部。我们只寻找一个现在做得到的动作。','如果只做一件能让情况前进一点点的小事，它会是什么？'],self:['听听这份感受在意什么','以下只是探索方向，不是对你的判断。','这件事里，你最在意、最害怕失去，或最希望被理解的是什么？'],past:['看看有没有熟悉的情境','只有你觉得有帮助时，才需要联系过去。','这次的感受有没有让你想起某个熟悉的情境？如果没有，也完全没关系。']}[kind];exploreTitle.textContent=cfg[0];exploreDesc.textContent=cfg[1];explorePrompt.textContent=cfg[2];exploreAnswer.value='';showSection('explore')}
+function saveExploration(){state.exploration=exploreAnswer.value.trim();saveAndHome()}
+function saveAndHome(){if(!document.getElementById('home').classList.contains('hidden'))return;if(state.saved){goHome();return}let a=sessions();if(a===null){storageWarning();return}a.unshift({id:Date.now(),date:new Date().toISOString(),text:state.text,mood:state.mood,before:state.before,after:state.after,method:state.method,note:state.note,chatAnswers:state.chatAnswers,schemaVersion:5,...(saveAttempts.checked&&state.attempts?.length?{previousAttempts:state.attempts.map(a=>({...a}))}:{}),context:{text:state.text,mood:state.mood,need:null},feedback:state.feedback||'skip',preference:preferenceChoice.value||null,allowFutureRecommendation:allowFuture.checked,explore:state.explore,exploration:state.exploration});if(saveSessions(a)){state.saved=true;goHome()}}
+function openHistory(){let a=sessions();if(a===null){storageWarning();return}modal.classList.remove('hidden');modalContent.innerHTML=`<div class="row"><h2>你的体验记录</h2><button class="textbtn" onclick="closeModal()">关闭</button></div><p class="sub">这些记录只保存在当前浏览器中。</p>${a.length?a.map((s,i)=>`<div class="history-item"><strong>${new Date(s.date).toLocaleString('zh-CN')} · ${s.type==='pulse'?'今日状态':(methods[s.method]?.name||'一次体验')}</strong><p>${escapeHtml(s.mood||s.text||'未填写状态')} ${s.type!=='pulse'&&s.before!=null&&s.after!=null?`· ${s.before} → ${s.after}/10`:''}</p>${s.note?`<p>${escapeHtml(s.note)}</p>`:''}${s.exploration?`<p>继续探索：${escapeHtml(s.exploration)}</p>`:''}${Array.isArray(s.previousAttempts)&&s.previousAttempts.length?`<p>之前尝试：</p>${s.previousAttempts.map((a,j)=>`<div><span>${escapeHtml((methods[a.method]?.name||'一次方法')+'（'+({better:'好一些了',same:'没有明显变化',worse:'感觉更难受了',skip:'不想回答'}[a.feedback]||'未记录')+'）')}</span> <button class="textbtn" onclick="deletePreviousAttempt(${i},${j})">删除这次尝试</button></div>`).join('')}`:''}${s.type!=='pulse'?`<p>未来推荐：${s.allowFutureRecommendation===true?'已允许':'未允许'}${s.preference?`；方法偏好：${s.preference==='like'?'适合我':'不适合我'}`:''}</p>${s.allowFutureRecommendation===true?`<button class="textbtn" onclick="revokeConsent(${i})">撤回本次授权</button>`:''}`:''}</div>`).join(''):'<div class="empty">还没有保存的体验。你不需要每天记录，想来时再来就好。</div>'}<div class="divider"></div><div class="actions"><button class="btn secondary" onclick="exportData()">导出 JSON</button><button class="btn ghost" onclick="clearData()">删除全部记录</button></div>`}
+function deletePreviousAttempt(index,attemptIndex){let a=sessions();if(a===null){storageWarning();return}const attempts=a[index]?.previousAttempts;if(!Array.isArray(attempts)||!Number.isInteger(attemptIndex)||attemptIndex<0||attemptIndex>=attempts.length)return;if(!confirm('确定删除这次尝试？其他记录不会删除。'))return;attempts.splice(attemptIndex,1);if(!attempts.length)delete a[index].previousAttempts;if(saveSessions(a))openHistory()}
+function revokeConsent(index){let a=sessions();if(a===null){storageWarning();return}if(!a[index])return;a[index].allowFutureRecommendation=false;if(saveSessions(a))openHistory()}
+function showSafety(){modal.classList.remove('hidden');modalContent.innerHTML='<div class="row"><h2>先联系现实中的支持</h2><button class="textbtn" onclick="closeModal()">关闭</button></div><p>如果你可能马上伤害自己，或已经受伤、服药，请立即联系当地急救服务或前往最近的急诊，并请信任的人陪伴你。尽可能远离可能用于伤害自己的物品。</p><p>你也可以联系当地危机支持服务或信任的人。Mind Log 不会持续监测安全，无法识别所有危险情况；没有出现提示不代表没有危险。它不能提供紧急救援、临床诊断或治疗。</p><button class="btn secondary" onclick="closeModal()">关闭</button>'}
+function openSettings(){modal.classList.remove('hidden');modalContent.innerHTML=`<div class="row"><h2>数据与隐私</h2><button class="textbtn" onclick="closeModal()">关闭</button></div><p>日记和练习记录保存在当前浏览器。使用本机实验版的 AI 回应时，每次都需要确认才会发送预览里的文字。</p><p>如果清除浏览器网站数据，记录可能丢失。建议定期导出备份。不要在原型中输入可识别身份的高度敏感信息。</p><div class="actions"><button class="btn secondary" onclick="exportData()">导出我的数据</button></div>`}
+function exportData(){let a=sessions();if(a===null){storageWarning();return}let blob=new Blob([JSON.stringify(a,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='mind-log-v3-data.json';link.click();URL.revokeObjectURL(url)}
+function clearData(){if(confirm('确定删除本浏览器中的全部 Mind Log 记录吗？此操作无法撤销。')&&saveSessions([]))closeModal()}
+function closeModal(){modal.classList.add('hidden')}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+let selectedPulse=null;
+function quickPulse(label,emoji,button){
+ selectedPulse={label,emoji};
+ document.querySelectorAll('#dailyMoodGrid .choice').forEach(x=>x.classList.remove('selected'));
+ button.classList.add('selected');
+ document.getElementById('pulseSave').disabled=false;
+ document.getElementById('pulseStatus').textContent=`今天的状态：${label}`;
+}
+function savePulse(){
+ if(!selectedPulse)return;
+ let a=sessions();if(a===null){storageWarning();return}let today=new Date().toDateString();
+ let idx=a.findIndex(s=>s.type==='pulse'&&new Date(s.date).toDateString()===today);
+ let item={id:Date.now(),type:'pulse',date:new Date().toISOString(),mood:selectedPulse.label,emoji:selectedPulse.emoji};
+ if(idx>=0)a[idx]=item;else a.unshift(item);
+ if(!saveSessions(a))return;selectedPulse=null;
+ document.getElementById('pulseSave').disabled=true;
+ document.getElementById('pulseStatus').textContent='记下来了，可以在最近七天里看到。';
+ document.querySelectorAll('#dailyMoodGrid .choice').forEach(x=>x.classList.remove('selected'));
+ renderHomeInsights();
+}
+function renderHomeInsights(){
+ const all=sessions();if(all===null){document.getElementById('continuityContent').textContent='记录暂时无法读取，请检查浏览器存储设置或恢复备份。';document.getElementById('weeklyContent').textContent='记录暂时无法读取。';document.getElementById('weekCount').textContent='';return}const full=all.filter(s=>s.type!=='pulse'),last=full[0];
+ const continuity=document.getElementById('continuityContent');
+ if(last){
+  const label=last.mood||last.text||'上一次的状态';
+  const result=(last.before!=null&&last.after!=null)?`当时的主观强度从 ${last.before} 变为 ${last.after}/10`:'上次没有填写前后评分';
+  continuity.innerHTML=`<div style="color:var(--ink);font-size:15px;font-weight:600">${escapeHtml(methods[last.method]?.name||'一次体验')} · ${new Date(last.date).toLocaleDateString('zh-CN')}</div><p style="margin:5px 0 10px">${escapeHtml(String(label).slice(0,90))}</p><p style="margin:0 0 12px">${result}${last.note?'；你的反馈：'+escapeHtml(last.note.slice(0,70)):''}</p><button class="btn secondary" onclick="repeatLast('${last.method}')">再次尝试这个方法</button> <button class="btn ghost" onclick="startFreshFromHome()">换一种方式</button>`;
+ }else{
+  continuity.textContent='保存一次体验后，可以来这里再试那种方式。';
+ }
+ const now = new Date();
+ const days = Array.from({length:7}, (_, index) => {
+  const date = new Date(now);
+  date.setDate(now.getDate() - 6 + index);
+  return {date, records:[]};
+ });
+ const dayByDate = new Map(days.map(day => [day.date.toDateString(), day]));
+ for (const record of all) {
+  if (typeof record.date !== 'string' && typeof record.date !== 'number') continue;
+  dayByDate.get(new Date(record.date).toDateString())?.records.push(record);
+ }
+ const count = days.reduce((total, day) => total + day.records.length, 0);
+ document.getElementById('weekCount').textContent = count + ' 条记录';
+
+ const week = document.createElement('div');
+ week.className = 'week-bars';
+ week.setAttribute('role', 'group');
+ week.setAttribute('aria-label', '选择日期');
+ const detail = document.createElement('div');
+ detail.className = 'week-detail';
+ detail.setAttribute('role', 'status');
+ const detailDate = document.createElement('strong');
+ detailDate.className = 'week-detail-date';
+ const detailSummary = document.createElement('span');
+ detailSummary.className = 'week-detail-summary';
+ detail.append(detailDate, detailSummary);
+
+ const weekday = ['日','一','二','三','四','五','六'];
+ const moodMarks = new Map(Object.entries({平静:'☼',愉快:'✿',焦虑:'◌',低落:'☁',疲惫:'☾',复杂:'？'}));
+ const buttons = [];
+ function selectDay(index) {
+  const day = days[index];
+  const pulse = day.records.find(record => record.type === 'pulse');
+  const count = day.records.filter(record => record.type !== 'pulse').length;
+  const summary = [];
+  if (pulse) {
+   const mood = typeof pulse.mood === 'string' ? pulse.mood.trim() : '';
+   summary.push(mood ? '记下了「' + mood + '」' : '记下了心情');
+  }
+  if (count) summary.push(count + ' 次体验');
+  buttons.forEach((button, current) => button.setAttribute('aria-pressed', String(current === index)));
+  detailDate.textContent = buttons[index].dataset.dateLabel;
+  detailSummary.textContent = summary.join(' · ') || '这天没有记录';
+ }
+ days.forEach((day, index) => {
+  const name = weekday[day.date.getDay()];
+  const date = day.date.toLocaleDateString('zh-CN', {month:'numeric', day:'numeric'});
+  const label = (index === days.length - 1 ? '今天' : '星期' + name) + ' · ' + date;
+  const pulse = day.records.find(record => record.type === 'pulse');
+  const hasRecords = day.records.length > 0;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'week-day';
+  button.dataset.recorded = String(hasRecords);
+  button.dataset.dateLabel = label;
+  button.setAttribute('aria-label', label + (hasRecords ? '，有记录' : '，没有记录'));
+  button.addEventListener('click', () => selectDay(index));
+  const mark = document.createElement('span');
+  mark.className = 'week-bar';
+  mark.setAttribute('aria-hidden', 'true');
+  mark.textContent = hasRecords ? moodMarks.get(pulse?.mood) || '●' : '·';
+  const shortName = document.createElement('small');
+  shortName.textContent = name;
+  button.append(mark, shortName);
+  buttons.push(button);
+  week.append(button);
+ });
+ selectDay(days.length - 1);
+ document.getElementById('weeklyContent').replaceChildren(week, detail);
+}
+function repeatLast(id){
+ state={text:'',mood:'',before:null,after:null,method:methods[id]?id:'grounding',keepMethod:true,step:0,chatIndex:0,chatAnswers:[],note:'',explore:null,exploration:'',startedAt:null};
+ showSection('baseline');
+}
+function startFreshFromHome(){
+ state={text:'',mood:'',before:null,after:null,method:'grounding',step:0,chatIndex:0,chatAnswers:[],note:'',explore:null,exploration:'',startedAt:null};
+ showFree();
+}
+
+updateCount();renderHomeInsights();
+
+// 角色仅回应用户本次选择；不读取历史，也不存储角色偏好。
+let mascotKind='blueberry';
+const mascotMouths={开心:'M143 169 Q150 176 157 169',愉快:'M143 169 Q150 176 157 169',平静:'M143 171 Q150 173 157 171',焦虑:'M143 173 Q150 166 157 173',难过:'M143 175 Q150 168 157 175',低落:'M143 175 Q150 168 157 175',疲惫:'M144 171 L156 171',烦躁:'M144 171 L156 171',空虚:'M144 171 L156 171',说不清:'M144 171 Q150 168 156 171',复杂:'M144 171 Q150 168 156 171'};
+const fruitTops={blueberry:'M110 51 L105 28 L129 39 L149 20 L170 39 L194 28 L188 51 Q150 61 110 51Z',tomato:'M150 49 Q127 20 105 28 Q120 37 128 47 Q105 42 92 54 Q120 51 143 59 Q150 54 157 59 Q180 51 208 54 Q195 42 172 47 Q180 37 195 28 Q173 20 150 49Z'};
+const feedbackMascot=document.querySelector('#feedbackMascot');feedbackMascot.append(document.querySelector('#heroArt .mascot-svg').cloneNode(true));const returnMascot=document.querySelector('#returnMascot');returnMascot.append(document.querySelector('#heroArt .mascot-svg').cloneNode(true));const resultMascot=document.querySelector('#resultMascot');resultMascot.append(document.querySelector('#heroArt .mascot-svg').cloneNode(true));
+const mascotPoses={开心:{arms:'M64 155 Q36 151 29 130 M236 155 Q264 151 271 130',legs:'M121 227 Q116 250 105 257 M179 227 Q184 250 195 257',eyes:'M121 151 Q127 144 133 151 M167 151 Q173 144 179 151'},平静:{arms:'M64 161 Q38 177 43 201 M236 161 Q262 177 257 201',legs:'M121 227 Q116 250 106 257 M179 227 Q184 250 194 257',eyes:'M122 152 Q127 157 132 152 M168 152 Q173 157 178 152'},焦虑:{arms:'M75 165 Q94 190 131 189 M225 165 Q206 190 169 189',legs:'M121 227 Q116 250 106 257 M179 227 Q184 250 194 257',eyes:'M127 146 a4.5 6 0 1 0 0 12 a4.5 6 0 1 0 0 -12 M173 146 a4.5 6 0 1 0 0 12 a4.5 6 0 1 0 0 -12'},难过:{arms:'M68 165 Q53 190 65 208 M232 165 Q247 190 235 208',legs:'M121 227 Q116 250 106 257 M179 227 Q184 250 194 257',eyes:'M121 150 Q127 157 133 150 M167 150 Q173 157 179 150'},疲惫:{arms:'M74 174 Q83 203 108 208 M226 174 Q217 203 192 208',legs:'M121 227 Q100 238 93 245 M179 227 Q200 238 207 245',eyes:'M121 153 Q127 158 133 153 M167 153 Q173 158 179 153'},说不清:{arms:'M64 161 Q38 177 43 201 M236 161 Q262 177 257 201',legs:'M121 227 Q116 250 106 257 M179 227 Q184 250 194 257',eyes:'M127 146 a4.5 6 0 1 0 0 12 a4.5 6 0 1 0 0 -12 M173 146 a4.5 6 0 1 0 0 12 a4.5 6 0 1 0 0 -12'}};
+function setMascotMood(container,mood,flower=false){const key=({愉快:'开心',低落:'难过',烦躁:'焦虑',空虚:'疲惫',复杂:'说不清'})[mood]||mood;const pose=mascotPoses[key]||mascotPoses.平静;container.querySelector('.mascot-mouth').setAttribute('d',mascotMouths[mood]||mascotMouths.平静);container.querySelector('.mascot-arms').setAttribute('d',pose.arms);container.querySelector('.mascot-legs').setAttribute('d',pose.legs);const eyes=container.querySelector('.mascot-eyes');eyes.replaceChildren();const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',pose.eyes);if(key==='焦虑'||key==='说不清'){path.setAttribute('fill','#282135')}else{path.setAttribute('fill','none');path.setAttribute('stroke','#282135');path.setAttribute('stroke-width','5');path.setAttribute('stroke-linecap','round')}eyes.append(path);container.querySelector('.mascot-flower').hidden=!flower} 
+function updateFeedbackMascot(choice){const mapping={better:['开心','你说好一些了，接下来由你决定。'],same:['平静','没有明显变化，可以调整、换一种方式或结束。'],worse:['难过','先停下来，你可以选择其他方式或结束。'],skip:['平静','不想回答也可以，按自己的需要结束。']};const [mood,text]=mapping[choice]||['平静','不必急着改变，按自己的感受选择。'];setMascotMood(feedbackMascot,mood,choice==='better');document.querySelector('#mascotFeedbackText').textContent=text}
+const weatherScene = document.getElementById('heroArt');
+const replyMascot = document.getElementById('aiReplyMascot');
+replyMascot.append(weatherScene.querySelector('svg').cloneNode(true));
+setMascotMood(weatherScene, '开心');
+setMascotMood(replyMascot, '平静');
+const weatherPreviews = ['开心', '平静', '焦虑', '疲惫', '低落', '说不清'];
+function paintWeather(mood) {
+  weatherScene.dataset.mood = mood;
+  setMascotMood(weatherScene, mood);
+  weatherScene.classList.remove('previewing');
+  // Restart the short acknowledgement only for an explicit selection.
+  void weatherScene.offsetWidth;
+  weatherScene.classList.add('previewing');
+}
+function previewNextWeather() {
+  const current = weatherPreviews.indexOf(weatherScene.dataset.mood);
+  const next = weatherPreviews[(current + 1) % weatherPreviews.length];
+  paintWeather(next);
+  document.getElementById('weatherAnnouncement').textContent = `表情预览：${next}。`;
+}
+for (const button of document.querySelectorAll('[data-mascot]')) {
+  button.addEventListener('click', () => {
+    mascotKind = button.dataset.mascot;
+    for (const choice of document.querySelectorAll('[data-mascot]')) {
+      choice.setAttribute('aria-pressed', String(choice === button));
+    }
+    for (const container of [weatherScene, feedbackMascot, returnMascot, resultMascot, replyMascot]) {
+      container.classList.toggle('mascot-tomato', mascotKind === 'tomato');
+      container.querySelector('.mascot-top').setAttribute('d', fruitTops[mascotKind]);
+    }
+  });
+}
+document.addEventListener('click', event => {
+  const button = event.target.closest('#moodGrid .choice, #dailyMoodGrid .choice');
+  const mood = button?.querySelector('strong')?.textContent;
+  if (mood && Object.hasOwn(mascotMouths, mood)) paintWeather(mood);
+});
+</script>
+</body></html>

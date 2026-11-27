@@ -6,19 +6,9 @@ import { GLTFLoader } from './libs/three/GLTFLoader.js';
 
 const wrap = document.getElementById('galleryWrap');
 const canvas = document.getElementById('galleryCanvas');
-if (!wrap || !canvas) throw new Error('gallery elements missing');
-
-// WebGL 不可用 / 初始化失败时的静态兜底：显示章鱼图片，避免兴趣区空白
-function showFallback() {
-  if (wrap.querySelector('.gallery-fallback')) return;
-  const img = document.createElement('img');
-  img.className = 'gallery-fallback';
-  img.src = 'octopus.jpg';
-  img.alt = '章鱼兴趣展示';
-  img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
-  canvas.style.display = 'none';
-  wrap.appendChild(img);
-}
+const interestBrowser = document.getElementById('interestBrowser');
+if (!wrap || !canvas || !interestBrowser) throw new Error('gallery elements missing');
+const interestButtons = Array.from(interestBrowser.querySelectorAll('button[aria-controls]'));
 
 // 移动端 / 微信内置浏览器：降低材质复杂度（MeshPhysicalMaterial 的 sheen/clearcoat 在部分 GPU/WebView 上兼容性差）
 const ua = navigator.userAgent;
@@ -39,21 +29,14 @@ const camera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
 camera.position.set(0, 3.5, 9);
 camera.lookAt(0, 0, 0);
 
-let renderer;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(w, h);
-  // 性能优化：限制像素比。桌面 1.5 封顶；移动端/微信 1.2（高 DPR 折叠屏掉帧明显）
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, useLightMat ? 1.2 : 1.5));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-} catch (e) {
-  // 华为等设备 WebGL 初始化失败：降级为静态章鱼图片，不让兴趣区空白
-  console.error('WebGL 不可用，已降级为静态章鱼展示:', e);
-  showFallback();
-  throw e;
-}
+// 3D 场景就绪前，页面会显示静态插画。
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setSize(w, h);
+// 性能优化：限制像素比。桌面 1.5 封顶；移动端/微信 1.2（高 DPR 折叠屏掉帧明显）
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, useLightMat ? 1.2 : 1.5));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
 
 window.addEventListener('resize', () => {
   const s = getSize();
@@ -176,12 +159,11 @@ gltfLoader.load(
     model.position.y = -1.0;
     octopus.add(model);
     octopusMesh = model;
+    wrap.classList.add('is-3d-ready');
   },
   (xhr) => { console.log(`章鱼加载: ${(xhr.loaded / xhr.total * 100).toFixed(1)}%`); },
   (err) => {
-    // GLB 加载失败：降级为静态章鱼图片
     console.error('章鱼 GLB 加载失败，已降级为静态展示:', err);
-    showFallback();
   }
 );
 
@@ -190,23 +172,18 @@ const ring = new THREE.Group();
 scene.add(ring);
 const ORBIT_A = 4.5;
 const ORBIT_B = 4.5;
-const IMAGE_COUNT = 6;
 const IMAGE_W = 1.6;
 const IMAGE_H = 1.6;
 const imageMeshes = [];
 const planeGeo = new THREE.PlaneGeometry(IMAGE_W, IMAGE_H);
 const texLoader = new THREE.TextureLoader();
-const imageFiles = [
-  'octopus-1.webp', 'octopus-2.webp', 'octopus-3.webp',
-  'octopus-4.webp', 'octopus-5.webp', 'octopus-6.webp',
-];
-const imageLabels = ['健身', '烘焙', '种植', '阅读', '陶艺', '绘画'];
-
-imageFiles.forEach((file, i) => {
-  const angle = (i / IMAGE_COUNT) * Math.PI * 2;
+interestButtons.forEach((button, i) => {
+  const detail = document.getElementById(button.getAttribute('aria-controls'));
+  const illustration = detail.querySelector('img');
+  const angle = (i / interestButtons.length) * Math.PI * 2;
   const x = Math.cos(angle) * ORBIT_A;
   const z = Math.sin(angle) * ORBIT_B;
-  const texture = texLoader.load(file);
+  const texture = texLoader.load(illustration.getAttribute('src'));
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 8;
   const mat = new THREE.MeshBasicMaterial({
@@ -218,60 +195,17 @@ imageFiles.forEach((file, i) => {
   const mesh = new THREE.Mesh(planeGeo, mat);
   mesh.position.set(x, 0, z);
   mesh.lookAt(camera.position);
-  mesh.userData = {
-    index: i, baseScale: 1.0, targetScale: 1.0,
-    angle: angle, label: imageLabels[i], labelVisible: false,
-  };
+  mesh.userData = { interestIndex: i, targetScale: 1.0 };
   ring.add(mesh);
   imageMeshes.push(mesh);
 });
-
-/* 文字标签 */
-const labelEl = document.createElement('div');
-labelEl.id = 'image-label';
-labelEl.style.cssText = `
-  position: fixed; top: 0; left: 0;
-  padding: 6px 16px;
-  background: rgba(255, 119, 16, 0.45);
-  color: #fff; font-size: 18px; font-weight: 500;
-  letter-spacing: 0.15em; border-radius: 20px;
-  pointer-events: none; opacity: 0;
-  transform: translate(-50%, -100%) scale(0.8);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  z-index: 100; white-space: nowrap;
-  box-shadow: 0 4px 20px rgba(255, 119, 16, 0.4);
-`;
-document.body.appendChild(labelEl);
-
-let activeLabelMesh = null;
-function showLabel(mesh) {
-  activeLabelMesh = mesh;
-  labelEl.textContent = mesh.userData.label;
-  labelEl.style.opacity = '1';
-  labelEl.style.transform = 'translate(-50%, -100%) scale(1)';
-}
-function hideLabel() {
-  activeLabelMesh = null;
-  labelEl.style.opacity = '0';
-  labelEl.style.transform = 'translate(-50%, -100%) scale(0.8)';
-}
-function updateLabelPosition() {
-  if (!activeLabelMesh) return;
-  const worldPos = new THREE.Vector3();
-  activeLabelMesh.getWorldPosition(worldPos);
-  worldPos.y += IMAGE_H / 2 + 0.1;
-  const projected = worldPos.clone().project(camera);
-  const rect = canvas.getBoundingClientRect();
-  const x = (projected.x * 0.5 + 0.5) * rect.width + rect.left;
-  const y = (-projected.y * 0.5 + 0.5) * rect.height + rect.top;
-  labelEl.style.left = `${x}px`;
-  labelEl.style.top = `${y}px`;
-}
 
 /* 射线检测 hover / click */
 const raycaster = new THREE.Raycaster();
 const mouseNDC = new THREE.Vector2(0, 0);
 let hoveredMesh = null;
+let press = null;
+const dragThreshold = 8;
 
 function updateMouseNDC(e) {
   const rect = canvas.getBoundingClientRect();
@@ -280,17 +214,28 @@ function updateMouseNDC(e) {
 }
 
 canvas.addEventListener('mousemove', updateMouseNDC);
+canvas.addEventListener('pointerdown', (e) => {
+  press = e.isPrimary && e.button === 0 ? { x: e.clientX, y: e.clientY } : null;
+});
+canvas.addEventListener('pointermove', (e) => {
+  if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > dragThreshold) {
+    press = null;
+  }
+});
+canvas.addEventListener('pointercancel', () => { press = null; });
 canvas.addEventListener('click', (e) => {
+  if (!press) return;
+  const distance = Math.hypot(e.clientX - press.x, e.clientY - press.y);
+  press = null;
+  if (distance > dragThreshold) return;
+
   updateMouseNDC(e);
   raycaster.setFromCamera(mouseNDC, camera);
-  const hits = raycaster.intersectObjects(imageMeshes, false);
-  if (hits.length > 0) {
-    const hit = hits[0].object;
-    if (activeLabelMesh === hit) hideLabel();
-    else showLabel(hit);
-  } else {
-    hideLabel();
-  }
+  const [hit] = raycaster.intersectObjects(imageMeshes, false);
+  if (!hit) return;
+
+  interestButtons[hit.object.userData.interestIndex].click();
+  interestBrowser.scrollIntoView({ block: 'nearest' });
 });
 
 /* 阴影 */
@@ -341,7 +286,6 @@ function animate(now) {
   }
   shadow.scale.setScalar(1.0 + Math.sin(t * 0.9) * 0.05);
   shadowMat.opacity = 0.4 + Math.sin(t * 0.9) * 0.05;
-  updateLabelPosition();
   controls.update();
   renderer.render(scene, camera);
 }

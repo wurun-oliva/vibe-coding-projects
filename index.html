@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>吴润 · 个人主页</title>
-  <link rel="stylesheet" href="style.css?v=2.17">
+  <link rel="stylesheet" href="style.css?v=2.18">
 </head>
 <body>
 
@@ -193,9 +193,64 @@
   <!-- 兴趣 · 3D 章鱼画廊 -->
   <section id="interests" class="section">
     <h2>兴趣</h2>
-    <p class="section-sub">// 拖拽旋转章鱼 · 点击图片查看兴趣</p>
+    <p class="section-sub">// 拖拽旋转章鱼 · 点击插画或兴趣标签查看详情</p>
     <div class="gallery-wrap" id="galleryWrap">
       <canvas id="galleryCanvas"></canvas>
+      <img class="gallery-fallback" src="octopus.jpg" alt="橙色章鱼插画" loading="lazy" decoding="async">
+    </div>
+    <div class="interest-browser" id="interestBrowser">
+      <div class="interest-picker" role="group" aria-label="选择兴趣">
+        <button type="button" aria-controls="interest-fitness" aria-pressed="true">健身</button>
+        <button type="button" aria-controls="interest-baking" aria-pressed="false">烘焙</button>
+        <button type="button" aria-controls="interest-planting" aria-pressed="false">种植</button>
+        <button type="button" aria-controls="interest-reading" aria-pressed="false">阅读</button>
+        <button type="button" aria-controls="interest-pottery" aria-pressed="false">陶艺</button>
+        <button type="button" aria-controls="interest-painting" aria-pressed="false">绘画</button>
+      </div>
+      <div aria-live="polite" aria-atomic="true">
+        <article class="interest-detail" id="interest-fitness">
+          <figure class="interest-art"><img src="octopus-1.webp" alt="举着哑铃的章鱼" width="1280" height="1280" loading="lazy" decoding="async"></figure>
+          <div class="interest-copy">
+            <h3>健身</h3>
+            <p>力量练习、伸展和有氧运动，各有不同的节奏。健身也是一个把注意力放回身体的机会，感受每个动作里的发力和呼吸。</p>
+          </div>
+        </article>
+        <article class="interest-detail" id="interest-baking" hidden>
+          <figure class="interest-art"><img src="octopus-2.webp" alt="戴厨师帽、端着蛋糕的章鱼" width="1280" height="1280" loading="lazy" decoding="async"></figure>
+          <div class="interest-copy">
+            <h3>烘焙</h3>
+            <p>从称量、搅拌到送进烤箱，每一步都会改变最后的口感。看着面糊慢慢成形，也是烘焙的乐趣。</p>
+          </div>
+        </article>
+        <article class="interest-detail" id="interest-planting" hidden>
+          <figure class="interest-art"><img src="octopus-3.webp" alt="给盆栽浇水的章鱼" width="1280" height="1280" loading="lazy" decoding="async"></figure>
+          <div class="interest-copy">
+            <h3>种植</h3>
+            <p>光照、水分和季节都会影响一株植物。看看叶子朝哪边长，等一片新叶舒展开，就能发现这些慢慢发生的变化。</p>
+          </div>
+        </article>
+        <article class="interest-detail" id="interest-reading" hidden>
+          <figure class="interest-art"><img src="octopus-4.webp" alt="在台灯下读书的章鱼" width="1280" height="1280" loading="lazy" decoding="async"></figure>
+          <div class="interest-copy">
+            <h3>阅读</h3>
+            <p>在故事里跟着别人看世界，也可以在一本书里顺着一个问题读下去。翻开书，就多了一个观察日常的角度。</p>
+          </div>
+        </article>
+        <article class="interest-detail" id="interest-pottery" hidden>
+          <figure class="interest-art"><img src="octopus-5.webp" alt="托着陶罐的章鱼" width="1280" height="1280" loading="lazy" decoding="async"></figure>
+          <div class="interest-copy">
+            <h3>陶艺</h3>
+            <p>用手感受泥土的软硬，一点点把它捏成器皿。指尖留下的纹路，也是每件陶作的一部分。</p>
+          </div>
+        </article>
+        <article class="interest-detail" id="interest-painting" hidden>
+          <figure class="interest-art"><img src="octopus-6.webp" alt="拿着画笔和调色盘的章鱼" width="1280" height="1280" loading="lazy" decoding="async"></figure>
+          <div class="interest-copy">
+            <h3>绘画</h3>
+            <p>用线条抓住轮廓，用色彩留下氛围。一张画可以从一个很小的观察开始，比如桌面上的影子，或者天色刚变暗时的蓝。</p>
+          </div>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -368,7 +423,8 @@
   <script src="effects.js?v=2.8"></script>
   <script src="libs/supabase/supabase.min.js"></script>
   <script src="feedback.js?v=1"></script>
-  <script type="module" src="gallery.js?v=4"></script>
+  <script src="interests.js?v=1" defer></script>
+  <script type="module" src="gallery.js?v=5"></script>
   <script>
     /* 预览钩子：?nv 强制显示无视频降级开屏（正常访问无影响） */
     if (new URLSearchParams(location.search).has('nv')) {

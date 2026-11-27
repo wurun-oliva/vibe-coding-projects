@@ -950,7 +950,7 @@ body { counter-reset: sec; }
   border: 1px solid rgba(255, 119, 16, 0.35);
   box-shadow: 0 0 40px rgba(255, 119, 16, 0.12), inset 0 0 60px rgba(2, 0, 41, 0.5);
 }
-.gallery-wrap::after {
+.gallery-wrap.is-3d-ready::after {
   content: 'RENDER // 3D.SCENE';
   position: absolute;
   right: 12px; bottom: 8px;
@@ -961,8 +961,82 @@ body { counter-reset: sec; }
   pointer-events: none;
   z-index: 5;
 }
-#galleryCanvas { display: block; width: 100%; height: 100%; }
+#galleryCanvas { display: block; width: 100%; height: 100%; visibility: hidden; }
+.is-3d-ready #galleryCanvas { visibility: visible; }
+.gallery-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.is-3d-ready .gallery-fallback { display: none; }
 @media (max-width: 640px) { .gallery-wrap { height: 380px; } }
+
+.interest-browser { margin-top: 18px; scroll-margin-block: 88px 16px; }
+.interest-picker {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.interest-picker button {
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+.interest-picker button:hover { border-color: var(--line-strong); }
+.interest-picker button[aria-pressed="true"] {
+  border-color: #ffb37d;
+  background: #ffb37d;
+  color: #26132a;
+  font-weight: 700;
+}
+.interest-picker button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.interest-detail {
+  display: grid;
+  grid-template-columns: minmax(160px, 32%) 1fr;
+  align-items: center;
+  gap: clamp(16px, 4vw, 44px);
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(125deg, #0e1540, #080b2e);
+}
+.interest-detail[hidden] { display: none; }
+.interest-art {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 50% 63%, rgba(255, 119, 16, .16), transparent 64%),
+    radial-gradient(ellipse at 50% 68%, rgba(0, 229, 255, .12), transparent 78%),
+    #080d30;
+}
+.interest-art img {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+}
+.interest-copy h3 {
+  margin-bottom: 8px;
+  color: #ffb37d;
+  font-size: clamp(1.25rem, 3vw, 1.7rem);
+  letter-spacing: 0.06em;
+}
+.interest-copy p { max-width: 36em; color: #c0c8e7; line-height: 1.75; }
+@media (max-width: 640px) {
+  .interest-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .interest-detail { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .interest-art img { max-width: 144px; }
+}
 
 /* ---------- 项目 ---------- */
 .project-grid {
